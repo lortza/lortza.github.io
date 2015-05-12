@@ -33,6 +33,7 @@ nav .name {
 nav .navlinks {
   float: right;
   margin: 0px;
+
 }
 
 nav li {
@@ -42,6 +43,7 @@ nav li {
 
 nav a {
   text-decoration: none;
+  color: #000;
 }
 
 nav a:visited {
@@ -120,12 +122,30 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+h2 a {
+  text-decoration: none;
+  color: #000;
+}
+
+h2 a:hover {
+  text-decoration: none;
+  color: #000;
+}
+
 .service-block {
   width: 33%;
   float: left;
   padding: 0em 0.5em;
   text-align: center;
 }
+
+ .service-block i {
+    color: white;
+    background-color: purple;
+    padding: 0.5em;
+    border-radius: 50%;
+    margin: .5em 0;
+  }
 
 .project-block {
   overflow: hidden;
@@ -153,12 +173,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0px;
 }
 
-  i {
-    color: white;
-    background-color: purple;
-    padding: 0.5em;
-    border-radius: 50%;
-  }
 
 footer {
   background-color: black;
@@ -167,6 +181,7 @@ footer {
   padding: 1em;
   font-size: .75em;
 }
+
 
 
 /*---------------------------
