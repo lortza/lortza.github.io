@@ -1,0 +1,245 @@
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Lato', sans-serif;
+  background: url("http://localflavormarketing.com/wp-content/uploads/2014/01/anne-home.jpg") top left no-repeat; 
+  background-size: 2000px;
+  background-attachment:fixed;
+  -webkit-background-size: cover;
+}
+
+nav {
+  background-color: rgba(255, 255, 255, 0.7);
+  margin: 0px 0px 2px 0em;
+  padding: 0px -2em;
+  text-align: right;
+}
+
+nav .name {
+  float: left;
+  font-family: 'Walter Turncoat', cursive;
+  font-size: 1.5em;
+  margin: 0px;
+}
+
+nav .navlinks {
+  float: right;
+  margin: 0px;
+}
+
+nav li {
+  display: inline;
+  margin: 0em 2em;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav a:visited {
+  color: black;
+}
+
+nav a:hover{
+  color: purple;
+  font-weight: 700;
+}
+
+nav a:active {
+  color: orange;
+  text-transform: uppercase;
+  font-size: .9em;
+}
+
+.readmore a {
+  color: green;
+  font-size: .7em;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding-left: 1em;
+  text-transform: uppercase;
+}
+
+.readmore a:hover {
+  font-weight: 700;
+}
+
+.wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  overflow: hidden;
+  /*border: 1px solid yellow;*/
+}
+
+.wrapper-right {
+  width: 60%;
+  float: right;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1em;
+  padding: 2%;
+  box-shadow: 2px 2px 5px black;
+}
+
+header {
+  float: right;
+  max-width: 60%;
+  padding: 0em 1em;
+  color: white;
+  text-shadow: 2px 2px 5px black;
+}
+
+header h1 {
+  text-align: left;
+  font-size: 4em;
+  margin-bottom: 0px;
+  font-weight: normal;
+
+}
+
+header h2 {
+  text-align: left;
+}
+
+section {
+  clear: both;
+  margin: 0em 0em 2em 0em;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Walter Turncoat', cursive;
+  font-weight: normal;
+  text-align: center;
+}
+
+.service-block {
+  width: 33%;
+  float: left;
+  padding: 0em 0.5em;
+  text-align: center;
+}
+
+.project-block {
+  overflow: hidden;
+  margin-bottom: 1em;
+  text-align: left;
+}
+
+.project-block img {
+  float: left;
+  margin-right: 2em;
+  border-radius: 10px;
+  width: 200px;
+}
+
+.project-block-text {
+  text-align: left;
+  margin-left: 1em;
+  line-height: 1.5em;
+}
+
+.project-block-text h3 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 0px;
+}
+
+  i {
+    color: white;
+    background-color: purple;
+    padding: 0.5em;
+    border-radius: 50%;
+  }
+
+footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 1em;
+  font-size: .75em;
+}
+
+
+/*---------------------------
+        Media Queries
+---------------------------*/
+
+
+@media only screen and (max-width: 800px) {
+  .project-block img {
+  clear: both;
+  margin-bottom: 1em;
+  }
+
+.project-block-text {
+  clear: both;
+  margin-bottom: 1em;  
+  }
+
+}/*CLOSES MEDIA QUERY*/
+  
+
+@media only screen and (max-width: 500px) {
+  .wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    overflow: hidden;
+    /*border: 1px solid yellow;*/
+    }
+
+  .wrapper-right {
+    width: 100%;
+    float: right;
+    background-color: rgba(255, 255, 255, 0.0);
+  }
+
+  header {
+  clear: both;
+  max-width: 100%;
+  padding: 0em 1em;
+  font-size: 70%;
+  }
+
+  .mquery500 {
+  overflow: hidden;
+  margin-bottom: 1em;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1em;
+  padding: 2%;
+  box-shadow: 2px 2px 5px black;
+  }
+
+  .project-block {
+  overflow: hidden;
+  margin-bottom: 1em;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 1em;
+  padding: 2%;
+  box-shadow: 2px 2px 5px black;
+  }
+
+  .project-block img {
+  float: center;
+  margin-right: 0em;
+  }
+
+.project-block-text h3 {
+  text-align: center;
+  }
+
+} /*CLOSES MEDIA QUERY*/
+
+
+
+        
