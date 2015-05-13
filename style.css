@@ -16,6 +16,12 @@ body {
   -webkit-background-size: cover;
 }
 
+.navbar-brand {
+  font-family: 'Walter Turncoat', cursive;
+  font-size: 1.5em;
+}
+
+
 nav {
   background-color: rgba(255, 255, 255, 0.7);
   margin: 0px 0px 2px 0em;
@@ -78,7 +84,7 @@ nav a:active {
   max-width: 960px;
   margin: 0 auto;
   overflow: hidden;
-  /*border: 1px solid yellow;*/
+  /* border: 1px solid yellow;*/
 }
 
 .wrapper-right {
@@ -149,15 +155,15 @@ h2 a:hover {
 
 .project-block {
   overflow: hidden;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
   text-align: left;
 }
 
 .project-block img {
   float: left;
-  margin-right: 2em;
+  margin: 0em 2em 1.5em 0em;
   border-radius: 10px;
-  width: 200px;
+  width: 150px;
 }
 
 .project-block-text {
@@ -170,7 +176,7 @@ h2 a:hover {
   font-family: 'Lato', sans-serif;
   font-weight: 700;
   text-align: left;
-  margin-bottom: 0px;
+  margin: 0px;
 }
 
 
@@ -190,22 +196,9 @@ footer {
 
 
 @media only screen and (max-width: 800px) {
-  .project-block img {
-  clear: both;
-  margin-bottom: 1em;
-  }
 
-.project-block-text {
-  clear: both;
-  margin-bottom: 1em;  
-  }
-
-}/*CLOSES MEDIA QUERY*/
-  
-
-@media only screen and (max-width: 500px) {
   .wrapper {
-    max-width: 960px;
+    max-width: 80%;
     margin: 0 auto;
     overflow: hidden;
     /*border: 1px solid yellow;*/
@@ -252,6 +245,41 @@ footer {
 .project-block-text h3 {
   text-align: center;
   }
+
+
+}/*CLOSES MEDIA QUERY*/
+
+
+
+  
+
+@media only screen and (max-width: 500px) {
+  .wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    /*border: 1px solid yellow;*/
+    }
+
+  .wrapper-right {
+    width: 100%;
+    float: right;
+    background-color: rgba(255, 255, 255, 0.0);
+  }
+  .service-block {
+  width: 100%;
+  clear: both;
+  padding: 0em 0.5em;
+  text-align: center;
+}
+
+service-block i {
+    padding: 0.25em;
+    margin: .5em;
+    float: left;
+  }
+
+  
 
 } /*CLOSES MEDIA QUERY*/
 
