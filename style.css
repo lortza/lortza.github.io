@@ -133,8 +133,13 @@ article {
   box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
 }
 
+article a img:hover {
+  opacity: 0.8;
+}
+
 .sites article {
   width: 30%;
+  height: 500px;
   margin: 0% 3% 3% 0%;
   text-align: center;
 }
@@ -143,28 +148,113 @@ article {
   width: 100%;
 }
 
+.sites article div.explanation {
+  padding: 0px 15px;
+}
+
 .products article {
-  width: 48%;
-  max-width: 600px;
-  min-width: 300px;
+  width: 480px;
   height: 200px;
-  margin: 0% 2% 2% 0%;
+  margin: 0% 20px 20px 0%;
 }
 
 .products img {
   height: 100%;
   float: left;
-  margin-right: 5%;
+}
+
+.products article div.explanation {
+  float: right;
+  padding: 0px 15px;
+  width: 280px;
 }
 
 .writing-type {
   font-weight: 400;
+  margin: 20px 0px 0px 0px;
 }
 
 footer {
-  background-color: black;
+  background-color: #3a3934;
   color: white;
   text-align: center;
   padding: 1em;
   font-size: .75em;
+  margin-top: 50px;
+}
+
+
+/*---------------------------
+        Media Queries
+---------------------------*/
+
+@media only screen and (max-width: 1200px) {
+
+  .container {
+    border: 1px solid green;
+  }
+  .products article {
+    float: none;
+    margin: 20px auto;
+    height: auto;
+    overflow: auto;
+    width: 80%;
+  }
+
+  .products article img {
+    width: 20%;
+    height: auto;
+  }
+
+  .products article div.explanation {
+    float: left;
+    padding: 0px 15px;
+    width: 75%;
+  }
+}
+
+
+@media only screen and (max-width: 800px) {
+
+  .container {
+    border: 1px solid yellow;
+  }
+
+  .sites article {
+    float: none;
+    width: 80%;
+    max-width: 400px;
+    height: auto;
+    overflow: auto;
+    margin: 20px auto;
+  }
+
+  .sites img {
+    width: 100%;
+  }
+
+  .sites article div.explanation {
+    padding: 0px 15px;
+  }
+
+  .products article {
+    float: none;
+    width: 80%;
+    max-width: 400px;
+    overflow: auto;
+    margin-bottom: 20px;
+  }
+
+  .products article img {
+    float: none;
+    width: 100%;
+    height: auto;
+
+  }
+
+  .products article div.explanation {
+    float: none;
+    padding: 15px;
+    width: 100%;
+  }
 }
