@@ -2,164 +2,236 @@
 <html>
 <head>
   <title>Anne Richardson's Portfolio</title>
-
-    <!--Bootstrap CDN file-->  
-   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-   <!--Google fonts-->
-   <link href='https://fonts.googleapis.com/css?family=Walter+Turncoat|Lato:300,700,300italic,700italic' rel='stylesheet' type='text/css'>
-    <!--Fontawesome-->
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-   <!--Links to our stylesheet-->
-   <link rel="stylesheet" type="text/css" href="style.css">
-   <!--link to javascript, and necessary for bootstrap-->
-   <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
-   <!--this is the bootstrap/javascript connection-->
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-   <!-- Check device width for responsive media queries -->
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
+  <!--Bootstrap CDN file-->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <!--Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+  <!--Fontawesome-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <!--Links to our stylesheet-->
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!--link to javascript, and necessary for bootstrap-->
+  <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  <!--this is the bootstrap/javascript connection-->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <!-- Check device width for responsive media queries -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 
 <body>
 
-<!-- <nav>
-  <div class="wrapper">
-  <p class="name">Anne Richardson</p>
-  <div class="navlinks">
-  <ul>
-    <li><a href="#">Home</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#projects">Recent Projects</a></li>
-    <li><a href="#footprint">Online Presence</a></li>
-    <li><a href="#footprint">Contact</a></li>
-  </ul>
-  </div><!-- CLOSES NAVLINKS -->
-  <!--</div><!-- CLOSES WRAPPER -->
-<!--</nav> -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Anne Richardson</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#rails-projects">Rails Projects</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="docs/richardson_resume.pdf" target="_blank" alt="">Resume</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Anne Richardson</a>
-    </div>
+    <div class="row banner">
+     <div class="container">
+      <img src="images/headshot.png">
+      <div class="banner-text">
+        <h1>Hi, I'm Anne.</h1>
+        <p>I am a Rails Developer and a maker of many things.</p>
+      </div><!--banner-text-->
+      </div><!--container-->
+    </div><!--row-->
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#services">Services <span class="sr-only">(current)</span></a></li>
-        <li><a href="#projects">Recent Projects</a></li>
-        <li><a href="#footprint">Online Presence</a></li>
-        <li><a href="http://localflavormarketing.com/contact">Contact</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+    <div class="row">
+      <div class="container">
+        <div class="find-me">
+          <h3>Find me on</h3>
+          <p><a href="https://www.linkedin.com/in/localflavor" target="_blank" alt="">LinkedIn</a></p>
+          <p><a href="https://github.com/lortza" target="_blank" alt="">GitHub</a></p>
+          <p><a href="http://stackoverflow.com/cv/anne" target="_blank" alt="">StackOverflow CV</a></p>
+          <p><a href="http://localflavormarketing.com/" target="_blank" alt="">Design Portfolio</a></p>
+        </div><!--find-me-->
+        <div class="about">
+        <h3>ABC: Always Be Creating</h3>
+        <p>This is the imspum that makes you like me aleady. </p>
+        </div> <!--about-->
+      </div> <!-- container -->
+    </div> <!-- row -->
 
-<div class="wrapper">
-<header>
-  <h1>Hi, I'm Anne...</h1>
-  <h2>a data nerd with a flair for design and ruby terminal app development</h2>
-</header>
-</div><!-- CLOSES WRAPPER -->
+<div class="container">
+    <a class="anchor" name="rails-projects"></a>
+    <div class="row">
+      <div class="sites">
+        <h2>Rails Projects</h2>
+        <p class="section-explanation">lasdf las flkja fkjg adfkjg sdkljfg slkdj gksjd glkjds fjg sdkjf gdskjf gkjs fgkjd fgkja skgj adkfj gskldjf gklsjd fgkljsd fg. ajkjf aksjd fkasdblfjsbdlkjfabkf galkdfjg akdjf gkjd fgs dfhg adjfhg ajhsf gjhad fjhg sdjfhg sjhdf gjkhad fjhg ajshd fjhas djhga sjfhg ajhfg ajhdf gjkha dfkjhga kdjfhg lsD,.</p>
+        <article>
+          <img src="images/rails_productmatchr.png">
+          <h3>ProductMatchr</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="http://www.productmatchr.com/" target="_blank" alt="productmatchr">site</a> | private repo</p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/rails_tarot.jpg">
+          <h3>ModernMystic</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="http://modernmystic.herokuapp.com/" target="_blank" alt="tarot readings">site</a> | <a href="https://github.com/lortza/tarot" target="_blank" alt="repo">repo</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/rails_flixonlists.png">
+          <h3>FlicksOnLists</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="http://www.flicksonlists.com/" target="_blank" alt="Flicks on Lists">site</a> | <a href="https://github.com/mikevallano/tmdb-moviequeue" target="_blank" alt="repo">repo</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/rails_gosling.png">
+          <h3>Sorry Girl</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="https://sorrygirl.herokuapp.com/" target="_blank" alt="Sorry Girl Apologies by Ryan Gosling">site</a> | <a href="https://github.com/lortza/sorrygirl" target="_blank" alt="repo">repo</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/rails_reactbetter.png">
+          <h3>ReactBetter</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="http://reactbetter.herokuapp.com/" target="_blank" alt="">site</a> | <a href="https://github.com/lortza/lemonade" target="_blank" alt="repo">repo</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/rails_restaurantqueue.png">
+          <h3>RestaurantQueue</h3>
+          <div class="explanation">
+            <p>This explains about the project.</p>
+            <p><a href="http://restaurantqueue.herokuapp.com/" target="_blank" alt="RestaurantQueue">site</a> | <a href="https://github.com/lortza/restaurantapp" target="_blank" alt="repo">repo</a></p>
+          </div><!--explanation-->
+        </article>
+      </div>
+    </div><!--row-->
 
-<div class="wrapper">
-<div class="wrapper-right">
-<article>
+    <a class="anchor" name="skills"></a>
+    <div class="row">
+      <div class="skills">
+        <h2>Skills</h2>
+        <p class="section-explanation">Ruby, Rails, Git, Sass, CSS, PHP, CodeIgniter, PostgreSQL, SQLite, Heroku, XML, Spanish, Card Game Design, and Bicycle Repair</p>
+      </div>
+    </div><!--row-->
 
-<!-- SERVICES SECTION -->
-<h2><a name="services">Services</a></h2>
-  <section class="mquery500">
 
-    <div class="service-block">
-    <i class="fa fa-diamond fa-2x "></i>
-    <p>Ruby Web App Development</p>
-    </div>
+    <a class="anchor" name="products"></a>
+    <div class="row">
+      <div class="products">
+        <h2>Other Media</h2>
+        <p class="section-explanation">Whenever I have an idea for something that solves a particular problem, I jump right in and make it. Sometimes it's a solution I can user right now (zipper pocket underpants) and other times, it's a solition that I wish had existed when I needed it (book on packing), so I created it to solve the problem for other people.</p>
+        <article>
+          <img src="images/product_tarot.jpg">
+          <h3>Self-Reading Tarot Deck</h3>
+          <div class="explanation">
+            <p>I was curious to be able to read tarot cards, but it was lots to memorize up front just to do a reading. I made this deck and spreads to be self-reading. All you have to do is lay the cards down and read what's on them. Easy as pie!</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_zipper.png">
+          <h3>Zipper Underwear</h3>
+          <div class="explanation">
+            <p>Women's clothing is dreadfully lacking in pockets. I made these underpants to create storage space for your keys, phone, wallet, and passport. They also double as secure boardshorts and instant skort shorts!</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_nomad.jpg">
+          <h3>Book on Packing</h3>
+          <div class="explanation">
+            <p>This explains about the product.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_hairballgame.jpg">
+          <h3>Cat Card Game</h3>
+          <div class="explanation">
+            <p>This explains about the product.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_coloring.jpg">
+          <h3>Adult Coloring Book</h3>
+          <div class="explanation">
+            <p>Coloring is fun. And some adult coloring books take themselves way too seriously with intense patterns and lots of decisions to make. I created this book to be as simple and playful as children's books, but scenes from adult life.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_yoga.png">
+          <h3>Yoga Track Album</h3>
+          <div class="explanation">
+            <p>There are some styles of yoga where you hold a pose for several minutes at a time. Instead of using a timer, I created guided tracks so I could build playlists for a perfectly timed yoga session.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_gringa.jpg">
+          <h3>Spanish Flash Card / Poker Deck</h3>
+          <div class="explanation">
+            <p>Travelers often carry a deck of cards, which makes for easy, cheap entertainment on the road. Ever conscious of carrying too much stuff, I created this deck to double as a Spanish learning deck.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+        <article>
+          <img src="images/product_necklace.jpg">
+          <h3>Plant Necklaces</h3>
+          <div class="explanation">
+            <p>I needed a little bit of nature in my life -- apparently right around my neck is where it had to be --  so I bought some wood and started creating.</p>
+            <p><a href="" target="_blank" alt="">site</a></p>
+          </div><!--explanation-->
+        </article>
+      </div>
+    </div><!--row-->
 
-    <div class="service-block">
-    <i class="fa fa-pencil fa-2x"></i>
-    <p>Marketing Consulting & Design</p>
-    </div>
 
-    <div class="service-block">
-    <i class="fa fa-book fa-2x"></i>
-    <p>eBook Conversion</p>
-    </div>
+    <a class="anchor" name="writing"></a>
+    <div class="row">
+      <div class="writing">
+        <h2>Writing</h2>
+        <p class="section-explanation">These are some of the places I do some writing.</p>
+        <p><span class="writing-type">Instructables</span> <a href="http://www.instructables.com/member/anner1/" target="_blank">Instructables.com</a> </p>
+        <p><span class="writing-type">Travel Blog</span> <a href="http://viajaryamar.com/" target="_blank">viajaryamar.com</a></p>
+        <p><span class="writing-type">Sustainability Blog</span> <a href="http://www.ashiftedperspective.com/" target="_blank">ashiftedperspective.com</a></p>
+        <p><span class="writing-type">Professional Blog</span> <a href="http://localflavormarketing.com/category/blog/" target="_blank">localflavormarketing.com</a></p>
+        <p><span class="writing-type">Cooking Blog</span> <a href="https://warmkitchen.wordpress.com/" target="_blank">warmkitchen.wordpress.com</a></p>
+        
+      </div>
+    </div><!--row-->
+  </div><!--container-->
 
-  </section>
-
-<!-- RECENT PROJECTS SECTION -->
-
-  <section>
-    <h2><a name="projects">Recent Projects</a></h2>
-    <div class="project-block">
-      <a href="https://www.youtube.com/watch?v=LSAumIvZpcc&feature=youtu.be" target="_blank">
-      <img src="links/mixteka.png" alt = "pinterest screen shot"></a>
-      <div class="project-block-text">
-      <h3>Mixteka Storyboard</h3>
-      <p>Mixteka is a virtual DJ music service for weddings. I created the storyboard (script, music, and art) for this video geared towards the DIY wedding crowd. Check out the final video <span class="readmore"><a href="https://www.youtube.com/watch?v=LSAumIvZpcc&feature=youtu.be" target="_blank">here</a>.</span></p>
-      </div><!-- CLOSES PROJECT-BLOCK-TEXT -->
-    </div><!-- CLOSES PROJECT-BLOCK -->
-
-    <div class="project-block">
-      <a href="https://milehighbiz.org/portfolio/column/4" target="_blank">
-      <img src="links/localfood.png" alt="MHBA Denver Coffee Guide"></a>
-      <div class="project-block-text">
-      <h3>Local First Campaign</h3>
-      <p>Since 2007, I've created and shaped the messages for thinking Local First in Colorado. This campaign employs lots of media including local business guides (maps) and matching web pages, stickers, buttons, t-shirts, and billboards. I get to create several project identies -- all of which celebrate the local flavor of Colorado. You'll see my artwork on the Mile High Business Alliance's programs page <span class="readmore"><a href="https://milehighbiz.org/portfolio/column/4" target="_blank">here</a>.</span></p>
-      </div><!-- CLOSES PROJECT-BLOCK-TEXT -->
-    </div><!-- CLOSES PROJECT-BLOCK -->
-
-    <div class="project-block">
-      <img src="links/bazooka.jpg" alt="book cover">
-      <div class="project-block-text">
-      <h3>Book Design</h3>
-      <p>Books projects are always really fun. I get to work with people who are excited about what they are creating and are always delighted when they finally get to hold the finished product in their hands. Having designed and printed a couple of my own books, I know the feeling -- and I'm always honored to be part of that process.</p>
-      <p>I offer design services for the cover artwork as well as the pages of the book and any necessary supporting artwork.</p>
-      </div><!-- CLOSES PROJECT-BLOCK-TEXT -->
-    </div><!-- CLOSES PROJECT-BLOCK -->
-
-    <div class="project-block">
-    <a href="https://www.thegamecrafter.com/designers/anne-richardson" target="_blank">
-      <img src="links/hairballgame.jpg" alt="Hairball the Card Game"></a>
-      <div class="project-block-text">
-      <h3>Card Games </h3>
-      <p>Beacause life doesn't always have to be serious, and because I'm a fan of making things I can hold in my own hands, I've created concepts and art for several card games. You'll see those games on thegamecrafter.com <span class="readmore"><a href="https://www.thegamecrafter.com/designers/anne-richardson" target="_blank">here</a>.</span></p>
-      </div><!-- CLOSES PROJECT-BLOCK-TEXT -->
-    </div><!-- CLOSES PROJECT-BLOCK -->
-
-    <div class="project-block">
-      <a href="http://repl.it/l3i/23" target="_blank" alt ="image of terminal app"><img src="links/terminalapp.jpg"></a>
-      <div class="project-block-text">
-      <h3>Terminal Apps</h3>
-      <p>Terminal apps are pretty darned fun. I don't know if it's my childhood experience with Oregon Trail or Dr. Sbaitso or that I just kind of love choose-your-own-adventure books. Whtever the reason, I think they're fun. If you're a fan of Monty Python, you might want to check out this Ruby terminal app I made, <span class="readmore"><a href="http://repl.it/l3i/23" target="_blank">here</a>.</span></p></p>
-      </div><!-- CLOSES PROJECT-BLOCK-TEXT -->
-    </div><!-- CLOSES PROJECT-BLOCK -->
-  </section>
-
-  <section>
-    <h2><a name="footprint">Other Places You'll Find Me</a></h2>
-    <p align = "center"><a href="https://www.linkedin.com/in/localflavor" target="_blank">linkedin</a>  |  <a href="https://github.com/lortza" target="_blank">github</a>  |  <a href="http://viajaryamar.com" target="_blank">my travel blog</a>
-  </section>
-  <section>
-<!--     <h2><a name="contact">&nbsp;</a></h2>-->    
-  <center><a href="http://localflavormarketing.com/contact/"><button type="button" class="btn btn-info btn-lg">Contact Me</button></a></center>
-    <p style="text-align: center;">(via my actual portfolio site)</p>
-  </section>
-</article>
-</div><!-- closes wrapper-right -->
-</div><!-- closes wrapper -->
-
-<footer>Copyright 2015... and pretty much forever. Come, be inspired, but don't steal without crediting. You dig?</footer>
+  <footer>Copyright today, tomorrow, and pretty much forever.</footer>
 
 </body>
 </html>
 
 
-        
+
+    <div class="row">
+      <div class="container">
+  
+      </div> <!-- container -->
+    </div> <!-- row -->

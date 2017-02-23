@@ -1,184 +1,165 @@
-/* apply a natural box layout model to all elements, but allowing components to change */
-html {
+body {
+  background-color: #f7f5f0;
+  /*background-color: #e5e4de;*/
+  /*background-color: #f1eee8;*/
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  margin-top: 50px;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-*, *:before, *:after {
-  box-sizing: inherit;
-}
 
-body {
-  padding: 0px;
-  margin: 0px;
-  font-family: 'Lato', sans-serif;
-  background: url("http://localflavormarketing.com/wp-content/uploads/2014/01/anne-home.jpg") top left no-repeat; 
-  background-size: 2000px;
-  background-attachment:fixed;
-  -webkit-background-size: cover;
-}
-
-.navbar-brand {
-  font-family: 'Walter Turncoat', cursive;
-  font-size: 1.5em;
+/*
+hr.style12 {
+  height: 6px;
+  background: url(http://ibrahimjabbari.com/english/images/hr-12.png) repeat-x 0 0;
+    border: 0;
 }
 
 
-nav {
-  background-color: rgba(255, 255, 255, 0.7);
-  margin: 0px 0px 2px 0em;
-  padding: 0px -2em;
-  text-align: right;
-}
+hr { 
+  border: 0; 
+  height: 1px; 
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0); 
+}*/
 
-nav .name {
-  float: left;
-  font-family: 'Walter Turncoat', cursive;
-  font-size: 1.5em;
-  margin: 0px;
-}
-
-nav .navlinks {
-  float: right;
-  margin: 0px;
-
-}
-
-nav li {
-  display: inline;
-  margin: 0em 2em;
-}
-
-nav a {
-  text-decoration: none;
-  color: #000;
-}
-
-nav a:visited {
-  color: black;
-}
-
-nav a:hover{
-  color: purple;
-  font-weight: 700;
-}
-
-nav a:active {
-  color: orange;
+h2 {
+  text-align: center;
+  border-top: 1px solid gray;
+  margin: 20px 0px 5px 0px;
+  padding: 20px 0px;
+  position: relative;
+  font-weight: 300;
   text-transform: uppercase;
-  font-size: .9em;
+  font-size: 2em;
+  letter-spacing: 5px;
+  color: gray;
 }
 
-.readmore a {
-  color: green;
-  font-size: .7em;
-  letter-spacing: 1px;
-  text-decoration: none;
-  padding-left: 1em;
+h3 {
+  font-weight: 300;
   text-transform: uppercase;
+  font-size: 1em;
+  letter-spacing: 2px;
+  color: gray;
 }
 
-.readmore a:hover {
-  font-weight: 700;
+.anchor {
+  margin-bottom: 20px;
+  background-color: red;
+  display: block;
 }
 
-.wrapper {
-  max-width: 960px;
-  margin: 0 auto;
-  overflow: hidden;
-  /* border: 1px solid yellow;*/
+.navbar {
+  background-color: white;
 }
 
-.wrapper-right {
-  width: 60%;
-  float: right;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 1em;
-  padding: 2%;
-  box-shadow: 2px 2px 5px black;
+.container {
+  /*border: 1px solid red;*/
+  max-width: 1000px;
+  position: relative;
 }
 
-header {
-  float: right;
-  max-width: 60%;
-  padding: 0em 1em;
-  color: white;
-  text-shadow: 2px 2px 5px black;
+.banner {
+  position: relative;
+  background-color: #3a3934;
+  background: -webkit-linear-gradient(top, #58574e, #3a3934); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(top, #58574e, #3a3934); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(top, #58574e, #3a3934); /* For Firefox 3.6 to 15 */
+  background-image: linear-gradient(to bottom top,#58574e,#3a3934);
+
 }
 
-header h1 {
-  text-align: left;
+.banner-text {
+  color: gray;
+  line-height: 3em;
+  bottom: 10px;
+  margin-top: 70px;
+}
+
+.banner h1 {
+  font-weight: 300;
   font-size: 4em;
-  margin-bottom: 0px;
-  font-weight: normal;
-
+  color: #f1f1f1;
 }
 
-header h2 {
-  text-align: left;
+.banner p {
+  font-size: 2.5em;
 }
 
-section {
-  clear: both;
-  margin: 0em 0em 2em 0em;
-  overflow: hidden;
+.banner img {
+  float: left;
+  width: 250px;
+  height: 250px;
+  margin-right: 30px;
+  /*position: absolute;
+  bottom: 0;
+  left: 0;*/
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Walter Turncoat', cursive;
-  font-weight: normal;
+.section-explanation {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 50px;
+}
+
+.about {
+  width: 75%;
+}
+
+.find-me {
+  color: gray;
+  float: right;
+  text-align: right;
+  margin-left: 10px;
+}
+
+.find-me p {
+  margin: 0;
+  font-size: 1em;
+}
+
+article {
+  background-color: white;
+  float: left;
+  border: 1px solid #e5e4de;
+  -webkit-box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
+  -moz-box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
+  box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
+}
+
+.sites article {
+  width: 30%;
+  margin: 0% 3% 3% 0%;
   text-align: center;
 }
 
-h2 a {
-  text-decoration: none;
-  color: #000;
+.sites img {
+  width: 100%;
 }
 
-h2 a:hover {
-  text-decoration: none;
-  color: #000;
+.products article {
+  width: 48%;
+  max-width: 600px;
+  min-width: 300px;
+  height: 200px;
+  margin: 0% 2% 2% 0%;
 }
 
-.service-block {
-  width: 33%;
+.products img {
+  height: 100%;
   float: left;
-  padding: 0em 0.5em;
-  text-align: center;
+  margin-right: 5%;
 }
 
- .service-block i {
-    color: white;
-    background-color: purple;
-    padding: 0.5em;
-    border-radius: 50%;
-    margin: .5em 0;
-  }
-
-.project-block {
-  overflow: hidden;
-  margin-bottom: 2em;
-  text-align: left;
+.writing-type {
+  font-weight: 400;
 }
-
-.project-block img {
-  float: left;
-  margin: 0em 2em 1.5em 0em;
-  border-radius: 10px;
-  width: 150px;
-}
-
-.project-block-text {
-  text-align: left;
-  margin-left: 1em;
-  line-height: 1.5em;
-}
-
-.project-block-text h3 {
-  font-family: 'Lato', sans-serif;
-  font-weight: 700;
-  text-align: left;
-  margin: 0px;
-}
-
 
 footer {
   background-color: black;
@@ -187,102 +168,3 @@ footer {
   padding: 1em;
   font-size: .75em;
 }
-
-
-
-/*---------------------------
-        Media Queries
----------------------------*/
-
-
-@media only screen and (max-width: 800px) {
-
-  .wrapper {
-    max-width: 80%;
-    margin: 0 auto;
-    overflow: hidden;
-    /*border: 1px solid yellow;*/
-    }
-
-  .wrapper-right {
-    width: 100%;
-    float: right;
-    background-color: rgba(255, 255, 255, 0.0);
-  }
-
-  header {
-  clear: both;
-  max-width: 100%;
-  padding: 0em 1em;
-  font-size: 70%;
-  }
-
-  .mquery500 {
-  overflow: hidden;
-  margin-bottom: 1em;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 1em;
-  padding: 2%;
-  box-shadow: 2px 2px 5px black;
-  }
-
-  .project-block {
-  overflow: hidden;
-  margin-bottom: 1em;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 1em;
-  padding: 2%;
-  box-shadow: 2px 2px 5px black;
-  }
-
-  .project-block img {
-  float: center;
-  margin-right: 0em;
-  }
-
-.project-block-text h3 {
-  text-align: center;
-  }
-
-
-}/*CLOSES MEDIA QUERY*/
-
-
-
-  
-
-@media only screen and (max-width: 500px) {
-  .wrapper {
-    max-width: 500px;
-    margin: 0 auto;
-    overflow: hidden;
-    /*border: 1px solid yellow;*/
-    }
-
-  .wrapper-right {
-    width: 100%;
-    float: right;
-    background-color: rgba(255, 255, 255, 0.0);
-  }
-  .service-block {
-  width: 100%;
-  clear: both;
-  padding: 0em 0.5em;
-  text-align: center;
-}
-
-service-block i {
-    padding: 0.25em;
-    margin: .5em;
-    float: left;
-  }
-
-  
-
-} /*CLOSES MEDIA QUERY*/
-
-
-
-        
