@@ -101,6 +101,7 @@ h3 {
 }
 
 article {
+  position: relative;
   background-color: white;
   float: left;
   border: 1px solid #e5e4de;
@@ -115,7 +116,7 @@ article a img:hover {
 
 .sites article {
   width: 30%;
-  height: 500px;
+  height: 515px;
   margin: 0% 3% 3% 0%;
   text-align: center;
 }
@@ -126,6 +127,17 @@ article a img:hover {
 
 .sites article div.explanation {
   padding: 0px 15px;
+}
+
+.sites article div.links {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: 8px;
+}
+
+.sites article div.links span.spacer {
+  margin: 0px 15px;
 }
 
 .products article {
