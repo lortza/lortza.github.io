@@ -12,7 +12,8 @@ permalink: /portfolio/
 
   <h2>Rails Projects</h2>
 
-  <p class="section-explanation">Oh man. Rails is so much fun. There is so much you can do and so many people available to do it along with you. These are some of the apps I've made. Of course, looking back at the code now, there is so much to be improved. I just keep marching forward onto bigger challenges. This week's challenge: implementing faceted search for productmatchr.com.</p>
+  <p class="section-explanation">Oh man. Writing web apps is so much fun. There is so much you can do and so many people available to do it along with you. These are some of the apps I've made. Of course, looking back at the code now, there is so much to be improved. I just keep marching forward onto new challenges.</p>
+  <p>This week's challenge: learn jekyll and customize a theme. If you're seeing this page, then my efforts have led to a successful deployment :)</p>
 
   <div class="rails-sites">
   {% for project in site.projects %}
