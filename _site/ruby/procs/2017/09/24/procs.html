@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>A Case for Using Procs</title>
+    <meta name="description" content="Rails Developer
+">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/ruby/procs/2017/09/24/procs.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">A Case for Using Procs</h1>
+    <p class="post-meta">September 24, 2017</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve read about and practiced working with Ruby procs – all with contrived examples. That’s all well and good, but for me, the best learning comes with a heaping helping of context, which has been sorely missing from most of the contrived examples. I finally got some good context today when the need for a proc sprung up organically in a code challenge I was working on. So now I get it. I have a much stronger foothold on procs and when to use them. Hopefully seeing my process here will help build context for when you may be able to use a proc to solve a similar problem.</p>
+
+<h3 id="the-challenge-building-a-message-cipher">The Challenge: Building a Message Cipher</h3>
+
+<p>Here’s the challenge: I’m building a message cipher – a small program that will encode and decode messages. The cipher is very basic. When it encodes, it takes a letter and simply moves down the alphabet the number of letters provided by the given offset. For example:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># With an offset of 0, all letters line up</span>
+<span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+         <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span> <span class="o">...</span>
+<span class="ss">input:   </span><span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span> <span class="n">f</span> <span class="n">g</span> <span class="n">h</span> <span class="n">i</span> <span class="n">j</span> <span class="o">...</span>
+<span class="ss">output:  </span><span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span> <span class="n">f</span> <span class="n">g</span> <span class="n">h</span> <span class="n">i</span> <span class="n">j</span> <span class="o">...</span>
+
+<span class="c1"># With an offset of 3, all numbers slide down 3 places so 'a' --&gt; 'd'</span>
+<span class="n">offset</span> <span class="o">=</span> <span class="mi">3</span>
+
+         <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span>
+<span class="ss">input:         </span><span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span> <span class="n">f</span> <span class="n">g</span> <span class="n">h</span> <span class="n">i</span> <span class="n">j</span>
+<span class="ss">output:  </span><span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span> <span class="n">f</span> <span class="n">g</span> <span class="n">h</span> <span class="n">i</span> <span class="n">j</span>
+
+<span class="n">input</span> <span class="n">a</span> <span class="o">--&gt;</span> <span class="n">output</span> <span class="n">d</span>
+<span class="n">input</span> <span class="n">c</span> <span class="o">--&gt;</span> <span class="n">output</span> <span class="n">f</span></code></pre></figure>
+
+<h3 id="the-encoder">The Encoder</h3>
+
+<p>Here’s my original <code class="highlighter-rouge">encode</code> method. For the sake of simplicity in explaining procs, this encoder does not handle wrapping the alphabet for letters exceeding “z”.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">message</span><span class="p">.</span><span class="nf">chars</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
+    <span class="n">new_index</span> <span class="o">=</span> <span class="no">ALPHABET</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span>
+    <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="no">ALPHABET</span><span class="p">[</span><span class="n">new_index</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="n">output</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+<span class="k">end</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Outputting the results:</span>
+
+<span class="n">cipher</span> <span class="o">=</span> <span class="no">Cipher</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">p</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="s1">'ilikekitties'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1">#&gt; lolnhnlwwlhv</span></code></pre></figure>
+
+<h3 id="the-decoder">The Decoder</h3>
+
+<p>After writing the encoder, I realized that the only difference between the process of encoding and decoding was the use of <code class="highlighter-rouge">+</code> or <code class="highlighter-rouge">-</code>. Instead of creating a nearly identical <code class="highlighter-rouge">decode</code> method, I decided to extract the encode/decode logic out into their own methods and leave the rest of the process in a method called <code class="highlighter-rouge">processor</code>.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">message</span><span class="p">.</span><span class="nf">chars</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
+    <span class="c1">#</span>
+    <span class="c1"># This part will need to become generic</span>
+    <span class="c1"># so it can both encode and decode.</span>
+    <span class="c1">#</span>
+  <span class="k">end</span>
+  <span class="n">output</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="c1">#</span>
+  <span class="c1"># Encoding-specific code will go here,</span>
+  <span class="c1"># then we'll call the processor method.</span>
+  <span class="c1">#</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="c1">#</span>
+  <span class="c1"># Decoding-specific code will go here,</span>
+  <span class="c1"># then we'll call the processor method.</span>
+  <span class="c1">#</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Then I realized that in order for the encode/decode methods to work, they’ll have to access the value of the <code class="highlighter-rouge">letter</code> iterator happening in the <code class="highlighter-rouge">message.chars.each do |letter|...</code> block inside the <code class="highlighter-rouge">processor</code> method. Yikes. <em>So how do you do that?</em></p>
+
+<p><strong>Procs! Tada! I found my own completely non-contrived use for a proc. At last.</strong> Here’s how it plays out:</p>
+
+<h3 id="incorporating-the-proc-logic">Incorporating the proc logic</h3>
+<p>I created a new proc for both the <code class="highlighter-rouge">encode</code> and <code class="highlighter-rouge">decode</code> methods:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="c1">#...</span>
+  <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="c1">#...</span>
+  <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>And then passed the proc into the <code class="highlighter-rouge">processor</code> method as an argument.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>I needed the proc inside the <code class="highlighter-rouge">each</code> loop to:</p>
+<ol>
+  <li>take the value of the current message input letter</li>
+  <li>get the index of where it is stored in the <code class="highlighter-rouge">ALPHABET</code> array</li>
+  <li>add the offset value (3) to that index</li>
+  <li>return the new index number for the encoded letter
+So the <code class="highlighter-rouge">encode</code> and <code class="highlighter-rouge">decode</code> methods with their procs look like this:</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span> <span class="no">ALPHABET</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span> <span class="p">}</span>
+  <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+  <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span> <span class="no">ALPHABET</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span> <span class="p">}</span>
+  <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>The new <code class="highlighter-rouge">processor</code> method takes the proc and <code class="highlighter-rouge">.call()</code>s it along with a <code class="highlighter-rouge">letter</code> argument for each letter of the input message inside the <code class="highlighter-rouge">each</code> loop. That new index is then used to get the value of the new letter from the <code class="highlighter-rouge">ALPHABET</code> array and then the new letter is pushed into the <code class="highlighter-rouge">output</code> array.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">message</span><span class="p">.</span><span class="nf">chars</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
+    <span class="n">new_index</span> <span class="o">=</span> <span class="n">adjusted_index_proc</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="no">ALPHABET</span><span class="p">[</span><span class="n">new_index</span><span class="p">]</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Lastly, the output array is joined back into a string and we get our encoded/decoded message.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+  <span class="c1">#...</span>
+  <span class="n">output</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+<span class="k">end</span></code></pre></figure>
+
+<h3 id="outputting-the-results">Outputting the Results</h3>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Outputting the results</span>
+
+<span class="n">cipher</span> <span class="o">=</span> <span class="no">Cipher</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="nb">p</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="s1">'ilikekitties'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1">#&gt; lolnhnlwwlhv</span>
+
+<span class="nb">p</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="s1">'lolnhnlwwlhv'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1">#&gt; ilikekitties</span></code></pre></figure>
+
+<h3 id="putting-it-all-together">Putting it all Together</h3>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Cipher</span>
+
+  <span class="no">ALPHABET</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'a'</span><span class="o">..</span><span class="s1">'z'</span><span class="p">).</span><span class="nf">to_a</span>
+
+  <span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">message</span><span class="p">.</span><span class="nf">chars</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
+      <span class="n">new_index</span> <span class="o">=</span> <span class="n">adjusted_index_proc</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span>
+      <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="no">ALPHABET</span><span class="p">[</span><span class="n">new_index</span><span class="p">]</span>
+    <span class="k">end</span>
+    <span class="n">output</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+    <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span> <span class="no">ALPHABET</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span> <span class="p">}</span>
+    <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+    <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span> <span class="no">ALPHABET</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span> <span class="p">}</span>
+    <span class="n">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">proc</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">cipher</span> <span class="o">=</span> <span class="no">Cipher</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="nb">p</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="s1">'ilikekitties'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1">#&gt; lolnhnlwwlhv</span>
+
+<span class="nb">p</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="s1">'lolnhnlwwlhv'</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1">#&gt; ilikekitties</span></code></pre></figure>
+
+<p>Though this is not the most streamlined or elegant cipher code base, it has been useful to me in building my understanding of procs. I hope it’s been useful to you too!</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2017</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Using Variables in CSS</title>
+    <meta name="description" content="Rails Developer
+">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2017/07/12/css-variables.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Using Variables in CSS</h1>
+    <p class="post-meta">July 12, 2017</p>
+  </header>
+
+  <article class="post-content">
+    <p>If you find yourself working in CSS and missing the ability to use SASS variables, oh boy do I have a treat for you. You <em>can</em> use variables in CSS. They just look a little bit different than they do in SASS.</p>
+
+<p>Set them up in a root block at the top of your stylesheet:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="ss">:root</span> <span class="p">{</span>
+  <span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#2C9C20;</span>
+  <span class="o">--</span><span class="n">secondary</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#317BE1;</span>
+  <span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="ss">size: </span><span class="mi">50</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>And use them in a class with a <code>var()</code>:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="ss">:root</span> <span class="p">{</span>
+  <span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#2C9C20;</span>
+  <span class="o">--</span><span class="n">secondary</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#317BE1;</span>
+  <span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="ss">size: </span><span class="mi">50</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nf">awesome</span><span class="o">-</span><span class="k">class</span> <span class="p">{</span>
+    <span class="n">background</span><span class="o">-</span><span class="ss">color: </span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="n">color</span><span class="p">);</span>
+    <span class="ss">height: </span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="n">size</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>They even work inside the CSS <code>calc()</code> function:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">.</span><span class="nf">awesome</span><span class="o">-</span><span class="k">class</span> <span class="p">{</span>
+    <span class="o">...</span>
+    <span class="n">margin</span><span class="o">-</span><span class="ss">bottom: </span><span class="n">calc</span><span class="p">(</span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Hooray! This discovery really made my day.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2017</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

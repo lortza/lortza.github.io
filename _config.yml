@@ -1,0 +1,37 @@
+# Site settings
+baseurl:  # the subpath of your site, e.g. /blog/
+url:  # the base hostname & protocol for your site
+title: Anne Richardson
+description: >
+  Rails Developer
+header_image: /img/headshot.jpg
+email: richardson.ae@gmail.com
+twitter_username: localflavormktg
+github_username:  lortza
+linkedin_username: localflavor
+stackoverflow_cv_name: anne
+other_portfolio_url: http://localflavormarketing.com/
+resume: /docs/richardson_resume.pdf
+
+# Build settings
+markdown: kramdown
+
+highlighter: rouge
+
+# Pagination
+# plugins: [jekyll-paginate]
+# paginate: 15
+# paginate_path: "/blog/page:num/"
+
+
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+  products:
+    output: true
+    permalink: /products/:path/
+  writings:
+    output: true
+    permalink: /writing/:path/
+

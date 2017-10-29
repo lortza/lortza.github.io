@@ -1,0 +1,24 @@
+---
+layout: default
+---
+
+<div class="portfolio-show">
+
+  <a href="{{ page.site }}" target="_blank" alt="{{ page.name }}"><img src="{{ page.img }}"></a>
+
+  <h1>{{ page.name }}</h1>
+
+  <p>{{ page.description }}</p>
+
+  <p><strong>My Role:</strong> {{ page.role }}</p>
+
+  <div class="links">
+    <a href="{{ page.site }}" target="_blank" alt="{{ page.name }}"><i class="fa fa-external-link"></i> Site</a>
+    <a href="{{ page.repo }}" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
+  </div> <!-- links -->
+
+  <article class="post-content">
+    {{ content }}
+  </article>
+
+</div> <!-- portfolio-show -->

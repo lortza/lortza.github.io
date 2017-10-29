@@ -1,0 +1,210 @@
+---
+layout: post
+title:  "A Case for Using Procs"
+date:   2017-09-24
+categories: ruby procs
+---
+
+I've read about and practiced working with Ruby procs -- all with contrived examples. That's all well and good, but for me, the best learning comes with a heaping helping of context, which has been sorely missing from most of the contrived examples. I finally got some good context today when the need for a proc sprung up organically in a code challenge I was working on. So now I get it. I have a much stronger foothold on procs and when to use them. Hopefully seeing my process here will help build context for when you may be able to use a proc to solve a similar problem.
+
+### The Challenge: Building a Message Cipher
+
+Here's the challenge: I'm building a message cipher -- a small program that will encode and decode messages. The cipher is very basic. When it encodes, it takes a letter and simply moves down the alphabet the number of letters provided by the given offset. For example:
+
+{% highlight ruby %}
+# With an offset of 0, all letters line up
+offset = 0
+
+         0 1 2 3 4 5 6 7 8 9 ...
+input:   a b c d e f g h i j ...
+output:  a b c d e f g h i j ...
+
+# With an offset of 3, all numbers slide down 3 places so 'a' --> 'd'
+offset = 3
+
+         0 1 2 3 4 5 6 7 8 9
+input:         a b c d e f g h i j
+output:  a b c d e f g h i j
+
+input a --> output d
+input c --> output f
+{% endhighlight %}
+
+### The Encoder
+
+Here's my original `encode` method. For the sake of simplicity in explaining procs, this encoder does not handle wrapping the alphabet for letters exceeding "z".
+
+
+{% highlight ruby %}
+def encode(message, offset, adjusted_index_proc)
+  output = []
+  message.chars.each do |letter|
+    new_index = ALPHABET.index(letter) + offset
+    output << ALPHABET[new_index]
+  end
+
+  output.join()
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+# Outputting the results:
+
+cipher = Cipher.new
+p cipher.encode('ilikekitties', 3)
+#> lolnhnlwwlhv
+{% endhighlight %}
+
+### The Decoder
+
+After writing the encoder, I realized that the only difference between the process of encoding and decoding was the use of `+` or `-`. Instead of creating a nearly identical `decode` method, I decided to extract the encode/decode logic out into their own methods and leave the rest of the process in a method called `processor`.
+
+{% highlight ruby %}
+def processor(message, offset, adjusted_index_proc)
+  output = []
+  message.chars.each do |letter|
+    #
+    # This part will need to become generic
+    # so it can both encode and decode.
+    #
+  end
+  output.join()
+end
+
+def encode(message, offset)
+  #
+  # Encoding-specific code will go here,
+  # then we'll call the processor method.
+  #
+end
+
+def decode(message, offset)
+  #
+  # Decoding-specific code will go here,
+  # then we'll call the processor method.
+  #
+end
+{% endhighlight %}
+
+
+Then I realized that in order for the encode/decode methods to work, they'll have to access the value of the `letter` iterator happening in the `message.chars.each do |letter|...` block inside the `processor` method. Yikes. <em>So how do you do that?</em>
+
+<strong>Procs! Tada! I found my own completely non-contrived use for a proc. At last.</strong> Here's how it plays out:
+
+### Incorporating the proc logic
+I created a new proc for both the `encode` and `decode` methods:
+
+{% highlight ruby %}
+def encode(message, offset)
+  proc = Proc.new #...
+  processor(message, offset, proc)
+end
+
+def decode(message, offset)
+  proc = Proc.new #...
+  processor(message, offset, proc)
+end
+{% endhighlight %}
+
+And then passed the proc into the `processor` method as an argument.
+
+{% highlight ruby %}
+def processor(message, offset, adjusted_index_proc)
+  # ...
+end
+{% endhighlight %}
+
+I needed the proc inside the `each` loop to:
+  1. take the value of the current message input letter
+  2. get the index of where it is stored in the `ALPHABET` array
+  3. add the offset value (3) to that index
+  4. return the new index number for the encoded letter
+So the `encode` and `decode` methods with their procs look like this:
+
+{% highlight ruby %}
+def encode(message, offset)
+  proc = Proc.new { |letter| ALPHABET.index(letter) + offset }
+  processor(message, offset, proc)
+end
+
+def decode(message, offset)
+  proc = Proc.new { |letter| ALPHABET.index(letter) - offset }
+  processor(message, offset, proc)
+end
+{% endhighlight %}
+
+The new `processor` method takes the proc and `.call()`s it along with a `letter` argument for each letter of the input message inside the `each` loop. That new index is then used to get the value of the new letter from the `ALPHABET` array and then the new letter is pushed into the `output` array.
+
+{% highlight ruby %}
+def processor(message, offset, adjusted_index_proc)
+  output = []
+  message.chars.each do |letter|
+    new_index = adjusted_index_proc.call(letter)
+    output << ALPHABET[new_index]
+  end
+  # ...
+end
+{% endhighlight %}
+
+Lastly, the output array is joined back into a string and we get our encoded/decoded message.
+
+{% highlight ruby %}
+def processor(message, offset, adjusted_index_proc)
+  #...
+  output.join()
+end
+{% endhighlight %}
+
+### Outputting the Results
+
+{% highlight ruby %}
+# Outputting the results
+
+cipher = Cipher.new
+
+p cipher.encode('ilikekitties', 3)
+#> lolnhnlwwlhv
+
+p cipher.decode('lolnhnlwwlhv', 3)
+#> ilikekitties
+{% endhighlight %}
+
+### Putting it all Together
+{% highlight ruby %}
+
+class Cipher
+
+  ALPHABET = ('a'..'z').to_a
+
+  def processor(message, offset, adjusted_index_proc)
+    output = []
+    message.chars.each do |letter|
+      new_index = adjusted_index_proc.call(letter)
+      output << ALPHABET[new_index]
+    end
+    output.join()
+  end
+
+  def encode(message, offset)
+    proc = Proc.new { |letter| ALPHABET.index(letter) + offset }
+    processor(message, offset, proc)
+  end
+
+  def decode(message, offset)
+    proc = Proc.new { |letter| ALPHABET.index(letter) - offset }
+    processor(message, offset, proc)
+  end
+end
+
+cipher = Cipher.new
+
+p cipher.encode('ilikekitties', 3)
+#> lolnhnlwwlhv
+
+p cipher.decode('lolnhnlwwlhv', 3)
+#> ilikekitties
+
+{% endhighlight %}
+
+
+Though this is not the most streamlined or elegant cipher code base, it has been useful to me in building my understanding of procs. I hope it's been useful to you too!

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>How to Access Your Sublime Snippets</title>
+    <meta name="description" content="Rails Developer
+">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2017/07/14/access-sublime-snippets.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Access Your Sublime Snippets</h1>
+    <p class="post-meta">July 14, 2017</p>
+  </header>
+
+  <article class="post-content">
+    <p>Once I discovered the power of SublimeText’s snippet feature, there was no turning back. Any time I find myself typing a thing that could be automated, I make a snippet for it. The trouble is, sometimes I like to look back at my existing snippets, but I couldn’t get to them easily. Well, I’ve solved that problem today and figured I’d share it with you. Here is how to easily access your existing Sublime snippets on a mac.</p>
+
+<p>Step 1. Create an alias called <code>snippets</code> in your <code>.bash_profile</code>.
+In terminal, open your <code>.bash_profile</code> file in your default text editor.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># if sublime is set as your default text editor</span>
+<span class="nb">open</span> <span class="o">~</span><span class="sr">/.bash_profile
+
+# if you use the subl shortcut
+subl ~/</span><span class="p">.</span><span class="nf">bash_profile</span></code></pre></figure>
+
+<p>Step 2. Add one of these aliases to the bottom of your file (or next to any other aliases you may have)</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># for SublimeText 3</span>
+<span class="k">alias</span> <span class="n">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User ; ls'</span>
+
+<span class="c1"># for SublimeText 2</span>
+<span class="k">alias</span> <span class="n">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User ; ls'</span></code></pre></figure>
+
+<p>Step 4. Save the <code>.bash_profile</code> file</p>
+
+<p>Step 5. Restart terminal</p>
+
+<p>Step 6. Try it out!
+Type your new alias at your command prompt</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">snippets</span></code></pre></figure>
+
+<p>This will open the snippets directory and show a list of all existing snippets. From here, you can open any of those snippet files in your default text editor with:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">open</span> <span class="n">file_name_goes_here</span></code></pre></figure>
+
+<p>or if you prefer to open the snippets folder in Finder window, you can open a finder window like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">cd</span> <span class="o">..</span><span class="sr">/; open User</span></code></pre></figure>
+
+<p>That’s it! This discovery has really made my day. I hope it’s helpful to you too.</p>
+
+<p>If you need a refresher on how to create your own sublime snippets, check out <a href="http://localflavormarketing.com/how-to-make-ruby-shortcuts-snippets-in-sublime-text/">this post I recently wrote</a> on the topic.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2017</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

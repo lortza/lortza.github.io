@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Output to Ruby hashes in one step with each_with_object</title>
+    <meta name="description" content="Rails Developer
+">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2017/09/16/hashes.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Output to Ruby hashes in one step with each_with_object</h1>
+    <p class="post-meta">September 16, 2017</p>
+  </header>
+
+  <article class="post-content">
+    <p>Today I discovered Ruby’s <a href="https://apidock.com/rails/Enumerable/each_with_object" target="_blank" alt="api dock" title="api dock"><code class="highlighter-rouge">each_with_object</code></a> method and I thought it was pretty nifty. Here is how it works.</p>
+
+<p>An example with an output array of doubled values:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="n">nums</span><span class="p">.</span><span class="nf">each_with_object</span><span class="p">([])</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="p">,</span> <span class="n">output</span><span class="o">|</span>
+  <span class="n">output</span> <span class="o">&lt;</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span></code></pre></figure>
+
+<p>You may say, “meh, this works one heck of a lot like <a href="https://apidock.com/ruby/Enumerable/map" target="_blank" alt="api dock" title="api dock"><code class="highlighter-rouge">map</code></a> but clunkier.” And you’d be right.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="n">nums</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span>
+  <span class="n">num</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="k">end</span>
+
+<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span></code></pre></figure>
+
+<p>But if you want to output a <strong><em>hash</em></strong>, you may start to see its value. Here we’ll output a hash that counts instances of a letter in an array:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">letters</span> <span class="o">=</span> <span class="sx">%w[a a a b c c d e e e f f f f g g]</span>
+
+<span class="n">letters</span><span class="p">.</span><span class="nf">each_with_object</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="p">,</span> <span class="n">output</span><span class="o">|</span>
+  <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="p">?</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">end</span>
+
+<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span></code></pre></figure>
+
+<p>Now that’s pretty nifty.
+The other option is to use plain <code class="highlighter-rouge">each</code>, hoist the output variable in advance, and then return it. Like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">letters</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
+  <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="p">?</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">end</span>
+
+<span class="n">output</span>
+
+<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span></code></pre></figure>
+
+<p>But this ain’t JavaScript, so why hoist if you don’t have to? ;)</p>
+
+<p>If you’d like a few more examples, check out <a href="http://womanonrails.com/each-with-object" target="_blank" alt="womanonrails.com">this post by Agnieszka Matysek</a> of <a href="http://womanonrails.com/" target="_blank" alt="womanonrails.com">womanonrails.com</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2017</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
