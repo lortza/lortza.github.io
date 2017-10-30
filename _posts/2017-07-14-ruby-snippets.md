@@ -1,10 +1,10 @@
 ---
 layout: post
 title:  How to make ruby shortcuts (snippets) in Sublime Text
-date:   2017-07-14 23:05
+date:   2017-07-14
 ---
 
-Typing Ruby erb tags is a past time pursued intentionally by... no one. The characters `&lt;%= %&gt;` don't exactly flow off the fingertips. So how do people get around typing these irritating-but-crucial characters?
+Typing Ruby erb tags is a past time pursued intentionally by... no one. The characters `<%= %>` don't exactly flow off the fingertips. So how do people get around typing these irritating-but-crucial characters?
 
 Why, SublimeText snippets, of course! <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.
 
@@ -163,7 +163,7 @@ So hopefully this gets you started on a path to using SublimeText more efficient
 
   - get `binding.pry` with `pry`
   - commenting your closing `div`s with the name of the class you've assigned them
-  - commenting your closing ruby method `end`s or closing javascript `} `braces
+  - commenting your closing ruby method `end`s or closing javascript `}` braces
   - building our your `initialize(args)` like `@name = args[:name]`s
 
 Also, just in case you want to reference a snippet you've already made, check out this post I recently wrote about <a href="http://localflavormarketing.com/how-to-access-your-sublime-snippets/">how to easily access your existing snippets</a>.

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Finding Prime Numbers in Ruby
-date:   2017-09-22 1:40:16
+date:   2017-09-22
 ---
 
 Code quizzes commonly have a prime number challenge, which got me to thinking, shouldn't there already be an `is_prime` method? Well, yes, there should be. And in Ruby, there is.
@@ -41,16 +41,13 @@ Those two methods alone have pretty much handled any prime number code challenge
 But let's be honest, code challenges involving math are usually focused on manipulating the <em>basics</em> of a language to solve a math problem, not about accessing the libraries or gems you'd probably use in real life. Code challenges like to make you do logic calisthenics, so let's do this thing the hard way.
 
 Here's some pseudocode for my approach:
-<ul>
-  <li>Create a range of numbers from 2 to one less than the number in question (`num - 1`)</li>
-  <li>Loop through that range
-<ul>
-  <li>Ask if the number in question (`num`) is cleanly divisible by each number in the range (`n`)</li>
-  <li>If any one of those range numbers (`n`) creates a 0 remainder when the number in question (`num`) is divided by that number (`n`), the number in question (`num`) is not prime</li>
-</ul>
-</li>
-  <li>If at the end of the loop, none of the range numbers (`n`) created a 0 remainder, the number in question (`num`) is, indeed, prime</li>
-</ul>
+
+- Create a range of numbers from 2 to one less than the number in question (`num - 1`)
+- Loop through that range
+  - Ask if the number in question (`num`) is cleanly divisible by each number in the range (`n`)
+  - If any one of those range numbers (`n`) creates a 0 remainder when the number in question (`num`) is divided by that number (`n`), the number in question (`num`) is not prime
+- If at the end of the loop, none of the range numbers (`n`) created a 0 remainder, the number in question (`num`) is, indeed, prime
+
 
 ### And now for the actual code
 
