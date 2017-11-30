@@ -11,8 +11,10 @@ I've done this a couple of times and couldn't quite find the answer before. This
 The sad, sad message when I tried to start `rails s` again:
 
 ```
+
 A server is already running. Check /Users/my_computer_name/your_project_location/tmp/pids/server.pid.
 Exiting
+
 ```
 
 On OSX, you can run this
@@ -33,4 +35,4 @@ Grab that number (in my case 56134) and killll it:
 kill -9 56134
 ```
 
-this post it brought to you with help from [this stackoverflow question](https://stackoverflow.com/questions/24627701/a-server-is-already-running-check-tmp-pids-server-pid-exiting-rails)
+this post is brought to you with help from [this stackoverflow question](https://stackoverflow.com/questions/24627701/a-server-is-already-running-check-tmp-pids-server-pid-exiting-rails)
