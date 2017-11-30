@@ -10,29 +10,28 @@ I've done this a couple of times and couldn't quite find the answer before. This
 
 The sad, sad message when I tried to start `rails s` again:
 
-```
-
+{% highlight ruby %}
 A server is already running. Check /Users/my_computer_name/your_project_location/tmp/pids/server.pid.
 Exiting
-
-```
+{% endhighlight %}
 
 On OSX, you can run this
 
-```
+{% highlight ruby %}
 sudo lsof -iTCP -sTCP:LISTEN -P | grep :3000
-```
+{% endhighlight %}
+
 
 You'll either get nothing back (which means no server is running) OR something like this (which is what I got):
 
-```
-ruby      56134 computer_name   11u  IPv4 0xe3ccaa0e8651f54d      0t0  TCP *:3000 (LISTEN)
-```
+{% highlight ruby %}
+ruby      56134 computer_name   11u  IPv4 0xe3ccaa0e8651f54d      0t0  TCP :3000 (LISTEN)
+{% endhighlight %}
 
 Grab that number (in my case 56134) and killll it:
 
-```
+{% highlight ruby %}
 kill -9 56134
-```
+{% endhighlight %}
 
 this post is brought to you with help from [this stackoverflow question](https://stackoverflow.com/questions/24627701/a-server-is-already-running-check-tmp-pids-server-pid-exiting-rails)
