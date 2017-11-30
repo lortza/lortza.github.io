@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  How to Fix when the Rails Server is Already Running, but not where you can find it
+title:  How to fix it when the Rails Server is already running, but not where you can find it
 date:   2017-11-30
 ---
 
