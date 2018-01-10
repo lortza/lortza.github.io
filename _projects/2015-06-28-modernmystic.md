@@ -6,6 +6,6 @@ site: http://modernmystic.herokuapp.com/
 repo: https://github.com/lortza/tarot
 img: /img/rails_tarot.jpg
 tagline: Instant tarot readings
-description: Get an instant tarot reading! Complete with full explanations that are generated from the database, but it's still mystic as hell. Try it out. You'll see. And it you want to kick it old school, you can check out the command line version at [this repl](https://repl.it/@lortz/tarotreadings)
+description: "Get an instant tarot reading! Complete with full explanations that are generated from the database, but it's still mystic as hell. Try it out. You'll see. And it you want to kick it old school, you can check out the command line version at <a href='https://repl.it/@lortz/tarotreadings' target='blank'>this repl</a>."
 role: solo project
 ---
