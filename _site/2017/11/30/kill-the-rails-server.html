@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to fix it when the Rails Server is already running, but not where you can find it</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2017/11/30/kill-the-rails-server.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to fix it when the Rails Server is already running, but not where you can find it</h1>
+    <p class="post-meta">November 30, 2017</p>
+  </header>
+
+  <article class="post-content">
+    <p>Have you ever accidentally closed a terminal tab while the <code class="highlighter-rouge">rails server</code> was still running and weren’t able to find it again?</p>
+
+<p>I’ve done this a couple of times and couldn’t quite find the answer before. This meant the only way out was restarting my machine. Ug. Nobody wants to do that. But today, when I overflowed my server stack and closed the window after a flurry or errant commands (yikes), I was able to find an answer – at last!</p>
+
+<p>The sad, sad message when I tried to start <code class="highlighter-rouge">rails s</code> again:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">A</span> <span class="n">server</span> <span class="n">is</span> <span class="n">already</span> <span class="n">running</span><span class="o">.</span> <span class="no">Check</span> <span class="sr">/Users/m</span><span class="n">y_computer_name</span><span class="o">/</span><span class="n">your_project_location</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">pids</span><span class="o">/</span><span class="n">server</span><span class="p">.</span><span class="nf">pid</span><span class="o">.</span>
+<span class="no">Exiting</span></code></pre></figure>
+
+<p>On OSX, you can run this</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">sudo</span> <span class="n">lsof</span> <span class="o">-</span><span class="n">iTCP</span> <span class="o">-</span><span class="n">sTCP</span><span class="ss">:LISTEN</span> <span class="o">-</span><span class="no">P</span> <span class="o">|</span> <span class="n">grep</span> <span class="p">:</span><span class="mi">3000</span></code></pre></figure>
+
+<p>You’ll either get nothing back (which means no server is running) OR something like this (which is what I got):</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">ruby</span>      <span class="mi">56134</span> <span class="n">computer_name</span>   <span class="mi">11</span><span class="n">u</span>  <span class="no">IPv4</span> <span class="mh">0xe3ccaa0e8651f54d</span>      <span class="mi">0</span><span class="n">t0</span>  <span class="no">TCP</span> <span class="p">:</span><span class="mi">3000</span> <span class="p">(</span><span class="no">LISTEN</span><span class="p">)</span></code></pre></figure>
+
+<p>Grab that number (in my case 56134) and killll it:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="mi">56134</span></code></pre></figure>
+
+<p>this post is brought to you with help from <a href="https://stackoverflow.com/questions/24627701/a-server-is-already-running-check-tmp-pids-server-pid-exiting-rails">this stackoverflow question</a></p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
