@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Anne Richardson | Using a Factory to Randomize Whether a Card is Drawn Right-side-up or Up-side-down</title>
+    <title>Anne Richardson | Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down</title>
     <meta name="description" content="Anne Richardson Rails Developer
  blog and portfolio">
 
@@ -58,7 +58,7 @@
         <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Using a Factory to Randomize Whether a Card is Drawn Right-side-up or Up-side-down</h1>
+    <h1 class="post-title">Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down</h1>
     <p class="post-meta">February 26, 2018</p>
   </header>
 
@@ -146,7 +146,7 @@
   <span class="nt">&lt;/article&gt;</span>
 ...</pre></td></tr></tbody></table></code></pre></figure>
 
-<p>Great! I was really happy with the way the app worked when I first built it. But gnawing in the back of my mind was the fact that in reality, when you draw tarot cards, sometimes the card shows up upside-down, <em>and upside-down (i.e. ‘reversed’) cards have different meanings than they do when they’re right-side-up (i.e. ‘upright’)</em>. That’s right. A single card actually has 2 meanings. Oh boy.</p>
+<p>Great! I was really happy with the way the app worked when I first built it. But gnawing in the back of my mind was the fact that in reality, when you draw tarot cards, sometimes the card shows up upside down, <em>and upside down (i.e. ‘reversed’) cards have different meanings than they do when they’re right-side up (i.e. ‘upright’)</em>. That’s right. A single card actually has 2 meanings. Oh boy.</p>
 
 <h2 id="adding-in-reversed-cards">Adding in “Reversed” Cards</h2>
 <p>So how do you solve this kind of thing? I didn’t want to have 2 different records in the database (upright &amp; reversed) for each card because that would be redundant, messy data, and would make it possible for me to draw both the upright and reversed version of a card in the same reading. No good.</p>
@@ -170,7 +170,7 @@
     <span class="o">...</span>
   <span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
 
-<h3 id="and-now-for-the-fun-part-flipping-card-up-side-down">And now for the fun part: flipping card up-side down.</h3>
+<h3 id="and-now-for-the-fun-part-flipping-card-upside-down">And now for the fun part: flipping card upside down.</h3>
 <p>I achieved this using a factory. Check out line 8 below. Instead of pulling cards directly from the <code class="highlighter-rouge">Card</code> class, now we’re pulling them from the <code class="highlighter-rouge">CardFactory</code> where they’re created to arrive to us exactly as we need them: with randomly assigned ‘upright’ or ‘reverse’ data.</p>
 
 <figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
@@ -312,7 +312,7 @@
   <span class="k">end</span>
 <span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
 
-<h3 id="the-new-functionality-with-up-side-down-cards">The New Functionality with Up-side-down Cards</h3>
+<h3 id="the-new-functionality-with-upside-down-cards">The New Functionality with Upside down Cards</h3>
 <p>Now with access to reversed meanings, our readings are more realistic. If I hop on over to <a href="http://modernmystic.herokuapp.com/">modernmystic.herokuapp.com</a> (and wait for those free dynos to spin up), I can do a relationship reading with results like this (only more pretty with css):</p>
 
 <figure class="highlight"><pre><code class="language-text" data-lang="text">    Position 1            Position 2              Position 3
