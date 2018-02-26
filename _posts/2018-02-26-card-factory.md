@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Using a Factory to Randomize Whether a Card is Drawn Right-side-up or Up-side-down
+title:  Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down
 date:   2018-02-26 03:53
 ---
 
@@ -66,7 +66,7 @@ Then in the view, we can access the data for both the reading position and the c
 ...
 {% endhighlight %}
 
-Great! I was really happy with the way the app worked when I first built it. But gnawing in the back of my mind was the fact that in reality, when you draw tarot cards, sometimes the card shows up upside-down, *and upside-down (i.e. 'reversed') cards have different meanings than they do when they're right-side-up (i.e. 'upright')*. That's right. A single card actually has 2 meanings. Oh boy.
+Great! I was really happy with the way the app worked when I first built it. But gnawing in the back of my mind was the fact that in reality, when you draw tarot cards, sometimes the card shows up upside down, *and upside down (i.e. 'reversed') cards have different meanings than they do when they're right-side up (i.e. 'upright')*. That's right. A single card actually has 2 meanings. Oh boy.
 
 ## Adding in "Reversed" Cards
 So how do you solve this kind of thing? I didn't want to have 2 different records in the database (upright & reversed) for each card because that would be redundant, messy data, and would make it possible for me to draw both the upright and reversed version of a card in the same reading. No good.
@@ -84,7 +84,7 @@ I decided to stay with one database record per card and added the reversed meani
   end
 {% endhighlight %}
 
-### And now for the fun part: flipping card up-side down.
+### And now for the fun part: flipping card upside down.
 I achieved this using a factory. Check out line 8 below. Instead of pulling cards directly from the `Card` class, now we're pulling them from the `CardFactory` where they're created to arrive to us exactly as we need them: with randomly assigned 'upright' or 'reverse' data.
 
 {% highlight ruby linenos %}
@@ -172,7 +172,7 @@ class CardFactory
 end
 {% endhighlight %}
 
-### The New Functionality with Up-side-down Cards
+### The New Functionality with Upside down Cards
 Now with access to reversed meanings, our readings are more realistic. If I hop on over to [modernmystic.herokuapp.com](http://modernmystic.herokuapp.com/) (and wait for those free dynos to spin up), I can do a relationship reading with results like this (only more pretty with css):
 
 {% highlight text %}
