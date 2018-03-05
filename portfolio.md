@@ -15,6 +15,36 @@ permalink: /portfolio/
   <p class="section-explanation">Oh man. Writing web apps is so much fun. There is so much you can do and so many people available to do it along with you. These are some of the apps I've made. Of course, looking back at the code now, there is so much to be improved. I just keep marching forward onto new challenges. This week's challenge: learn jekyll and customize a theme. If you're seeing this page, then my efforts have led to a successful deployment :)</p>
 
   <div class="rails-sites">
+    <div class="projects-subhead">
+      <h1>Featured Project</h1>
+      <p>For those of you reviewing projects in a hurry</p>
+    </div> <!-- projects-subhead -->
+  {% for project in site.featured_projects %}
+    <div class="featured">
+      <div class="thumbnail">
+        <a href="{{ project.url }}">
+          {% if project.img %}
+          <img class="thumbnail" src="{{ project.img }}"/>
+          {% else %}
+          <div class="thumbnail blankbox"></div>
+          {% endif %}
+          <span>
+            <h1>{{ project.name }}</h1>
+            <br/>
+            <p>{{ project.tagline }}</p>
+          </span>
+        </a>
+      </div>
+    </div>
+  {% endfor %}
+  </div> <!-- .rails-sites -->
+
+  <div class="rails-sites">
+    <div class="projects-subhead">
+      <h1>More Projects</h1>
+      <p>For those of you who want to see a little more</p>
+    </div> <!-- projects-subhead -->
+
   {% for project in site.projects %}
     <div class="project">
       <div class="thumbnail">

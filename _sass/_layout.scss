@@ -237,6 +237,12 @@ img.about-pic {
     text-transform: lowercase;
   }
   .rails-sites { overflow: auto; }
+  .projects-subhead { text-align: center; }
+  .featured {
+    clear: both;
+    margin: 0 auto;
+    width: 33%;
+  }
   .section-explanation { text-align: center; }
 } /* .portfolio-index */
 
@@ -350,6 +356,7 @@ img.about-pic {
   text-align: center;
   img {
     width: 400px;
+    border: 1px solid $grey-color-light;
   }
   .links {
     a {

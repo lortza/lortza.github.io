@@ -1,7 +1,7 @@
 ---
 layout: project
 name: Restaurant Queue
-date: 2015-08-17
+date: 2017-01-31
 site: http://restaurantqueue.herokuapp.com
 repo: https://github.com/lortza/restaurantapp
 img: /img/rails_restaurantqueue.png

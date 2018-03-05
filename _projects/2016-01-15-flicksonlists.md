@@ -1,7 +1,7 @@
 ---
 layout: project
 name: FlicksOnLists
-date: 2016-01-15
+date: 2017-01-15
 site: http://www.flicksonlists.com/
 repo: https://github.com/mikevallano/tmdb-moviequeue
 img: /img/rails_flixonlists.png
