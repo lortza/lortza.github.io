@@ -8,7 +8,7 @@ permalink: /portfolio/
 
   <h2>Skills</h2>
 
-  <p class="section-explanation">Ruby, Rails, Git, Sass, CSS, JavaScript, jQuery, Node.js, PHP, CodeIgniter, MySQL, PostgreSQL, SQLite, Heroku, XML, transactional Spanish, Card Game Design, and Bicycle Repair</p>
+  <p class="section-explanation">Ruby, Rails, Git, Sass, CSS, JavaScript, jQuery, Node.js, PHP, CodeIgniter, MySQL, PostgreSQL, SQLite, Heroku, AWS S3, Jekyll, XML, Database Design, transactional Spanish, Card Game Design, and Bicycle Repair</p>
 
   <h2>Rails Projects</h2>
 
