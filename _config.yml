@@ -25,6 +25,9 @@ highlighter: rouge
 
 
 collections:
+  featured_projects:
+    output: true
+    permalink: /projects/:path/
   projects:
     output: true
     permalink: /projects/:path/

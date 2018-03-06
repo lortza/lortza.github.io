@@ -1,7 +1,7 @@
 ---
 layout: project
 name: Sorry Girl
-date: 2015-11-07
+date: 2017-01-20
 site: https://sorrygirl.herokuapp.com
 repo: https://github.com/lortza/sorrygirl
 img: /img/rails_gosling.png

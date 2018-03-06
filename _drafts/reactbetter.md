@@ -1,7 +1,7 @@
 ---
 layout: project
 name: ReactBetter
-date: 2016-01-21
+date: 2017-01-16
 site: http://reactbetter.herokuapp.com/
 repo: https://github.com/lortza/lemonade
 img: /img/rails_reactbetter.png

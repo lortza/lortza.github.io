@@ -1,7 +1,7 @@
 ---
 layout: project
 name: ProductMatchr
-date: 2017-08-28
+date: 2017-01-04
 site: https://www.productmatchr.com
 repo: https://bitbucket.org/truongmkevin/productmatch
 img: /img/rails_productmatchr.png

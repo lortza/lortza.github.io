@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/02/26/card-factory.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down</h1>
+    <p class="post-meta">February 26, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>A couple of years ago, I build a Rails app that could do tarot card readings for me. (Here are the <a href="http://modernmystic.herokuapp.com/">live app</a> and <a href="https://github.com/lortza/tarot">repo</a>.) A tarot reading, though it takes years of experience for professional readers to deeply understand cards, contexts, and people, can also be done rather simply using data. Obviously, you’ll miss out on the insight of a professional reader, but it’s still pretty fun. I built this app initially as a bootcamp final project, and have since used it as an opportunity to refactor and add new features as my skills grow.</p>
+
+<h2 id="the-anatomy-of-tarot-reading-app">The Anatomy of Tarot Reading App</h2>
+<p>From the perspective of an app, a deck of tarot cards can be distilled down to a simple set of data with each card having a name and meaning. Likewise, a “reading” has a set number of positions in which to place a card, and each position in the reading has a context.</p>
+
+<p>For example, a 3-card relationship reading, you have 3 positions, each with a different context:</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text">    Position 1         Position 2          Position 3
+       You          The Other Person    The Relationship
+     ________           ________            ________
+    |        |         |        |          |        |
+    | card 1 |         | card 2 |          | card 3 |
+    |  goes  |         |  goes  |          |  goes  |
+    |  here  |         |  here  |          |  here  |
+    |________|         |________|          |________|</code></pre></figure>
+
+<p>In pseudocode, implementing this functionality looks like this:</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text">- count the number of positions needed for the reading
+- grab a random selection of cards to fill those positions
+- deal out each card into each position
+- display the card name and meaning inside each position context for the user to see</code></pre></figure>
+
+<p>That works out like this in the <code class="highlighter-rouge">ReadingsController</code>:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="c1"># app/controllers/readings_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@reading</span> <span class="o">=</span> <span class="no">Reading</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+
+    <span class="c1"># Grab the reading's positions</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="vi">@reading</span><span class="p">.</span><span class="nf">positions</span>
+
+    <span class="c1"># Grab enough random cards to fill the positions</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
+
+    <span class="c1"># Assign a card to each position</span>
+    <span class="vi">@deal</span> <span class="o">=</span> <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">cards</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Then in the view, we can access the data for both the reading position and the card:</p>
+
+<figure class="highlight"><pre><code class="language-erb" data-lang="erb"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="code"><pre><span class="c">&lt;!-- app/views/readings/show.html.erb --&gt;</span>
+...
+<span class="cp">&lt;%</span> <span class="vi">@deal</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">position</span><span class="p">,</span> <span class="n">card</span><span class="o">|</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;article&gt;</span>
+    <span class="nt">&lt;h2&gt;</span><span class="cp">&lt;%=</span> <span class="n">position</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h2&gt;</span>
+    <span class="nt">&lt;h3&gt;</span><span class="cp">&lt;%=</span> <span class="n">card</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">&lt;%=</span> <span class="n">card</span><span class="p">.</span><span class="nf">meaning</span> <span class="cp">%&gt;</span><span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/article&gt;</span>
+...</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Great! I was really happy with the way the app worked when I first built it. But gnawing in the back of my mind was the fact that in reality, when you draw tarot cards, sometimes the card shows up upside down, <em>and upside down (i.e. ‘reversed’) cards have different meanings than they do when they’re right-side up (i.e. ‘upright’)</em>. That’s right. A single card actually has 2 meanings. Oh boy.</p>
+
+<h2 id="adding-in-reversed-cards">Adding in “Reversed” Cards</h2>
+<p>So how do you solve this kind of thing? I didn’t want to have 2 different records in the database (upright &amp; reversed) for each card because that would be redundant, messy data, and would make it possible for me to draw both the upright and reversed version of a card in the same reading. No good.</p>
+
+<p>I decided to stay with one database record per card and added the reversed meaning column to the cards table. My updated schema looked more like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="c1"># db/schema.rb</span>
+
+  <span class="n">create_table</span> <span class="s2">"cards"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="s2">"name"</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"upright_meaning"</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"reverse_meaning"</span>
+    <span class="o">...</span>
+  <span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="and-now-for-the-fun-part-flipping-card-upside-down">And now for the fun part: flipping card upside down.</h3>
+<p>I achieved this using a factory. Check out line 8 below. Instead of pulling cards directly from the <code class="highlighter-rouge">Card</code> class, now we’re pulling them from the <code class="highlighter-rouge">CardFactory</code> where they’re created to arrive to us exactly as we need them: with randomly assigned ‘upright’ or ‘reverse’ data.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="c1"># app/controllers/readings_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@reading</span> <span class="o">=</span> <span class="no">Reading</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="vi">@reading</span><span class="p">.</span><span class="nf">positions</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="no">CardFactory</span><span class="p">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
+    <span class="vi">@deal</span> <span class="o">=</span> <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">cards</span><span class="p">)</span>
+  <span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Let’s pseudocode what we want that <code class="highlighter-rouge">CardFactory</code> to do:</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text">We want our factory to:
+- take a number argument so it knows how many cards to produce
+- grab a random selection of Cards in that quantity
+- randomly assign an orientation (upright/reverse) to each card
+- manufacture complete cards with a name and meaning
+  - If that card is upright, I want to see:
+    card.name = 'The Fool'
+    card.meaning = 'New Beginnings: innocence, journey, spontaneity, free spirit, change'
+  - If that card is reversed, I want to see:
+    card.name = 'The Fool Reversed'
+    card.meaning = 'Resistance: stuck, foolishness, risk-taking, recklessness'
+- deliver all manufactured cards in an array</code></pre></figure>
+
+<p>This way, in our view, we don’t have to worry about knowing when to call <code class="highlighter-rouge">upright_meaning</code> or <code class="highlighter-rouge">reverse_meaning</code> because the attribute simply will be called <code class="highlighter-rouge">meaning</code>. Now isn’t that tidy?</p>
+
+<p>Let’s look at how the <code class="highlighter-rouge">CardFactory</code> actually produces these cards.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+</pre></td><td class="code"><pre><span class="c1"># app/models/card_factory.rb</span>
+
+<span class="k">class</span> <span class="nc">CardFactory</span>
+  <span class="nb">attr_reader</span> <span class="ss">:card</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:meaning</span>
+
+   <span class="c1"># Give the CardFactory object the attributes we'll need</span>
+   <span class="c1"># to access in the view</span>
+   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="n">built_name</span><span class="p">,</span> <span class="n">built_meaning</span><span class="p">)</span>
+    <span class="vi">@card</span> <span class="o">=</span> <span class="n">card</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="n">built_name</span>
+    <span class="vi">@meaning</span> <span class="o">=</span> <span class="n">built_meaning</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Allow this CardFactory object to access this attribute</span>
+  <span class="c1"># directly from the @card</span>
+  <span class="n">delegate</span> <span class="ss">:id</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span>
+    <span class="c1"># Grab the right quantity of randomly selected Cards</span>
+    <span class="n">raw_cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span>
+
+    <span class="c1"># Set up the orientation options</span>
+    <span class="n">orientation_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'reverse'</span><span class="p">,</span> <span class="s1">'upright'</span><span class="p">]</span>
+
+    <span class="c1"># Hoist that built_cards placeholder</span>
+    <span class="vi">@built_cards</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">raw_cards</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">card</span><span class="o">|</span>
+      <span class="c1"># Select a random orientation</span>
+      <span class="n">orientation</span> <span class="o">=</span> <span class="n">orientation_options</span><span class="p">.</span><span class="nf">sample</span>
+
+      <span class="c1"># Use that orientation to pull the appropriate meaning</span>
+      <span class="c1"># from the Card object. If the orientation is 'upright', that</span>
+      <span class="c1"># interpolated 'send' is essentially calling 'card.upright_meaning'</span>
+      <span class="c1"># or... 'card.reverse_meaning' for 'reverse'</span>
+      <span class="n">built_meaning</span> <span class="o">=</span> <span class="n">card</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">orientation</span><span class="si">}</span><span class="s2">_meaning"</span><span class="p">)</span>
+
+      <span class="c1"># Use that orientation to modify the card name if needed</span>
+      <span class="n">built_name</span> <span class="o">=</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s1">'upright'</span> <span class="p">?</span> <span class="n">card</span><span class="p">.</span><span class="nf">name</span> <span class="p">:</span> <span class="s2">"</span><span class="si">#{</span><span class="n">card</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2"> Reversed"</span>
+
+      <span class="c1"># Use our newly-built data to construct the new CardFactory object</span>
+      <span class="n">built_card</span> <span class="o">=</span> <span class="no">CardFactory</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="n">built_name</span><span class="p">,</span> <span class="n">built_meaning</span><span class="p">)</span>
+
+      <span class="c1"># and push it into the cards that will be delivered to the controller</span>
+      <span class="vi">@built_cards</span> <span class="o">&lt;&lt;</span> <span class="n">built_card</span>
+    <span class="k">end</span>
+    <span class="vi">@built_cards</span>
+  <span class="k">end</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="the-new-functionality-with-upside-down-cards">The New Functionality with Upside down Cards</h3>
+<p>Now with access to reversed meanings, our readings are more realistic. If I hop on over to <a href="http://modernmystic.herokuapp.com/">modernmystic.herokuapp.com</a> (and wait for those free dynos to spin up), I can do a relationship reading with results like this (only more pretty with css):</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text">    Position 1            Position 2              Position 3
+        Me             The Other Person        The Relationship
+     _________            __________              __________
+    |         |          |          |            |          |
+    |  The    |          |  3 of    |            |  9 of    |
+    | Chariot |          |  Wands   |            | Swords   |
+    |         |          | Reversed |            | Reversed |
+    |_________|          |__________|            |__________|
+    "self-control,       "dreamer, careless,    "persepctive, moving
+    willpower,            untrustworthy          forward after
+    ambition, focus"      partners"              failure"</code></pre></figure>
+
+<p>Ha ha ha ha! Though I’m pretty pleased with the outcome of the app, it looks like I’ve got a little work to do on a relationship in my life. brb…</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
