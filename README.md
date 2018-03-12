@@ -7,6 +7,8 @@ This is my personal web development portfolio and blog [site](http://lortza.gith
 
 ## Notes to Self
 
+- The order of projects is based on calendar date (most recent on top). I've chosen to order every `.md` as a date in Jan 2017 and move projects around within those 31 days to order them.
+
 ### About the Theme
 
 This theme is *not* one of the select GitHub-approved themes, so it can not be updated through the GitHub theme interface. The different iterations of this site live on different branches in this repo.

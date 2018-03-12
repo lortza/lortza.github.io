@@ -128,7 +128,7 @@ li {
  * Links
  */
  a {
-    color: $text-color;
+    color: $theme-color;
     text-decoration: none;
     /*
     &:visited {
@@ -136,7 +136,8 @@ li {
     }
     */
     &:hover {
-        color: $theme-color;
+        color: $theme-color-2;
+        // color: darken($theme-color, 10%);
         text-decoration: none;
     }
 }
