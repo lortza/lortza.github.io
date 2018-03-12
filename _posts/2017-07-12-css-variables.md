@@ -4,7 +4,7 @@ title:  Using Variables in CSS
 date:   2017-07-12 03:02
 ---
 
-If you find yourself working in CSS and missing the ability to use SASS variables, oh boy do I have a treat for you. You <em>can</em> use variables in CSS. They just look a little bit different than they do in SASS.
+If you find yourself working in CSS and missing the ability to use SASS variables, oh boy do I have a treat for you. You _can_ use variables in CSS. They just look a little bit different than they do in SASS.
 
 Set them up in a root block at the top of your stylesheet:
 
@@ -17,11 +17,9 @@ Set them up in a root block at the top of your stylesheet:
 }
 {% endhighlight %}
 
-And use them in a class with a <code>var()</code>:
+And use them in a class with a `var()`:
 
 {% highlight ruby %}
-
-
 :root {
   --brand-color: #2C9C20;
   --secondary-color: #317BE1;
@@ -34,14 +32,13 @@ And use them in a class with a <code>var()</code>:
 }
 {% endhighlight %}
 
-They even work inside the CSS <code>calc()</code> function:
+They even work inside the CSS `calc()` function:
 
-{% highlight ruby %}
-
+```css
 .awesome-class {
     ...
     margin-bottom: calc(var(--height) * 2);
 }
-{% endhighlight %}
+```
 
 Hooray! This discovery really made my day.

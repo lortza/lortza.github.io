@@ -540,7 +540,7 @@ img.about-pic {
  * Syntax highlighting styles
  */
 .highlight {
-  background: #fff; }
+  background: #ddd; }
   .highlight .c {
     color: #998;
     font-style: italic; }
