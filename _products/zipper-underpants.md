@@ -1,7 +1,7 @@
 ---
 layout: post
 name: Zipper Underwear
-date: 2016-06-01
+date: 2017-01-20
 store_name: Betabrand
 store_url: https://www.betabrand.com/travel-underwear-shorts-with-pockets-womens.html
 img: /img/product_zipper.png

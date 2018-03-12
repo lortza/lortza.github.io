@@ -1,7 +1,7 @@
 ---
 layout: post
 name: Self-Reading Tarot Deck
-date: 2017-10-03
+date: 2017-01-30
 store_name: Etsy
 store_url: https://www.etsy.com/listing/488215794
 img: /img/product_tarot.jpg

@@ -1,7 +1,7 @@
 ---
 layout: post
 name: Yoga Track Album
-date: 2013-01-21
+date: 2017-01-04
 store_name: Bandcamp
 store_url: https://annerichardson.bandcamp.com/releases
 img: /img/product_yoga.png
