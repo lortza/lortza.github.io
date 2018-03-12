@@ -1,7 +1,7 @@
 ---
 layout: post
 title: StackOverflow
-date: 2017-07-20
+date: 2017-01-20
 site_url: https://stackoverflow.com/users/5009528/richardson?tab=profile
 ---
 

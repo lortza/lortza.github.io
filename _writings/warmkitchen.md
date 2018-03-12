@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Cooking Blog
-date: 2008-10-20
+date: 2017-01-01
 site_url: https://warmkitchen.wordpress.com
 ---
 
