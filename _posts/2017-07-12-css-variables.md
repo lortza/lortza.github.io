@@ -8,18 +8,21 @@ If you find yourself working in CSS and missing the ability to use SASS variable
 
 Set them up in a root block at the top of your stylesheet:
 
-{% highlight ruby %}
+```css
+/* stylesheet.css */
 
 :root {
   --brand-color: #2C9C20;
   --secondary-color: #317BE1;
   --fave-size: 50px;
 }
-{% endhighlight %}
+```
 
 And use them in a class with a `var()`:
 
-{% highlight ruby %}
+```css
+/* stylesheet.css */
+
 :root {
   --brand-color: #2C9C20;
   --secondary-color: #317BE1;
@@ -30,13 +33,14 @@ And use them in a class with a `var()`:
     background-color: var(--brand-color);
     height: var(--fave-size);
 }
-{% endhighlight %}
+```
 
 They even work inside the CSS `calc()` function:
 
 ```css
-.awesome-class {
-    ...
+/* stylesheet.css */
+
+.another-class {
     margin-bottom: calc(var(--height) * 2);
 }
 ```

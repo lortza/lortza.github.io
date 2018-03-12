@@ -11,7 +11,7 @@
  blog and portfolio">
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="canonical" href="http://localhost:4000/2017/07/14/ruby-snippets.html">
+    <link rel="canonical" href="http://localhost:4000/2017/07/13/ruby-snippets.html">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 </head>
@@ -59,13 +59,13 @@
 
   <header class="post-header">
     <h1 class="post-title">How to make ruby shortcuts (snippets) in Sublime Text</h1>
-    <p class="post-meta">July 14, 2017</p>
+    <p class="post-meta">July 13, 2017</p>
   </header>
 
   <article class="post-content">
-    <p>Typing Ruby erb tags is a past time pursued intentionally by… no one. The characters <code class="highlighter-rouge">&lt;%= %&gt;</code> don’t exactly flow off the fingertips. So how do people get around typing these irritating-but-crucial characters?</p>
+    <p>Typing Ruby erb tags is a past time pursued intentionally by… no one? Well, certainly not me! The characters <code class="highlighter-rouge">&lt;%= %&gt;</code> don’t exactly flow off of my fingertips. So how do people get around typing these irritating-but-crucial characters?</p>
 
-<p>Why, SublimeText snippets, of course! <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.</p>
+<p>I use my beloved SublimeText snippets. <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.</p>
 
 <h2 id="what-is-a-snippet">What is a snippet?</h2>
 <p>A snippet is a keystroke shortcut you create that will generate text for you. There are some built-in snippets in Sublime that make my life easier. For example, if you type <code class="highlighter-rouge">lorem + TAB</code> you’ll get a short paragraph of lorem ipsum placeholder text.</p>
@@ -78,7 +78,9 @@
 
 <p>You’ll get a snippet template that looks like this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;snippet&gt;</span>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- new_snippet_file --&gt;</span>
+
+<span class="nt">&lt;snippet&gt;</span>
   <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[
 Hello, ${1:this} is a ${2:snippet}.
 ]]&gt;</span><span class="nt">&lt;/content&gt;</span>
@@ -86,7 +88,8 @@ Hello, ${1:this} is a ${2:snippet}.
   <span class="c">&lt;!-- &lt;tabTrigger&gt;hello&lt;/tabTrigger&gt; --&gt;</span>
   <span class="c">&lt;!-- Optional: Set a scope to limit where the snippet will trigger --&gt;</span>
   <span class="c">&lt;!-- &lt;scope&gt;source.python&lt;/scope&gt; --&gt;</span>
-<span class="nt">&lt;/snippet&gt;</span></code></pre></figure>
+<span class="nt">&lt;/snippet&gt;</span>
+</code></pre></div></div>
 
 <p>It looks a little crazy, but don’t panic. It’s all really useful stuff and I’ll get to that in a bit. First, let’s cut to the chase and make those erb tags.</p>
 
@@ -94,40 +97,48 @@ Hello, ${1:this} is a ${2:snippet}.
 
 <p>Assuming you want your shortcut word to be <code class="highlighter-rouge">erb</code>, delete everything in that file and replace it with this:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;snippet&gt;</span>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;snippet&gt;</span>
   <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[&lt;%= ${1} %&gt;]]&gt;</span><span class="nt">&lt;/content&gt;</span>
   <span class="nt">&lt;tabTrigger&gt;</span>erb<span class="nt">&lt;/tabTrigger&gt;</span>
   <span class="nt">&lt;description&gt;</span><span class="ni">&amp;#60;&amp;#37;&amp;#61;&amp;#37;&amp;#62;</span><span class="nt">&lt;/description&gt;</span>
   <span class="nt">&lt;scope&gt;</span>text.html.ruby<span class="nt">&lt;/scope&gt;</span>
-<span class="nt">&lt;/snippet&gt;</span></code></pre></figure>
-
+<span class="nt">&lt;/snippet&gt;</span>
+</code></pre></div></div>
 <p>Save the file as <code class="highlighter-rouge">html-erb.sublime-snippet</code>.</p>
 
 <p>Now, when you’re inside an erb file like <code class="highlighter-rouge">index.html.erb</code>, you can simply type your new shortcut + TAB and you get your erb tags. Hooray!</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># type this:</span>
-<span class="n">erb</span> <span class="o">+</span> <span class="no">TAB</span>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># type this:
+erb + TAB
 
-<span class="c1"># get this:</span>
-<span class="o">&lt;</span><span class="sx">%= %&gt;</span></code></pre></figure>
-
+# get this:
+&lt;%=  %&gt;
+</code></pre></div></div>
 <h2 id="what-its-doing-and-how-to-customize">What it’s doing and how to customize</h2>
 
 <p>The <code class="highlighter-rouge">content</code> tags house the end result of the snippet. The <code class="highlighter-rouge">${1}</code> is where your cursor will end up after you hit <code class="highlighter-rouge">TAB</code>.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[&lt;%= ${1} %&gt;]]&gt;</span><span class="nt">&lt;/content&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the content --&gt;</span>
+<span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[&lt;%= ${1} %&gt;]]&gt;</span><span class="nt">&lt;/content&gt;</span>
+</code></pre></div></div>
 
 <p>The <code class="highlighter-rouge">tabTrigger</code> tags hold the shortcut word you’ll use before triggering the shortcut with the TAB key</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;tabTrigger&gt;</span>erb<span class="nt">&lt;/tabTrigger&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the tab trigger --&gt;</span>
+<span class="nt">&lt;tabTrigger&gt;</span>erb<span class="nt">&lt;/tabTrigger&gt;</span>
+</code></pre></div></div>
 
 <p>The <code class="highlighter-rouge">description</code> tags are optional and display more meaning if you have several similar snippets. This one is super gnarly because it is using code to literally display the characters <code class="highlighter-rouge">&lt;%= %&gt;</code>. You could simply type “erb tag” and be done with it.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;description&gt;</span><span class="ni">&amp;#60;&amp;#37;&amp;#61;&amp;#37;&amp;#62;</span><span class="nt">&lt;/description&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the description --&gt;</span>
+<span class="nt">&lt;description&gt;</span><span class="ni">&amp;#60;&amp;#37;&amp;#61;&amp;#37;&amp;#62;</span><span class="nt">&lt;/description&gt;</span>
+</code></pre></div></div>
 
 <p>The <code class="highlighter-rouge">scope</code> tags are also optional and limit the snippet to running in only the types of files you designate here. This scope limits this snippet to work in erb files only. If you want your snippet to work in all file types, delete this line.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;scope&gt;</span>text.html.ruby<span class="nt">&lt;/scope&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the scope --&gt;</span>
+<span class="nt">&lt;scope&gt;</span>text.html.ruby<span class="nt">&lt;/scope&gt;</span>
+</code></pre></div></div>
 
 <p>Here’s an <a title="sublime scopes" href="https://gist.github.com/iambibhas/4705378?reference=localflavormarketing.com" target="_blank" rel="noopener noreferrer">excellent gist with a list of scopes for SublimeText 2</a>, most of which work in SublimeText 3 as well.</p>
 
@@ -135,7 +146,7 @@ Hello, ${1:this} is a ${2:snippet}.
 
 <p>So let’s build a new snippet. Here’s one I use a lot:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"># this snippet code
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- This snippet code... --&gt;</span>
 
 <span class="nt">&lt;snippet&gt;</span>
   <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[
@@ -144,46 +155,60 @@ Hello, ${1:this} is a ${2:snippet}.
     <span class="nt">&lt;tabTrigger&gt;</span>a<span class="nt">&lt;/tabTrigger&gt;</span>
     <span class="nt">&lt;description&gt;</span>a href<span class="nt">&lt;/description&gt;</span>
     <span class="nt">&lt;scope&gt;</span>text.html, text.html.ruby<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/snippet&gt;</span></code></pre></figure>
+  <span class="nt">&lt;/snippet&gt;</span>
+</code></pre></div></div>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"># generates this html
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- ... Generates this html: --&gt;</span>
 
-<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">""</span> <span class="na">target=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span></code></pre></figure>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">""</span> <span class="na">target=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div>
 
-<p>This is the core snippet code. It will generate a blank snippet:</p>
+<p>This is the core of the snippet code. It will generate a blank snippet:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[   ]]&gt;</span><span class="nt">&lt;/content&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- this generates a blank snippet --&gt;</span>
 
-<p>Much like the <a title="The Dash Between Songs" href="https://www.youtube.com/results?search_query=the+dash+between&amp;page=&amp;utm_source=opensearch" target="_blank" rel="noopener noreferrer">myriad of country songs</a> based on <a title="The Dash Between" href="http://www.rontranmer.com/the-dash-between" target="_blank" rel="noopener noreferrer">this poem</a>, it’s that space between those brackets that’s important – but a lot less cheesy. This is is between the brackets for this specific snippet:</p>
+<span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[   ]]&gt;</span><span class="nt">&lt;/content&gt;</span>
+</code></pre></div></div>
+<p>Much like the <a title="The Dash Between Songs" href="https://www.youtube.com/results?search_query=the+dash+between&amp;page=&amp;utm_source=opensearch" target="_blank" rel="noopener noreferrer">myriad of country songs</a> based on <a title="The Dash Between" href="http://www.rontranmer.com/the-dash-between" target="_blank" rel="noopener noreferrer">this poem</a>, it’s that space between those brackets that’s important – and a lot less cheesy. This is what’s between the brackets for this specific snippet:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">  <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[
-    &lt;a href="${1}" target="${2:_blank}" alt="${3}" title="${3}"&gt;${4}&lt;/a&gt;
-    ]]&gt;</span><span class="nt">&lt;/content&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[
+
+  &lt;a href="${1}" target="${2:_blank}" alt="${3}" title="${3}"&gt;${4}&lt;/a&gt;
+
+ ]]&gt;</span><span class="nt">&lt;/content&gt;</span>
+</code></pre></div></div>
 
 <p>The <code class="highlighter-rouge">${1}</code> is the first tab-stop placeholder. This means that after I type my trigger of <code class="highlighter-rouge">a</code> plus the <code class="highlighter-rouge">TAB</code> key, all of that html shows up and my cursor is placed in the 1st placeholder inside <code class="highlighter-rouge">href=""</code>. Now I can type or paste a URL:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 1 --&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div>
 
-<p>When I hit the <code class="highlighter-rouge">TAB</code> key <em>again</em>, it moves to the second placeholder, <code class="highlighter-rouge">${2:_blank}</code>, which is inside the <code class="highlighter-rouge">target=""</code>. This placeholder is special because I gave it a default value of <code class="highlighter-rouge">_blank</code>. I could simply start typing to replace that default value with something else.</p>
+<p>When I hit the <code class="highlighter-rouge">TAB</code> key <em>again</em>, it moves to the second placeholder, <code class="highlighter-rouge">${2:_blank}</code>, which is inside the <code class="highlighter-rouge">target=""</code>. This placeholder is special because I gave it a default value of <code class="highlighter-rouge">_blank</code>. If I want to replace that default value with something else, I could just type that now.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"anything_i_want"</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span></code></pre></figure>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 2 --&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"anything_i_want"</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span>
+</code></pre></div></div>
 
 <p>But I like it as <code class="highlighter-rouge">_blank</code>, so I just hit the <code class="highlighter-rouge">TAB</code> key again and move on to the next placeholder.</p>
 
 <p>The third placeholder, <code class="highlighter-rouge">${3}</code>, is also special because there are two of them: one in the <code class="highlighter-rouge">alt=""</code> and one in the <code class="highlighter-rouge">title=""</code>. My cursor will actually be in both of those spaces at the same time, so whatever I type will show up in both of those places.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- two placeholders with the same number will output the same value --&gt;</span>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 3 --&gt;</span>
+
+<span class="c">&lt;!-- two placeholders with the same number will output the same value --&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"${1}"</span> <span class="na">target=</span><span class="s">"${2:_blank}"</span> <span class="na">alt=</span><span class="s">"${3}"</span> <span class="na">title=</span><span class="s">"${3}"</span><span class="nt">&gt;</span>${4}<span class="nt">&lt;/a&gt;</span>
 
 <span class="c">&lt;!-- resulting in this --&gt;</span>
-<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"_blank"</span> <span class="na">alt=</span><span class="s">"the googles"</span> <span class="na">title=</span><span class="s">"the googles"</span><span class="nt">&gt;</span>${4}<span class="nt">&lt;/a&gt;</span></code></pre></figure>
-
-<p><strong>Kaboom!</strong> right? This discovery opened up my world of snippet-making.</p>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"_blank"</span> <span class="na">alt=</span><span class="s">"the googles"</span> <span class="na">title=</span><span class="s">"the googles"</span><span class="nt">&gt;</span>${4}<span class="nt">&lt;/a&gt;</span>
+</code></pre></div></div>
+<p><em>Kaboom!</em> right? This discovery opened up my world of snippet-making.</p>
 
 <p>Now, hit the <code class="highlighter-rouge">TAB</code> key again, and we’re in placeholder #4. Nothing special here. I can fill it out, hit <code class="highlighter-rouge">TAB</code> again and my cursor will move to the first space outside of the snippet.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"_blank"</span> <span class="na">alt=</span><span class="s">"the googles"</span> <span class="na">title=</span><span class="s">"the googles"</span><span class="nt">&gt;</span>Google<span class="nt">&lt;/a&gt;</span></code></pre></figure>
-
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 4 --&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"_blank"</span> <span class="na">alt=</span><span class="s">"the googles"</span> <span class="na">title=</span><span class="s">"the googles"</span><span class="nt">&gt;</span>Google<span class="nt">&lt;/a&gt;</span>
+</code></pre></div></div>
 <p>So hopefully this gets you started on a path to using SublimeText more efficiently so you can spend less time typing and more time coding. Though you’ll start to discover your snippet needs pretty easily on your own. Here are some ideas:</p>
 
 <ul>

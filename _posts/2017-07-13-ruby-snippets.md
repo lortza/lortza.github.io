@@ -1,12 +1,12 @@
 ---
 layout: post
 title:  How to make ruby shortcuts (snippets) in Sublime Text
-date:   2017-07-14
+date:   2017-07-13
 ---
 
-Typing Ruby erb tags is a past time pursued intentionally by... no one. The characters `<%= %>` don't exactly flow off the fingertips. So how do people get around typing these irritating-but-crucial characters?
+Typing Ruby erb tags is a past time pursued intentionally by... no one? Well, certainly not me! The characters `<%= %>` don't exactly flow off of my fingertips. So how do people get around typing these irritating-but-crucial characters?
 
-Why, SublimeText snippets, of course! <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.
+I use my beloved SublimeText snippets. <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.
 
 ## What is a snippet?
 A snippet is a keystroke shortcut you create that will generate text for you. There are some built-in snippets in Sublime that make my life easier. For example, if you type `lorem + TAB` you'll get a short paragraph of lorem ipsum placeholder text.
@@ -19,7 +19,9 @@ In SublimeText 3, go to Tools/Developer/New Snippet
 
 You'll get a snippet template that looks like this:
 
-{% highlight html %}
+```html
+<!-- new_snippet_file -->
+
 <snippet>
   <content><![CDATA[
 Hello, ${1:this} is a ${2:snippet}.
@@ -29,8 +31,7 @@ Hello, ${1:this} is a ${2:snippet}.
   <!-- Optional: Set a scope to limit where the snippet will trigger -->
   <!-- <scope>source.python</scope> -->
 </snippet>
-{% endhighlight %}
-
+```
 
 It looks a little crazy, but don't panic. It's all really useful stuff and I'll get to that in a bit. First, let's cut to the chase and make those erb tags.
 
@@ -39,52 +40,54 @@ It looks a little crazy, but don't panic. It's all really useful stuff and I'll 
 
 Assuming you want your shortcut word to be `erb`, delete everything in that file and replace it with this:
 
-{% highlight html %}
+```html
 <snippet>
   <content><![CDATA[<%= ${1} %>]]></content>
   <tabTrigger>erb</tabTrigger>
   <description>&#60;&#37;&#61;&#37;&#62;</description>
   <scope>text.html.ruby</scope>
 </snippet>
-{% endhighlight %}
-
+```
 Save the file as `html-erb.sublime-snippet`.
 
 Now, when you're inside an erb file like `index.html.erb`, you can simply type your new shortcut + TAB and you get your erb tags. Hooray!
 
-{% highlight ruby %}
+```
 # type this:
 erb + TAB
 
 # get this:
-<%= %>
-{% endhighlight %}
-
+<%=  %>
+```
 ## What it's doing and how to customize
 
 The `content` tags house the end result of the snippet. The `${1}` is where your cursor will end up after you hit `TAB`.
 
-{% highlight html %}
-  <content><![CDATA[<%= ${1} %>]]></content>
-{% endhighlight %}
+```html
+<!-- the content -->
+<content><![CDATA[<%= ${1} %>]]></content>
+```
 
 The `tabTrigger` tags hold the shortcut word you'll use before triggering the shortcut with the TAB key
 
-{% highlight html %}
-  <tabTrigger>erb</tabTrigger>
-{% endhighlight %}
+```html
+<!-- the tab trigger -->
+<tabTrigger>erb</tabTrigger>
+```
 
 The `description` tags are optional and display more meaning if you have several similar snippets. This one is super gnarly because it is using code to literally display the characters `<%= %>`. You could simply type "erb tag" and be done with it.
 
-{% highlight html %}
-  <description>&#60;&#37;&#61;&#37;&#62;</description>
-{% endhighlight %}
+```html
+<!-- the description -->
+<description>&#60;&#37;&#61;&#37;&#62;</description>
+```
 
 The `scope` tags are also optional and limit the snippet to running in only the types of files you designate here. This scope limits this snippet to work in erb files only. If you want your snippet to work in all file types, delete this line.
 
-{% highlight html %}
-  <scope>text.html.ruby</scope>
-{% endhighlight %}
+```html
+<!-- the scope -->
+<scope>text.html.ruby</scope>
+```
 
 Here's an <a title="sublime scopes" href="https://gist.github.com/iambibhas/4705378?reference=localflavormarketing.com" target="_blank" rel="noopener noreferrer">excellent gist with a list of scopes for SublimeText 2</a>, most of which work in SublimeText 3 as well.
 
@@ -93,8 +96,8 @@ Here's an <a title="sublime scopes" href="https://gist.github.com/iambibhas/4705
 
 So let's build a new snippet. Here's one I use a lot:
 
-{% highlight html %}
-# this snippet code
+```html
+<!-- This snippet code... -->
 
 <snippet>
   <content><![CDATA[
@@ -104,61 +107,67 @@ So let's build a new snippet. Here's one I use a lot:
     <description>a href</description>
     <scope>text.html, text.html.ruby</scope>
   </snippet>
-{% endhighlight %}
+```
 
-{% highlight html %}
-# generates this html
+```html
+<!-- ... Generates this html: -->
 
 <a href="" target="" alt="" title=""></a>
-{% endhighlight %}
+```
 
-This is the core snippet code. It will generate a blank snippet:
+This is the core of the snippet code. It will generate a blank snippet:
 
-{% highlight html %}
-  <content><![CDATA[   ]]></content>
-{% endhighlight %}
+```html
+<!-- this generates a blank snippet -->
 
-Much like the <a title="The Dash Between Songs" href="https://www.youtube.com/results?search_query=the+dash+between&amp;page=&amp;utm_source=opensearch" target="_blank" rel="noopener noreferrer">myriad of country songs</a> based on <a title="The Dash Between" href="http://www.rontranmer.com/the-dash-between" target="_blank" rel="noopener noreferrer">this poem</a>, it's that space between those brackets that's important -- but a lot less cheesy. This is is between the brackets for this specific snippet:
+<content><![CDATA[   ]]></content>
+```
+Much like the <a title="The Dash Between Songs" href="https://www.youtube.com/results?search_query=the+dash+between&amp;page=&amp;utm_source=opensearch" target="_blank" rel="noopener noreferrer">myriad of country songs</a> based on <a title="The Dash Between" href="http://www.rontranmer.com/the-dash-between" target="_blank" rel="noopener noreferrer">this poem</a>, it's that space between those brackets that's important -- and a lot less cheesy. This is what's between the brackets for this specific snippet:
 
-{% highlight html %}
-  <content><![CDATA[
-    <a href="${1}" target="${2:_blank}" alt="${3}" title="${3}">${4}</a>
-    ]]></content>
-{% endhighlight %}
+```html
+<content><![CDATA[
+
+  <a href="${1}" target="${2:_blank}" alt="${3}" title="${3}">${4}</a>
+
+ ]]></content>
+```
 
 The `${1}` is the first tab-stop placeholder. This means that after I type my trigger of `a` plus the `TAB` key, all of that html shows up and my cursor is placed in the 1st placeholder inside `href=""`. Now I can type or paste a URL:
 
 
-{% highlight html %}
+```html
+<!-- at placeholder 1 -->
 <a href="http://www.google.com" target="" alt="" title=""></a>
-{% endhighlight %}
+```
 
-When I hit the `TAB` key <em>again</em>, it moves to the second placeholder, `${2:_blank}`, which is inside the `target=""`. This placeholder is special because I gave it a default value of `_blank`. I could simply start typing to replace that default value with something else.
+When I hit the `TAB` key _again_, it moves to the second placeholder, `${2:_blank}`, which is inside the `target=""`. This placeholder is special because I gave it a default value of `_blank`. If I want to replace that default value with something else, I could just type that now.
 
-{% highlight html %}
+```html
+<!-- at placeholder 2 -->
 <a href="http://www.google.com" target="anything_i_want" alt="" title=""></a>
-{% endhighlight %}
+```
 
 But I like it as `_blank`, so I just hit the `TAB` key again and move on to the next placeholder.
 
 The third placeholder, `${3}`, is also special because there are two of them: one in the `alt=""` and one in the `title=""`. My cursor will actually be in both of those spaces at the same time, so whatever I type will show up in both of those places.
 
-{% highlight html %}
+```html
+<!-- at placeholder 3 -->
+
 <!-- two placeholders with the same number will output the same value -->
 <a href="${1}" target="${2:_blank}" alt="${3}" title="${3}">${4}</a>
 
 <!-- resulting in this -->
 <a href="http://www.google.com" target="_blank" alt="the googles" title="the googles">${4}</a>
-{% endhighlight %}
-
-<strong>Kaboom!</strong> right? This discovery opened up my world of snippet-making.
+```
+*Kaboom!* right? This discovery opened up my world of snippet-making.
 
 Now, hit the `TAB` key again, and we're in placeholder #4. Nothing special here. I can fill it out, hit `TAB` again and my cursor will move to the first space outside of the snippet.
 
-{% highlight html %}
+```html
+<!-- at placeholder 4 -->
 <a href="http://www.google.com" target="_blank" alt="the googles" title="the googles">Google</a>
-{% endhighlight %}
-
+```
 So hopefully this gets you started on a path to using SublimeText more efficiently so you can spend less time typing and more time coding. Though you'll start to discover your snippet needs pretty easily on your own. Here are some ideas:
 
   - get `binding.pry` with `pry`
