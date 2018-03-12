@@ -480,16 +480,18 @@ img.about-pic {
   .portfolio-show img {
     width: 400px;
     border: 1px solid #ddd; }
-  .portfolio-show .links {
+  .portfolio-show a {
+    color: #B7D12A; }
+  .portfolio-show .link-buttons {
     /* a */ }
-    .portfolio-show .links a {
+    .portfolio-show .link-buttons a {
       color: #B7D12A;
       border: 1px solid #B7D12A;
       padding: 2px 10px;
       border-radius: 5px;
       margin: 0 5px;
       /* &:hover */ }
-      .portfolio-show .links a:hover {
+      .portfolio-show .link-buttons a:hover {
         background-color: #B7D12A;
         color: white; }
 

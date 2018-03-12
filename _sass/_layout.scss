@@ -358,7 +358,8 @@ img.about-pic {
     width: 400px;
     border: 1px solid $grey-color-light;
   }
-  .links {
+  a {color: $theme-color;}
+  .link-buttons {
     a {
       color: $theme-color;
       border: 1px solid $theme-color;
