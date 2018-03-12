@@ -63,28 +63,31 @@
   </header>
 
   <article class="post-content">
-    <p>A couple of years ago, I build a Rails app that could do tarot card readings for me. (Here are the <a href="http://modernmystic.herokuapp.com/">live app</a> and <a href="https://github.com/lortza/tarot">repo</a>.) A tarot reading, though it takes years of experience for professional readers to deeply understand cards, contexts, and people, can also be done rather simply using data. Obviously, you’ll miss out on the insight of a professional reader, but it’s still pretty fun. I built this app initially as a bootcamp final project, and have since used it as an opportunity to refactor and add new features as my skills grow.</p>
+    <p>A couple of years ago, I build a Rails app that could do tarot card readings for me. (Here are the <a href="http://modernmystic.herokuapp.com/">live app</a> and <a href="https://github.com/lortza/tarot">repo</a>.) A tarot reading, though it takes years of experience for professional readers to deeply understand cards, contexts, and people, can also be done with a <code class="highlighter-rouge">card</code>s table and Ruby’s <code class="highlighter-rouge">sample</code> method. Obviously, you’ll miss out on the insight of a professional reader, but it’s still pretty fun.</p>
+
+<p>I built this app initially as a bootcamp final project, and have since used it as an opportunity to refactor and add new features as my skills grow. Recently, I added the exciting new feature of having cards appear both right-side up and upside down. This feature makes the app experience much closer to the actual tarot reading experience, and is the centerpoint of this post.</p>
 
 <h2 id="the-anatomy-of-tarot-reading-app">The Anatomy of Tarot Reading App</h2>
-<p>From the perspective of an app, a deck of tarot cards can be distilled down to a simple set of data with each card having a name and meaning. Likewise, a “reading” has a set number of positions in which to place a card, and each position in the reading has a context.</p>
+<p>From the perspective of an app, a deck of tarot cards can be distilled down to a set of data with each card having a name and meaning. Likewise, a “reading” has a set number of positions in which to place a card, and each position in the reading has a context.</p>
 
 <p>For example, a 3-card relationship reading, you have 3 positions, each with a different context:</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">    Position 1         Position 2          Position 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1         Position 2          Position 3
        You          The Other Person    The Relationship
      ________           ________            ________
     |        |         |        |          |        |
     | card 1 |         | card 2 |          | card 3 |
     |  goes  |         |  goes  |          |  goes  |
     |  here  |         |  here  |          |  here  |
-    |________|         |________|          |________|</code></pre></figure>
+    |________|         |________|          |________|
+</code></pre></div></div>
 
 <p>In pseudocode, implementing this functionality looks like this:</p>
-
-<figure class="highlight"><pre><code class="language-text" data-lang="text">- count the number of positions needed for the reading
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- count the number of positions needed for the reading
 - grab a random selection of cards to fill those positions
 - deal out each card into each position
-- display the card name and meaning inside each position context for the user to see</code></pre></figure>
+- display the card name and meaning inside each position context for the user to see
+</code></pre></div></div>
 
 <p>That works out like this in the <code class="highlighter-rouge">ReadingsController</code>:</p>
 
@@ -163,12 +166,12 @@
 8
 </pre></td><td class="code"><pre><span class="c1"># db/schema.rb</span>
 
-  <span class="n">create_table</span> <span class="s2">"cards"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
-    <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="s2">"name"</span>
-    <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"upright_meaning"</span>
-    <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"reverse_meaning"</span>
-    <span class="o">...</span>
-  <span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+<span class="n">create_table</span> <span class="s2">"cards"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="s2">"name"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"upright_meaning"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"reverse_meaning"</span>
+  <span class="o">...</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
 
 <h3 id="and-now-for-the-fun-part-flipping-card-upside-down">And now for the fun part: flipping card upside down.</h3>
 <p>I achieved this using a factory. Check out line 8 below. Instead of pulling cards directly from the <code class="highlighter-rouge">Card</code> class, now we’re pulling them from the <code class="highlighter-rouge">CardFactory</code> where they’re created to arrive to us exactly as we need them: with randomly assigned ‘upright’ or ‘reverse’ data.</p>
@@ -196,7 +199,7 @@
 
 <p>Let’s pseudocode what we want that <code class="highlighter-rouge">CardFactory</code> to do:</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">We want our factory to:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>We want our factory to:
 - take a number argument so it knows how many cards to produce
 - grab a random selection of Cards in that quantity
 - randomly assign an orientation (upright/reverse) to each card
@@ -207,8 +210,8 @@
   - If that card is reversed, I want to see:
     card.name = 'The Fool Reversed'
     card.meaning = 'Resistance: stuck, foolishness, risk-taking, recklessness'
-- deliver all manufactured cards in an array</code></pre></figure>
-
+- deliver all manufactured cards in an array
+</code></pre></div></div>
 <p>This way, in our view, we don’t have to worry about knowing when to call <code class="highlighter-rouge">upright_meaning</code> or <code class="highlighter-rouge">reverse_meaning</code> because the attribute simply will be called <code class="highlighter-rouge">meaning</code>. Now isn’t that tidy?</p>
 
 <p>Let’s look at how the <code class="highlighter-rouge">CardFactory</code> actually produces these cards.</p>
@@ -315,7 +318,7 @@
 <h3 id="the-new-functionality-with-upside-down-cards">The New Functionality with Upside down Cards</h3>
 <p>Now with access to reversed meanings, our readings are more realistic. If I hop on over to <a href="http://modernmystic.herokuapp.com/">modernmystic.herokuapp.com</a> (and wait for those free dynos to spin up), I can do a relationship reading with results like this (only more pretty with css):</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">    Position 1            Position 2              Position 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1            Position 2              Position 3
         Me             The Other Person        The Relationship
      _________            __________              __________
     |         |          |          |            |          |
@@ -325,7 +328,8 @@
     |_________|          |__________|            |__________|
     "self-control,       "dreamer, careless,    "persepctive, moving
     willpower,            untrustworthy          forward after
-    ambition, focus"      partners"              failure"</code></pre></figure>
+    ambition, focus"      partners"              failure"
+</code></pre></div></div>
 
 <p>Ha ha ha ha! Though I’m pretty pleased with the outcome of the app, it looks like I’ve got a little work to do on a relationship in my life. brb…</p>
 
