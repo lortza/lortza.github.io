@@ -3,6 +3,7 @@
  * Site header   **********************************************************
  */
  .site-header {
+  a {color: $text-color;}
   border-bottom: 1px solid $grey-color-light;
   background-color: #fff;
   opacity: 0.75;
@@ -358,7 +359,7 @@ img.about-pic {
     width: 400px;
     border: 1px solid $grey-color-light;
   }
-  .links {
+  .link-buttons {
     a {
       color: $theme-color;
       border: 1px solid $theme-color;
