@@ -310,18 +310,20 @@ img.about-pic {
       font-size: 36px; } }
 
 .post-content h2 {
-  font-size: 30px; }
+  font-size: 30px !important;
+  margin-top: 2em; }
   @media screen and (max-width: 800px) {
     .post-content h2 {
       font-size: 28px; } }
 .post-content h3 {
-  font-size: 20px;
-  margin-bottom: 0.5em; }
+  font-size: 20px !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.25em; }
   @media screen and (max-width: 800px) {
     .post-content h3 {
       font-size: 22px; } }
 .post-content h4 {
-  font-size: 15px;
+  font-size: 15px !important;
   font-weight: bold; }
   @media screen and (max-width: 800px) {
     .post-content h4 {
