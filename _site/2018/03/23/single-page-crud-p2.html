@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Single Page CRUD App in Rails - Part 2 - Deleting Records</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/03/23/single-page-crud-p2.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Single Page CRUD App in Rails - Part 2 - Deleting Records</h1>
+    <p class="post-meta">March 23, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven’t seen <a href="/2018/03/20/single-page-crud-p1.html">Part 1: New Records</a>, I recommend you check it out first as it sets the stage for the app.</p>
+
+<ul>
+  <li><a href="/2018/03/20/single-page-crud-p1.html">Part 1: New Records</a></li>
+  <li><a href="/2018/03/23/single-page-crud-p2.html">Part 2: Deleting Records (this post)</a></li>
+  <li>Part 3: Editing Records (WIP)</li>
+</ul>
+
+<p>App Stats:</p>
+
+<ul>
+  <li>Rails 5.0.6</li>
+  <li>Ruby 2.4.2</li>
+</ul>
+
+<h2 id="deleting-a-record">Deleting a Record</h2>
+
+<p>The process for deleting a record is very similar to the process for creating a new record. These key things need to happen in order to delete a record:</p>
+
+<ol>
+  <li>Identify each record <code class="highlighter-rouge">&lt;tr&gt;</code> by id</li>
+  <li>Convert the “Delete” link to <code class="highlighter-rouge">remote: true</code></li>
+  <li>Set up the controller <code class="highlighter-rouge">destroy</code> method</li>
+  <li>Remove the record from the <code class="highlighter-rouge">index</code> page</li>
+</ol>
+
+<h3 id="1-identify-each-record-tr-by-id">1. Identify Each Record <code class="highlighter-rouge">&lt;tr&gt;</code> by Id</h3>
+<p>In the last post, we set up a partial for each record called <code class="highlighter-rouge">_critter.html.erb</code> and it looked like this:</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
+
+<span class="nt">&lt;tr&gt;</span>
+  <span class="nt">&lt;td&gt;&lt;h4&gt;</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h4&gt;&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span>is a <span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">color</span> <span class="cp">%&gt;</span> critter who lives in <span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">city</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span>"<span class="nt">&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Edit'</span><span class="p">,</span> <span class="n">edit_critter_path</span><span class="p">(</span><span class="n">critter</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="nt">&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Destroy'</span><span class="p">,</span> <span class="n">critter</span><span class="p">,</span> <span class="ss">method: :delete</span><span class="p">,</span> <span class="ss">data: </span><span class="p">{</span> <span class="ss">confirm: </span><span class="s1">'Are you sure?'</span> <span class="p">}</span> <span class="cp">%&gt;</span><span class="nt">&lt;/td&gt;</span>
+<span class="nt">&lt;/tr&gt;</span>
+</code></pre></div></div>
+
+<p>In order to delete a record, we first have to be able to identify it. Fortunately for us, we already have an id for each record (courtesy of <code class="highlighter-rouge">critter.id</code>) and we can just add it to each record’s <code class="highlighter-rouge">&lt;tr&gt;</code> element. Since javascript gets cranky about ids starting with numbers, we’ll create our id in this format: <code class="highlighter-rouge">critter_3</code></p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
+
+<span class="nt">&lt;tr</span> <span class="na">id=</span><span class="s">"critter_</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">id</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span> <span class="c">&lt;!-- Add a unique id to the tr --&gt;</span>
+  <span class="nt">&lt;td&gt;&lt;h4&gt;</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h4&gt;&lt;/td&gt;</span>
+  ...
+<span class="nt">&lt;/tr&gt;</span>
+</code></pre></div></div>
+
+<h3 id="2-convert-the-delete-link-to-remote-true">2. Convert the “Delete” Link to <code class="highlighter-rouge">remote: true</code></h3>
+<p>Still working inside the <code class="highlighter-rouge">_critter.html.erb</code> partial, we need to tell the existing delete link to request javascript instead of following the usual HTTP protocol. Just like we did with the “New Critter” button, we’ll add <code class="highlighter-rouge">remote: true</code> to the “Delete” link.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
+
+<span class="nt">&lt;tr</span> <span class="na">id=</span><span class="s">"critter_</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">id</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+  ...
+  <span class="nt">&lt;td&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Delete'</span><span class="p">,</span> <span class="n">critter</span><span class="p">,</span> <span class="ss">method: :delete</span><span class="p">,</span> <span class="ss">data: </span><span class="p">{</span> <span class="ss">confirm: </span><span class="s1">'Are you sure?'</span> <span class="p">},</span> <span class="ss">remote: </span><span class="kp">true</span> <span class="cp">%&gt;</span><span class="nt">&lt;/td&gt;</span>
+<span class="nt">&lt;/tr&gt;</span>
+</code></pre></div></div>
+
+<h3 id="3-set-up-the-controller-destroy-method">3. Set up the Controller <code class="highlighter-rouge">destroy</code> Method</h3>
+<p>The controller’s <code class="highlighter-rouge">destroy</code> method handles the HTTP <code class="highlighter-rouge">delete</code> action, so we need to tell it how to respond to this request for javascript. We do that the same way we did in the other controller actions, by setting <code class="highlighter-rouge">respond_to</code> to <code class="highlighter-rouge">js</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">CrittersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">destroy</span>
+    <span class="vi">@critter</span><span class="p">.</span><span class="nf">destroy</span>
+    <span class="n">respond_to</span> <span class="ss">:js</span>  <span class="c1">#&lt;-- here</span>
+  <span class="k">end</span>
+<span class="o">...</span>
+</code></pre></div></div>
+
+<p>The controller is now expecting to find a file called <code class="highlighter-rouge">destroy.js</code>, so we need to make one. We’ll be using a little erb syntax in our file, so we’ll create a file in the <code class="highlighter-rouge">app/views/critters</code> directory called <code class="highlighter-rouge">destroy.js.erb</code> and the controller will still be happy.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
+
+<span class="nx">alert</span><span class="p">(</span><span class="s2">"Hey! The destroy.js.erb file is responding!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If you refresh your page, then click the delete button, you’ll get an alert box that says “Are you sure?”. Click “ok”, then you’ll see a new box pop up that says “Hey! The destroy.js.erb file is reponding!” After you dismiss that box, you’ll notice that your content is still on the index page. This is the expected behavior. All that’s left is to remove it with a little javascript.</p>
+
+<h3 id="4-remove-the-record-from-the-index-page">4. Remove the Record from the <code class="highlighter-rouge">index</code> Page</h3>
+<p>Remove that alert line from your <code class="highlighter-rouge">destroy.js.erb</code> file and replace it with the line that will actually remove the record. Here we’re using the <code class="highlighter-rouge">@critter</code> object that was defined in the controller’s <code class="highlighter-rouge">destroy</code> action to find the exact <code class="highlighter-rouge">&lt;tr&gt;</code> on the table. Then we remove it by calling <code class="highlighter-rouge">.remove()</code> on it.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+
+</code></pre></div></div>
+
+<p>Voila! That’s it! Refresh your page again, then go through the process of deleting another record. You should see your record has been removed from the index and the page was not reloaded via the controller. Pretty nifty ;)</p>
+
+<h1 id="next-editing-records">Next: Editing Records</h1>
+<p>Alright! That’s it for deleting records. My next post on editing records from the index page is coming soon.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

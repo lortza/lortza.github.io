@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 2 - Editing Records
+title:  Single Page CRUD App in Rails - Part 3 - Editing Records
 date:   2018-03-30
 ---
 
@@ -8,9 +8,9 @@ This is the second post in my Single Page CRUD App in Rails series. If you haven
 
 Since each of the crud actions takes several steps, I've broken this post into a few different posts, each focusing on one of the actions.
 
-- [Part 1: New Records]({% post_url 2018-03-23-single-page-crud-p1 %})
-- [Part 2: Editing Records (this post)]({% post_url 2018-03-30-single-page-crud-p2 %})
-- Part 3: Deleting Records (WIP)
+- [Part 1: New Records]({% post_url 2018-03-20-single-page-crud-p1 %})
+- [Part 2: Deleting Records]({% post_url 2018-03-23-single-page-crud-p2 %})
+- Part 3: Editing Records (WIP)
 
 # Editing a Record
 
