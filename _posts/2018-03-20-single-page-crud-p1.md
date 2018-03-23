@@ -4,7 +4,7 @@ title:  Single Page CRUD App in Rails - Part 1 - New Records
 date:   2018-03-20
 ---
 
-I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built a simple app (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live -- because, in the words of [Mattias Petter Johansson](https://youtu.be/BMUiFMZr7vk?t=4m19s), "we're writing enterprise grade software here." LOL.
+I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built a sample app (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live.
 
 This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the `index` page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I've broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.
 
