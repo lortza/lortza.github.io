@@ -1,3 +1,4 @@
 # Ignore doc files
+.sass-cache
 styles/.sass-cache
 styles/.sass-cache/*
