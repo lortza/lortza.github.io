@@ -80,7 +80,8 @@ In this file, we want to tell the javascript to render the `new` form partial on
 // Change the content of this div to the partial
 $('#critter-form-placeholder').html("<%= escape_javascript(render partial: 'new' ) %>");
 
-// Make sure the div is set to visible (because we'll be hiding it in a separate step)
+// Make the div visible (because we'll be hiding
+// it later in a separate step)
 document.getElementById("critter-form-placeholder").style.display = "block";
 ```
 
@@ -90,8 +91,9 @@ In Rails, when rendering a partial, we call it `'new'` but Rails will be looking
 <!-- app/views/critters/_new.html.erb -->
 
 <h3>New Critter</h3>
+<!-- Render the form partial, passing it @critter, which was
+     set in the controller's `new` action -->
 <%= render 'form', critter: @critter %>
-
 ```
 
 *Just to be clear* you need both `new.js.erb` and `_new.html.erb` files.
@@ -119,7 +121,9 @@ The `_new.html.erb` file is rendering _another_ partial, `_form.html.erb`, that 
   </div>
 
   <div class="actions">
-    <%= f.submit %><!-- Don't try to `remote: true` this button. It won't work. -->
+    <!-- Don't try to add `remote: true` to
+         this button. It won't work. -->
+    <%= f.submit %>
   </div>
 <% end %>
 ```

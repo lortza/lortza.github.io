@@ -140,7 +140,8 @@
 <span class="c1">// Change the content of this div to the partial</span>
 <span class="nx">$</span><span class="p">(</span><span class="s1">'#critter-form-placeholder'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'new' ) %&gt;"</span><span class="p">);</span>
 
-<span class="c1">// Make sure the div is set to visible (because we'll be hiding it in a separate step)</span>
+<span class="c1">// Make the div visible (because we'll be hiding</span>
+<span class="c1">// it later in a separate step)</span>
 <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"critter-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"block"</span><span class="p">;</span>
 </code></pre></div></div>
 
@@ -149,8 +150,9 @@
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_new.html.erb --&gt;</span>
 
 <span class="nt">&lt;h3&gt;</span>New Critter<span class="nt">&lt;/h3&gt;</span>
+<span class="c">&lt;!-- Render the form partial, passing it @critter, which was
+     set in the controller's `new` action --&gt;</span>
 <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'form'</span><span class="p">,</span> <span class="ss">critter: </span><span class="vi">@critter</span> <span class="cp">%&gt;</span>
-
 </code></pre></div></div>
 
 <p><em>Just to be clear</em> you need both <code class="highlighter-rouge">new.js.erb</code> and <code class="highlighter-rouge">_new.html.erb</code> files.</p>
@@ -177,7 +179,9 @@
   <span class="nt">&lt;/div&gt;</span>
 
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"actions"</span><span class="nt">&gt;</span>
-    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">submit</span> <span class="cp">%&gt;</span><span class="c">&lt;!-- Don't try to `remote: true` this button. It won't work. --&gt;</span>
+    <span class="c">&lt;!-- Don't try to add `remote: true` to
+         this button. It won't work. --&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">submit</span> <span class="cp">%&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
 <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
 </code></pre></div></div>
