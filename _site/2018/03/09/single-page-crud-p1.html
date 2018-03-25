@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Single Page CRUD App in Rails - Part 1 - New Records</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/03/09/single-page-crud-p1.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Single Page CRUD App in Rails - Part 1 - New Records</h1>
+    <p class="post-meta">March 9, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built a sample app (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called <code class="highlighter-rouge">critters</code> where I list a bunch of pets and a helper table called <code class="highlighter-rouge">cities</code> where I list the cities where they live.</p>
+
+<p>This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the <code class="highlighter-rouge">index</code> page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I’ve broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.</p>
+
+<ul>
+  <li><a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records (this post)</a></li>
+  <li><a href="/2018/03/16/single-page-crud-p2.html">Part 2: Deleting Records</a></li>
+  <li><a href="/2018/03/23/single-page-crud-p3.html">Part 3: Editing Records</a></li>
+</ul>
+
+<h2 id="adding-a-new-record">Adding a New Record</h2>
+<p>I want to be able to click a button that says “New Critter” and have a form appear on this same page just above the existing table of critters. The following key things need to happen here to make a new record:</p>
+
+<ol>
+  <li>Create a placeholder for the <code class="highlighter-rouge">new</code> form</li>
+  <li>Add a <code class="highlighter-rouge">new</code> link with <code class="highlighter-rouge">remote: true</code></li>
+  <li>Set up the controller <code class="highlighter-rouge">new</code> action and supporting javascript</li>
+</ol>
+
+<h3 id="1-create-a-placeholder-for-the-new-form">1. Create a Placeholder for the <code class="highlighter-rouge">new</code> Form</h3>
+<p>In order to do that, we need a placeholder in the HTML so the javscript knows where to render this form.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/index.html.erb --&gt;</span>
+
+<span class="nt">&lt;h1&gt;</span>Critters<span class="nt">&lt;/h1&gt;</span>
+
+<span class="c">&lt;!-- Insert an empty div with an id --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"critter-form-placeholder"</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+<span class="nt">&lt;table</span> <span class="na">class=</span><span class="s">"table"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;thead&gt;</span>
+  ...
+
+</code></pre></div></div>
+
+<h3 id="2-add-a-new-link-with-remote-true">2. Add a <code class="highlighter-rouge">new</code> Link with <code class="highlighter-rouge">remote: true</code></h3>
+<p>Add a <code class="highlighter-rouge">link_to</code> with the <code class="highlighter-rouge">new_critter_path</code> in the normal way. Then append it with <code class="highlighter-rouge">remote: true</code>. This tells the controller the we’re aiming for javascript and not the usual HTML response format.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/index.html.erb --&gt;</span>
+
+<span class="nt">&lt;h1&gt;</span>Critters<span class="nt">&lt;/h1&gt;</span>
+
+<span class="nt">&lt;div&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'+ New Critter'</span><span class="p">,</span> <span class="n">new_critter_path</span><span class="p">,</span> <span class="ss">remote: </span><span class="kp">true</span> <span class="cp">%&gt;</span><span class="nt">&lt;/div&gt;</span>
+
+...
+</code></pre></div></div>
+
+<h3 id="3-set-up-the-controller-new-action-and-supporting-javascript">3. Set up the Controller <code class="highlighter-rouge">new</code> Action and Supporting Javascript</h3>
+<p>Since our link says <code class="highlighter-rouge">remote: true</code>, we need to provide the controller with the appropriate instructions to handle it. It’s expecting to see javascript, so we need to tell it to  respond with javascript:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">CrittersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<span class="o">...</span>
+
+  <span class="k">def</span> <span class="nf">new</span>
+    <span class="vi">@critter</span> <span class="o">=</span> <span class="no">Critter</span><span class="p">.</span><span class="nf">new</span>
+    <span class="n">respond_to</span> <span class="ss">:js</span>         <span class="c1">#&lt;-- here</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>This also means that the controller is expecting to find a file called <code class="highlighter-rouge">new.js</code>. Since we’re going to render a little erb in our file, we’ll call ours <code class="highlighter-rouge">new.js.erb</code> and the controller will still be satisfied.</p>
+
+<p>In this file, we want to tell the javascript to render the <code class="highlighter-rouge">new</code> form partial on the index page. To do that, grab the placeholder div using the id, then use the Rails helper <code class="highlighter-rouge">escape_javascript</code> to execute javascript’s <code class="highlighter-rouge">preventDefault()</code> function and render the partial.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/new.js.erb</span>
+
+<span class="c1">// Change the content of this div to the partial</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">'#critter-form-placeholder'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'new' ) %&gt;"</span><span class="p">);</span>
+
+<span class="c1">// Make the div visible (because we'll be hiding</span>
+<span class="c1">// it later in a separate step)</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"critter-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"block"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>In Rails, when rendering a partial, we call it <code class="highlighter-rouge">'new'</code> but Rails will be looking for a file called <code class="highlighter-rouge">_new</code>. Create a file called (or rename your existing file to) <code class="highlighter-rouge">_new.html.erb</code> to stand in as your “new” view, and give it this content:</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_new.html.erb --&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>New Critter<span class="nt">&lt;/h3&gt;</span>
+<span class="c">&lt;!-- Render the form partial, passing it @critter, which was
+     set in the controller's `new` action --&gt;</span>
+<span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'form'</span><span class="p">,</span> <span class="ss">critter: </span><span class="vi">@critter</span> <span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<p><em>Just to be clear</em> you need both <code class="highlighter-rouge">new.js.erb</code> and <code class="highlighter-rouge">_new.html.erb</code> files.</p>
+
+<p>The <code class="highlighter-rouge">_new.html.erb</code> file is rendering <em>another</em> partial, <code class="highlighter-rouge">_form.html.erb</code>, that actually houses the form. This is Rails convention and it will come in handy later when we go to edit a record. The <code class="highlighter-rouge">_form.html.erb</code> behaves as it usually does, with one exception: it needs to be set to <code class="highlighter-rouge">remote: true</code>. When I was working through this step, I first set the <code class="highlighter-rouge">submit</code> button link to <code class="highlighter-rouge">remote: true</code> and <em>that does not work</em>. Instead, you need to set the form action to <code class="highlighter-rouge">remote: true</code>.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_form.html.erb --&gt;</span>
+
+<span class="c">&lt;!-- Set the form action to remote: true like this: --&gt;</span>
+<span class="cp">&lt;%=</span> <span class="n">form_for</span><span class="p">(</span><span class="n">critter</span><span class="p">,</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">label</span> <span class="ss">:name</span> <span class="cp">%&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">text_field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">class: </span><span class="s1">'form-control'</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"field"</span><span class="nt">&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">label</span> <span class="ss">:color</span> <span class="cp">%&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">text_field</span> <span class="ss">:color</span><span class="p">,</span> <span class="ss">class: </span><span class="s1">'form-control'</span>  <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"field col-sm-12"</span><span class="nt">&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">label</span> <span class="ss">:city</span> <span class="cp">%&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">collection_select</span> <span class="ss">:city_id</span><span class="p">,</span> <span class="no">City</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="ss">:name</span><span class="p">),</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">class: </span><span class="s1">'form-control'</span>  <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"actions"</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- Don't try to add `remote: true` to
+         this button. It won't work. --&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">submit</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<p>At this point, you should be able to go to your index page, click the “New Critter” button, and see your form appear on the page. Hooray!</p>
+
+<p>If you fill out and submit your form, your critter record will save (assuming you have the default Rails <code class="highlighter-rouge">create</code> action set up in your controller), but your view will not change. This is the expected behavior. You can refresh the page and the new critter record will appear in the table.</p>
+
+<p>But we want MORE, right? We still want to see the new critter record show up on the index page without needing to refresh the page.</p>
+
+<h2 id="displaying-the-new-record-on-the-index-page">Displaying the New Record on the Index Page</h2>
+<p>Now that we’ve created the new record, we want it to display dynamically on the index page. These key things need to happen here to display the record dynamically:</p>
+
+<ol>
+  <li>Convert the HTML in the table record to a partial</li>
+  <li>Set an <code class="highlighter-rouge">id</code> on the <code class="highlighter-rouge">&lt;tbody&gt;</code> element</li>
+  <li>Set up the controller <code class="highlighter-rouge">create</code> action and supporting javascript</li>
+</ol>
+
+<h3 id="1-convert-the-html-in-the-table-record-to-a-partial">1. Convert the HTML in the Table Record to a Partial</h3>
+<p>In order to make a new record appear in the table via javascript, we’ll need a partial to house the data from that record. Given our current table HTML, each “record” is just a row in the table, so  extract the table row out into a partial called <code class="highlighter-rouge">_critter.html.erb</code>.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
+
+<span class="nt">&lt;tr&gt;</span>
+  <span class="nt">&lt;td&gt;&lt;h4&gt;</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h4&gt;&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span>is a <span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">color</span> <span class="cp">%&gt;</span> critter who lives in <span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">city</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span>"<span class="nt">&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Edit'</span><span class="p">,</span> <span class="n">edit_critter_path</span><span class="p">(</span><span class="n">critter</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="nt">&lt;/td&gt;</span>
+  <span class="nt">&lt;td&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Destroy'</span><span class="p">,</span> <span class="n">critter</span><span class="p">,</span> <span class="ss">method: :delete</span><span class="p">,</span> <span class="ss">data: </span><span class="p">{</span> <span class="ss">confirm: </span><span class="s1">'Are you sure?'</span> <span class="p">}</span> <span class="cp">%&gt;</span><span class="nt">&lt;/td&gt;</span>
+<span class="nt">&lt;/tr&gt;</span>
+
+</code></pre></div></div>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/index.html.erb --&gt;</span>
+...
+<span class="nt">&lt;table&gt;</span>
+  ...
+  <span class="nt">&lt;tbody&gt;</span>
+    <span class="cp">&lt;%</span> <span class="vi">@critters</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">critter</span><span class="o">|</span> <span class="cp">%&gt;</span>
+
+      <span class="c">&lt;!-- Replace the table row with a partial,
+           passing it the local critter object --&gt;</span>
+      <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'critter'</span><span class="p">,</span> <span class="ss">critter: </span><span class="n">critter</span> <span class="cp">%&gt;</span>
+
+    <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/tbody&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+
+</code></pre></div></div>
+
+<h3 id="2-set-an-id-on-the-tbody-element">2. Set an <code class="highlighter-rouge">id</code> on the <code class="highlighter-rouge">&lt;tbody&gt;</code> Element</h3>
+<p>Jumping back to the <code class="highlighter-rouge">index</code> page, we need to choose a specific place for the new critter record to be added via javascript. I’m choosing the <code class="highlighter-rouge">&lt;tbody&gt;</code> as a parent. This way, when we append each new record partial, it will be added as a child <code class="highlighter-rouge">&lt;tr&gt;</code> to that <code class="highlighter-rouge">&lt;tbody&gt;</code> parent element.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/index.html.erb --&gt;</span>
+...
+<span class="nt">&lt;table&gt;</span>
+  ...
+  <span class="nt">&lt;tbody</span> <span class="na">id=</span><span class="s">"critters"</span><span class="nt">&gt;</span> <span class="c">&lt;!-- Add an id here so we can find it with javascript --&gt;</span>
+    <span class="cp">&lt;%</span> <span class="vi">@critters</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">critter</span><span class="o">|</span> <span class="cp">%&gt;</span>
+      <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'critter'</span><span class="p">,</span> <span class="ss">critter: </span><span class="n">critter</span> <span class="cp">%&gt;</span>
+    <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/tbody&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</code></pre></div></div>
+
+<h3 id="3-set-up-the-controller-create-action-and-supporting-javascript">3. Set up the Controller <code class="highlighter-rouge">create</code> Action and Supporting Javascript</h3>
+
+<p>Similarly to how we set up the <code class="highlighter-rouge">new</code> action, we need to set the <code class="highlighter-rouge">create</code> action to respond to javascript:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">CrittersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="vi">@critter</span> <span class="o">=</span> <span class="no">Critter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">critter_params</span><span class="p">)</span>
+    <span class="vi">@critter</span><span class="p">.</span><span class="nf">save</span>
+    <span class="n">respond_to</span> <span class="ss">:js</span>         <span class="c1">#&lt;-- here</span>
+  <span class="k">end</span>
+
+  <span class="o">...</span>
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">set_critter</span>
+    <span class="vi">@critter</span> <span class="o">=</span> <span class="no">Critter</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">critter_params</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:critter</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:city_id</span><span class="p">,</span> <span class="ss">:color</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+</code></pre></div></div>
+
+<p>Now that the controller is looking for a <code class="highlighter-rouge">create.js</code> file, we need to supply it with one. Similarly to when we created the <code class="highlighter-rouge">new</code> action, we’ll create a <code class="highlighter-rouge">create.js.erb</code> to render the javascript. We don’t need to make the <code class="highlighter-rouge">_create.html.erb</code> file, because we don’t need to render a “create” partial. Instead, we’ll be rendering our <code class="highlighter-rouge">_critter.html.erb</code> partial.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/create.js.erb</span>
+
+<span class="c1">// Place the newly-populated `_critter` partial as the last row in the</span>
+<span class="c1">// table, passing it the @critter value as defined in the controller's</span>
+<span class="c1">// `create` action</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">'tbody#critters'</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;"</span><span class="p">);</span>
+
+<span class="c1">// Make sure the 'new' form is hidden</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"critter-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"none"</span><span class="p">;</span>
+
+</code></pre></div></div>
+
+<p>Give it a whirl! Refresh your index page, then add a new critter. You’ll see your new record appear as the last record in the table.</p>
+
+<h2 id="next-deleting-records">Next: Deleting Records</h2>
+<p>Alright! That’s it for creating and displaying new records. It’s time to move on to <a href="/2018/03/16/single-page-crud-p2.html">Part 2: Deleting Records from the Index Page</a>.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

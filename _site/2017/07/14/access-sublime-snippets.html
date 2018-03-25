@@ -65,39 +65,54 @@
   <article class="post-content">
     <p>Once I discovered the power of SublimeText’s snippet feature, there was no turning back. Any time I find myself typing a thing that could be automated, I make a snippet for it. The trouble is, sometimes I like to look back at my existing snippets, but I couldn’t get to them easily. Well, I’ve solved that problem today and figured I’d share it with you. Here is how to easily access your existing Sublime snippets on a mac.</p>
 
-<p>Step 1. Create an alias called <code>snippets</code> in your <code>.bash_profile</code>.
-In terminal, open your <code>.bash_profile</code> file in your default text editor.</p>
+<p>Step 1. Create an alias called <code class="highlighter-rouge">snippets</code> in your <code class="highlighter-rouge">.bash_profile</code>.
+In terminal, open your <code class="highlighter-rouge">.bash_profile</code> file in your default text editor.</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># if sublime is set as your default text editor</span>
-<span class="nb">open</span> <span class="o">~</span><span class="sr">/.bash_profile
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># if sublime is set as your default text editor</span>
+<span class="nv">$ </span>open ~/.bash_profile
 
-# if you use the subl shortcut
-subl ~/</span><span class="p">.</span><span class="nf">bash_profile</span></code></pre></figure>
+<span class="c"># if you use the subl shortcut</span>
+<span class="nv">$ </span>subl ~/.bash_profile
+</code></pre></div></div>
 
 <p>Step 2. Add one of these aliases to the bottom of your file (or next to any other aliases you may have)</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># for SublimeText 3</span>
-<span class="k">alias</span> <span class="n">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User ; ls'</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># .bash_profile</span>
 
-<span class="c1"># for SublimeText 2</span>
-<span class="k">alias</span> <span class="n">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User ; ls'</span></code></pre></figure>
+<span class="c"># for SublimeText 3</span>
+<span class="nb">alias </span><span class="nv">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User ; ls'</span>
 
-<p>Step 4. Save the <code>.bash_profile</code> file</p>
+<span class="c"># for SublimeText 2</span>
+<span class="nb">alias </span><span class="nv">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User ; ls'</span>
+</code></pre></div></div>
+
+<p>Step 4. Save the <code class="highlighter-rouge">.bash_profile</code> file</p>
 
 <p>Step 5. Restart terminal</p>
 
 <p>Step 6. Try it out!
 Type your new alias at your command prompt</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">snippets</span></code></pre></figure>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>snippets
+</code></pre></div></div>
 
 <p>This will open the snippets directory and show a list of all existing snippets. From here, you can open any of those snippet files in your default text editor with:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">open</span> <span class="n">file_name_goes_here</span></code></pre></figure>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>open file_name_goes_here
+</code></pre></div></div>
 
 <p>or if you prefer to open the snippets folder in Finder window, you can open a finder window like this:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">cd</span> <span class="o">..</span><span class="sr">/; open User</span></code></pre></figure>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd</span> ../<span class="p">;</span> open User
+</code></pre></div></div>
+
+<p>Personally, my favorite spin is to map my alias to open a sublime project folder with all of my snippets. This way, I can move around easily between all existing snippet files:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># my .bash_profile</span>
+<span class="nb">alias </span><span class="nv">snippets</span><span class="o">=</span><span class="s1">'cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User ; subl .'</span>
+
+<span class="c"># terminal</span>
+<span class="nv">$ </span>snippets
+</code></pre></div></div>
 
 <p>That’s it! This discovery has really made my day. I hope it’s helpful to you too.</p>
 

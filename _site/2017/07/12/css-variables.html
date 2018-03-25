@@ -67,31 +67,39 @@
 
 <p>Set them up in a root block at the top of your stylesheet:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="ss">:root</span> <span class="p">{</span>
-  <span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#2C9C20;</span>
-  <span class="o">--</span><span class="n">secondary</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#317BE1;</span>
-  <span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="ss">size: </span><span class="mi">50</span><span class="n">px</span><span class="p">;</span>
-<span class="p">}</span></code></pre></figure>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* stylesheet.css */</span>
 
-<p>And use them in a class with a <code>var()</code>:</p>
+<span class="nd">:root</span> <span class="p">{</span>
+  <span class="py">--brand-color</span><span class="p">:</span> <span class="m">#2C9C20</span><span class="p">;</span>
+  <span class="py">--secondary-color</span><span class="p">:</span> <span class="m">#317BE1</span><span class="p">;</span>
+  <span class="py">--fave-size</span><span class="p">:</span> <span class="m">50px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="ss">:root</span> <span class="p">{</span>
-  <span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#2C9C20;</span>
-  <span class="o">--</span><span class="n">secondary</span><span class="o">-</span><span class="ss">color: </span><span class="c1">#317BE1;</span>
-  <span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="ss">size: </span><span class="mi">50</span><span class="n">px</span><span class="p">;</span>
+<p>And use them in a class with a <code class="highlighter-rouge">var()</code>:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* stylesheet.css */</span>
+
+<span class="nd">:root</span> <span class="p">{</span>
+  <span class="py">--brand-color</span><span class="p">:</span> <span class="m">#2C9C20</span><span class="p">;</span>
+  <span class="py">--secondary-color</span><span class="p">:</span> <span class="m">#317BE1</span><span class="p">;</span>
+  <span class="py">--fave-size</span><span class="p">:</span> <span class="m">50px</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="p">.</span><span class="nf">awesome</span><span class="o">-</span><span class="k">class</span> <span class="p">{</span>
-    <span class="n">background</span><span class="o">-</span><span class="ss">color: </span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">brand</span><span class="o">-</span><span class="n">color</span><span class="p">);</span>
-    <span class="ss">height: </span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">fave</span><span class="o">-</span><span class="n">size</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
+<span class="nc">.awesome-class</span> <span class="p">{</span>
+    <span class="nl">background-color</span><span class="p">:</span> <span class="n">var</span><span class="p">(</span><span class="n">--brand-color</span><span class="p">);</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="n">var</span><span class="p">(</span><span class="n">--fave-size</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>They even work inside the CSS <code>calc()</code> function:</p>
+<p>They even work inside the CSS <code class="highlighter-rouge">calc()</code> function:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">.</span><span class="nf">awesome</span><span class="o">-</span><span class="k">class</span> <span class="p">{</span>
-    <span class="o">...</span>
-    <span class="n">margin</span><span class="o">-</span><span class="ss">bottom: </span><span class="n">calc</span><span class="p">(</span><span class="n">var</span><span class="p">(</span><span class="o">--</span><span class="n">height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* stylesheet.css */</span>
+
+<span class="nc">.another-class</span> <span class="p">{</span>
+    <span class="nl">margin-bottom</span><span class="p">:</span> <span class="n">calc</span><span class="p">(</span><span class="n">var</span><span class="p">(</span><span class="n">--height</span><span class="p">)</span> <span class="err">*</span> <span class="m">2</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Hooray! This discovery really made my day.</p>
 

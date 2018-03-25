@@ -69,31 +69,33 @@
 
 <h4 id="return-true-if-a-given-number-is-prime">Return true if a given number is prime</h4>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'prime'</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'prime'</span>
 
 <span class="no">Prime</span><span class="p">.</span><span class="nf">prime?</span><span class="p">(</span><span class="mi">8753</span><span class="p">)</span>
 <span class="c1">#=&gt; true</span>
 
 <span class="no">Prime</span><span class="p">.</span><span class="nf">prime?</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="c1">#=&gt; false</span></code></pre></figure>
+<span class="c1">#=&gt; false</span>
+</code></pre></div></div>
 
 <p>Awwwwww yeah! That’s the stuff right there.</p>
 
 <h4 id="generate-a-list-of-primes-starting-with-2-through-a-given-number">Generate a list of primes starting with 2 through a given number</h4>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'prime'</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'prime'</span>
 
 <span class="no">Prime</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">prime</span><span class="o">|</span>
   <span class="nb">p</span> <span class="n">prime</span>
 <span class="k">end</span>
 
-<span class="c1">#=&gt; 2, 3, 5, 7, 11, 13, 17, 19, 23</span></code></pre></figure>
+<span class="c1">#=&gt; 2, 3, 5, 7, 11, 13, 17, 19, 23</span>
+</code></pre></div></div>
 
-<p>Those two methods alone have pretty much handled any prime number code challenge that’s comes my way. If the challenge is about researching a programming language to see what options are available, this approach wins – hooray!– because learning a language’s libraries and methods makes us stronger, faster, and more efficient. Ah yes, proficiency leads to efficiency… I like that.</p>
+<p>Those two methods alone have pretty much handled any prime number code challenge that has come my way. If the challenge is about researching a programming language to see what options are available, this approach wins – hooray!– because learning a language’s libraries and methods makes us stronger, faster, and more efficient. Ah yes, proficiency leads to efficiency… I like that.</p>
 
-<h4 id="creating-our-own-is_prime-method">Creating our own <code class="highlighter-rouge">is_prime</code> method</h4>
+<h3 id="creating-our-own-is_prime-method">Creating our own <code class="highlighter-rouge">is_prime</code> method</h3>
 
-<p>But let’s be honest, code challenges involving math are usually focused on manipulating the <em>basics</em> of a language to solve a math problem, not about accessing the libraries or gems you’d probably use in real life. Code challenges like to make you do logic calisthenics, so let’s do this thing the hard way.</p>
+<p>But, I need to be honest with myself. The code challenges involving math are usually focused on language-indiscriminate programming savvy to solve a math problem, not about accessing the libraries or gems you’d probably use in real life. Code challenges like to make you do logic calisthenics, so let’s do this thing the hard way.</p>
 
 <p>Here’s some pseudocode for my approach:</p>
 
@@ -112,7 +114,7 @@
 
 <h4 id="using-the-ruby-each-loop">Using the Ruby <code class="highlighter-rouge">each</code> loop:</h4>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
   <span class="p">(</span><span class="mi">2</span><span class="o">..</span><span class="p">(</span><span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span>
     <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span>
   <span class="k">end</span>
@@ -123,11 +125,12 @@
 <span class="c1">#=&gt; true</span>
 
 <span class="n">is_prime</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="c1">#=&gt; false</span></code></pre></figure>
+<span class="c1">#=&gt; false</span>
+</code></pre></div></div>
 
 <h4 id="using-a-ruby-while-loop">Using a Ruby <code class="highlighter-rouge">while</code> loop:</h4>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
   <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">num</span>
     <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span>
@@ -140,13 +143,14 @@
 <span class="c1">#=&gt; true</span>
 
 <span class="n">is_prime</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="c1">#=&gt; false</span></code></pre></figure>
+<span class="c1">#=&gt; false</span>
+</code></pre></div></div>
 
 <p>The Ruby while loop approach might feel familiar to people coming to Ruby from JavaScript because its iteration is transparent like <a href="https://www.w3schools.com/js/js_loop_for.asp" rel="noopener" target="_blank">JavaScript’s for loop</a>. After all, there’s none of that kludgy <code class="highlighter-rouge">(2..(num - 1))</code> to define the iteration range like there is in the Ruby <code class="highlighter-rouge">each</code> loop. For good measure, here is a JavaScript version of <code class="highlighter-rouge">isPrime</code>.</p>
 
 <h4 id="using-the-javascript-for-loop">Using the JavaScript <code class="highlighter-rouge">for</code> loop:</h4>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">isPrime</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">isPrime</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
   <span class="k">for</span> <span class="p">(</span><span class="nx">n</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">n</span> <span class="o">&lt;</span> <span class="nx">num</span><span class="p">;</span> <span class="nx">n</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">%</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
   <span class="p">}</span>
@@ -157,7 +161,8 @@
 <span class="c1">//=&gt; true</span>
 
 <span class="nx">isPrime</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
-<span class="c1">//=&gt; false</span></code></pre></figure>
+<span class="c1">//=&gt; false</span>
+</code></pre></div></div>
 
   </article>
 

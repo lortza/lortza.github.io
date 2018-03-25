@@ -67,38 +67,42 @@
 
 <p>An example with an output array of doubled values:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
 
 <span class="n">nums</span><span class="p">.</span><span class="nf">each_with_object</span><span class="p">([])</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="p">,</span> <span class="n">output</span><span class="o">|</span>
-  <span class="n">output</span> <span class="o">&lt;</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span></code></pre></figure>
+<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span>
+</code></pre></div></div>
 
 <p>You may say, “meh, this works one heck of a lot like <a href="https://apidock.com/ruby/Enumerable/map" target="_blank" alt="api dock" title="api dock"><code class="highlighter-rouge">map</code></a> but clunkier.” And you’d be right.</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
 
 <span class="n">nums</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span>
   <span class="n">num</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="k">end</span>
 
-<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span></code></pre></figure>
+<span class="c1">#=&gt; [2, 4, 6, 8, 10]</span>
+</code></pre></div></div>
 
-<p>But if you want to output a <strong><em>hash</em></strong>, you may start to see its value. Here we’ll output a hash that counts instances of a letter in an array:</p>
+<p>But if you want to output a <em>_hash_</em>, you may start to see its value. Here we’ll output a hash that counts instances of a letter in an array:</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">letters</span> <span class="o">=</span> <span class="sx">%w[a a a b c c d e e e f f f f g g]</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">letters</span> <span class="o">=</span> <span class="sx">%w[a a a b c c d e e e f f f f g g]</span>
 
 <span class="n">letters</span><span class="p">.</span><span class="nf">each_with_object</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="p">,</span> <span class="n">output</span><span class="o">|</span>
   <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="p">?</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="k">end</span>
 
-<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span></code></pre></figure>
+<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span>
+</code></pre></div></div>
 
-<p>Now that’s pretty nifty.
-The other option is to use plain <code class="highlighter-rouge">each</code>, hoist the output variable in advance, and then return it. Like this:</p>
+<p>Now that’s pretty nifty.</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+<p>Another option is to use plain <code class="highlighter-rouge">each</code>, hoist the output variable in advance, and then return it. Like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="n">letters</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">letter</span><span class="o">|</span>
   <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="p">?</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
@@ -106,7 +110,8 @@ The other option is to use plain <code class="highlighter-rouge">each</code>, ho
 
 <span class="n">output</span>
 
-<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span></code></pre></figure>
+<span class="c1">#=&gt; {"a"=&gt;3, "b"=&gt;1, "c"=&gt;2, "d"=&gt;1, "e"=&gt;3, "f"=&gt;4, "g"=&gt;2}</span>
+</code></pre></div></div>
 
 <p>But this ain’t JavaScript, so why hoist if you don’t have to? ;)</p>
 
