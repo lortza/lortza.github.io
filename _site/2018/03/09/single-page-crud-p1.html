@@ -11,7 +11,7 @@
  blog and portfolio">
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="canonical" href="http://localhost:4000/2018/03/20/single-page-crud-p1.html">
+    <link rel="canonical" href="http://localhost:4000/2018/03/09/single-page-crud-p1.html">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 </head>
@@ -59,7 +59,7 @@
 
   <header class="post-header">
     <h1 class="post-title">Single Page CRUD App in Rails - Part 1 - New Records</h1>
-    <p class="post-meta">March 20, 2018</p>
+    <p class="post-meta">March 9, 2018</p>
   </header>
 
   <article class="post-content">
@@ -68,9 +68,9 @@
 <p>This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the <code class="highlighter-rouge">index</code> page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I’ve broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.</p>
 
 <ul>
-  <li><a href="/2018/03/20/single-page-crud-p1.html">Part 1: New Records (this post)</a></li>
-  <li><a href="/2018/03/23/single-page-crud-p2.html">Part 2: Deleting Records</a></li>
-  <li>Part 3: Editing Records (WIP)</li>
+  <li><a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records (this post)</a></li>
+  <li><a href="/2018/03/16/single-page-crud-p2.html">Part 2: Deleting Records</a></li>
+  <li><a href="/2018/03/23/single-page-crud-p3.html">Part 3: Editing Records</a></li>
 </ul>
 
 <h2 id="adding-a-new-record">Adding a New Record</h2>
@@ -256,6 +256,10 @@
 
   <span class="o">...</span>
   <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">set_critter</span>
+    <span class="vi">@critter</span> <span class="o">=</span> <span class="no">Critter</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="k">end</span>
+
   <span class="k">def</span> <span class="nf">critter_params</span>
     <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:critter</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:city_id</span><span class="p">,</span> <span class="ss">:color</span><span class="p">)</span>
   <span class="k">end</span>
@@ -279,7 +283,7 @@
 <p>Give it a whirl! Refresh your index page, then add a new critter. You’ll see your new record appear as the last record in the table.</p>
 
 <h2 id="next-deleting-records">Next: Deleting Records</h2>
-<p>Alright! That’s it for creating and displaying new records. It’s time to move on to <a href="/2018/03/23/single-page-crud-p2.html">Part 2: Deleting Records from the Index Page</a>.</p>
+<p>Alright! That’s it for creating and displaying new records. It’s time to move on to <a href="/2018/03/16/single-page-crud-p2.html">Part 2: Deleting Records from the Index Page</a>.</p>
 
 
   </article>

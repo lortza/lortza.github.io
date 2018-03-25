@@ -1,17 +1,12 @@
 ---
 layout: post
 title:  Single Page CRUD App in Rails - Part 2 - Deleting Records
-date:   2018-03-23
+date:   2018-03-16
 ---
 
-This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-20-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app. This code is from my app built in Rails 5.0.6, Ruby 2.4.2.
-
-- [Part 1: New Records]({% post_url 2018-03-20-single-page-crud-p1 %})
-- [Part 2: Deleting Records (this post)]({% post_url 2018-03-23-single-page-crud-p2 %})
-- Part 3: Editing Records (WIP)
+This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app's codebase. The code in this tutorial is from an app I built in Rails 5.0.6, Ruby 2.4.2.
 
 ## Deleting a Record
-
 The process for deleting a record is very similar to the process for creating a new record. These key things need to happen in order to delete a record:
 
 1. Identify each record `<tr>` by id
@@ -94,6 +89,7 @@ $("#critter_<%= @critter.id %>").remove();
 
 Voila! That's it! Refresh your page again, then go through the process of deleting another record. You should see your record has been removed from the index and the page was not reloaded via the controller. Pretty nifty ;)
 
-# Next: Editing Records
-Alright! That's it for deleting records. My next post on editing records from the index page is coming soon.
+## Next: Editing Records
+Alright! That's it for creating and displaying new records. It's time to move on to [Part 3: Editing Records from the Index Page]({% post_url 2018-03-23-single-page-crud-p3 %}).
+
 

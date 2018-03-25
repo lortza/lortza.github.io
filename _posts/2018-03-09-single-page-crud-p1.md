@@ -1,16 +1,16 @@
 ---
 layout: post
 title:  Single Page CRUD App in Rails - Part 1 - New Records
-date:   2018-03-20
+date:   2018-03-09
 ---
 
 I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built a sample app (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live.
 
 This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the `index` page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I've broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.
 
-- [Part 1: New Records (this post)]({% post_url 2018-03-20-single-page-crud-p1 %})
-- [Part 2: Deleting Records]({% post_url 2018-03-23-single-page-crud-p2 %})
-- Part 3: Editing Records (WIP)
+- [Part 1: New Records (this post)]({% post_url 2018-03-09-single-page-crud-p1 %})
+- [Part 2: Deleting Records]({% post_url 2018-03-16-single-page-crud-p2 %})
+- [Part 3: Editing Records]({% post_url 2018-03-23-single-page-crud-p3 %})
 
 ## Adding a New Record
 I want to be able to click a button that says "New Critter" and have a form appear on this same page just above the existing table of critters. The following key things need to happen here to make a new record:
@@ -205,6 +205,10 @@ class CrittersController < ApplicationController
 
   ...
   private
+  def set_critter
+    @critter = Critter.find(params[:id])
+  end
+
   def critter_params
     params.require(:critter).permit(:name, :city_id, :color)
   end
@@ -229,5 +233,5 @@ document.getElementById("critter-form-placeholder").style.display = "none";
 Give it a whirl! Refresh your index page, then add a new critter. You'll see your new record appear as the last record in the table.
 
 ## Next: Deleting Records
-Alright! That's it for creating and displaying new records. It's time to move on to [Part 2: Deleting Records from the Index Page]({% post_url 2018-03-23-single-page-crud-p2 %}).
+Alright! That's it for creating and displaying new records. It's time to move on to [Part 2: Deleting Records from the Index Page]({% post_url 2018-03-16-single-page-crud-p2 %}).
 
