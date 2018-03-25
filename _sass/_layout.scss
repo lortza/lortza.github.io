@@ -164,11 +164,11 @@ img.about-pic {
   margin-bottom: $vertical-spacing-unit;
 }
 .post-title {
-  font-size: 35px;
+  font-size: 30px;
   letter-spacing: -1px;
   line-height: 1;
   @include media-query($on-laptop) {
-    font-size: 36px;
+    font-size: 30px;
   }
 }
 .post-content {

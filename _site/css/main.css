@@ -302,12 +302,12 @@ img.about-pic {
   margin-bottom: 40px; }
 
 .post-title {
-  font-size: 35px;
+  font-size: 30px;
   letter-spacing: -1px;
   line-height: 1; }
   @media screen and (max-width: 800px) {
     .post-title {
-      font-size: 36px; } }
+      font-size: 30px; } }
 
 .post-content h2 {
   font-size: 30px !important;
