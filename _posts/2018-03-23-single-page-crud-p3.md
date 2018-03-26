@@ -6,7 +6,7 @@ date:   2018-03-23
 
 Well here we are in the final stretch of making our Rails app AJAX CRUDdy! I saved this section for last because, well, it was the last section I figured out how to do, and because it builds on patterns we used in both the [creating (Part 1)]({% post_url 2018-03-09-single-page-crud-p1 %}) and the [destroying (Part 2)]({% post_url 2018-03-16-single-page-crud-p2 %}) processes.
 
-This is the third and final post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen the previous parts, I recommend you start with [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}) as it sets the stage for the app's codebase. The code in this tutorial is from an app I built in Rails 5.0.6, Ruby 2.4.2.
+This is the third and final post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen the previous parts, I recommend you start with [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}) as it sets the stage for the app's codebase. The code in this tutorial is from [an app I built](https://github.com/lortza/single_page_crud) in Rails 5.0.6, Ruby 2.4.2.
 
 ## Editing a Record
 

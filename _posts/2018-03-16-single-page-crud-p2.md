@@ -4,7 +4,7 @@ title:  Single Page CRUD App in Rails - Part 2 - Deleting Records
 date:   2018-03-16
 ---
 
-This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app's codebase. The code in this tutorial is from an app I built in Rails 5.0.6, Ruby 2.4.2.
+This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app's codebase. The code in this tutorial is from [an app I built](https://github.com/lortza/single_page_crud) in Rails 5.0.6, Ruby 2.4.2.
 
 ## Deleting a Record
 The process for deleting a record is very similar to the process for creating a new record. These key things need to happen in order to delete a record:
