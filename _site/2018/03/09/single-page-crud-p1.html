@@ -63,7 +63,7 @@
   </header>
 
   <article class="post-content">
-    <p>I’ve been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built a sample app (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called <code class="highlighter-rouge">critters</code> where I list a bunch of pets and a helper table called <code class="highlighter-rouge">cities</code> where I list the cities where they live.</p>
+    <p>I’ve been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built <a href="https://github.com/lortza/single_page_crud">a sample app</a> (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called <code class="highlighter-rouge">critters</code> where I list a bunch of pets and a helper table called <code class="highlighter-rouge">cities</code> where I list the cities where they live.</p>
 
 <p>This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the <code class="highlighter-rouge">index</code> page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I’ve broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.</p>
 
@@ -90,7 +90,7 @@
 <span class="nt">&lt;h1&gt;</span>Critters<span class="nt">&lt;/h1&gt;</span>
 
 <span class="c">&lt;!-- Insert an empty div with an id --&gt;</span>
-<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"critter-form-placeholder"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"new-form-placeholder"</span><span class="nt">&gt;&lt;/div&gt;</span>
 
 <span class="nt">&lt;table</span> <span class="na">class=</span><span class="s">"table"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;thead&gt;</span>
@@ -131,11 +131,11 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/new.js.erb</span>
 
 <span class="c1">// Change the content of this div to the partial</span>
-<span class="nx">$</span><span class="p">(</span><span class="s1">'#critter-form-placeholder'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'new' ) %&gt;"</span><span class="p">);</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">'#new-form-placeholder'</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'new' ) %&gt;"</span><span class="p">);</span>
 
 <span class="c1">// Make the div visible (because we'll be hiding</span>
 <span class="c1">// it later in a separate step)</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"critter-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"block"</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"new-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"block"</span><span class="p">;</span>
 </code></pre></div></div>
 
 <p>In Rails, when rendering a partial, we call it <code class="highlighter-rouge">'new'</code> but Rails will be looking for a file called <code class="highlighter-rouge">_new</code>. Create a file called (or rename your existing file to) <code class="highlighter-rouge">_new.html.erb</code> to stand in as your “new” view, and give it this content:</p>
@@ -276,7 +276,7 @@
 <span class="nx">$</span><span class="p">(</span><span class="s1">'tbody#critters'</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;"</span><span class="p">);</span>
 
 <span class="c1">// Make sure the 'new' form is hidden</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"critter-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"none"</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"new-form-placeholder"</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s2">"none"</span><span class="p">;</span>
 
 </code></pre></div></div>
 

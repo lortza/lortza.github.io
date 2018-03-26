@@ -6,40 +6,20 @@ date:   2018-03-23
 
 Well here we are in the final stretch of making our Rails app AJAX CRUDdy! I saved this section for last because, well, it was the last section I figured out how to do, and because it builds on patterns we used in both the [creating (Part 1)]({% post_url 2018-03-09-single-page-crud-p1 %}) and the [destroying (Part 2)]({% post_url 2018-03-16-single-page-crud-p2 %}) processes.
 
-This is the third and final post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen the previous parts, I recommend you start with [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}) as it sets the stage for the app's codebase. The code in this tutorial is from an app I built in Rails 5.0.6, Ruby 2.4.2.
+This is the third and final post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen the previous parts, I recommend you start with [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}) as it sets the stage for the app's codebase. The code in this tutorial is from [an app I built](https://github.com/lortza/single_page_crud) in Rails 5.0.6, Ruby 2.4.2.
 
 ## Editing a Record
 
 These are the key things we'll need to accomplish in order to edit a record from the index page via AJAX:
 
-1. Create a placeholder on the index page for the `edit` form
-2. Set the partial's "Edit" link to `remote: true`
-3. Set up the controller `edit` method
-4. Render an `edit` partial
-5. Set the `edit` form to `remote: true`
+1. Set the record partial's "Edit" link to `remote: true`
+2. Set up the controller `edit` method
+3. Render an `edit` partial
+4. Set the `edit` form to `remote: true`
 
 
-### 1. Create a Placeholder on the Index Page for the `edit` Form
-Back when we set up the "new" form in [Part 1]({% post_url 2018-03-09-single-page-crud-p1 %}), we added a placeholder `<div>` on the index page where the "new" form partial  appears. We'll use that same placeholder for the "edit" form. No changes needed here!
-
-```erb
-<!-- views/critters/index.html.erb -->
-
-<h1>Critters</h1>
-
-<!-- We'll use this same placeholder for the Edit form -->
-<div id="critter-form-placeholder"></div>
-
-<table class="table">
-  <thead>
-  ...
-
-```
-
-
-
-### 2. Set the Partial's "Edit" Link to `remote: true`
-When we click the "Edit" link on the critter record, we want stay on the index page, but have the edit form to appear above the table. In order to do this, we need to render that form via AJAX. We do that by using the Rails helper `remote: true`.
+### 1. Set the Record Partial's "Edit" Link to `remote: true`
+When we click the "Edit" link on the critter record, we want stay on the index page and have the edit form appear in the table directly below the record being edited. In order to do this, we need to render that form via AJAX. We do that by using the Rails helper `remote: true`.
 
 Each record in our critters table is rendered using a partial called `_critter.html.erb`. In the partial, add `remote: true` to the end of the "Edit" `link_to` helper like this:
 
@@ -52,7 +32,7 @@ Each record in our critters table is rendered using a partial called `_critter.h
 
 This will tell the controller that we want to use an AJAX response, not the default HTTP response.
 
-### 3. Set up the Controller `edit` Method
+### 2. Set up the Controller `edit` Method
 Since the controller has been instructed by `remote: true` to speak in AJAX terms, we need to provide the `edit` method with a way to respond to this request. We do that by telling it to `respond_to :js` like this:
 
 ```ruby
@@ -66,7 +46,7 @@ class CrittersController < ApplicationController
 ...
 ```
 
-### 4. Render an `edit` Partial
+### 3. Render an `edit` Partial
 By default in Rails, controller methods render a view file as their last action. Unless you specify a different view, the view it renders will be the one named the same as the controller method. This means, for the `edit` controller method, Rails is looking in the `app/views/critters` directory for a file named `edit.[some extension]` and since we told it to respond to javascript (with `:js`), it's looking for a file called `edit.js`.
 
 Our file will contain a little erb syntax in it, so we need to name our file `edit.js.erb` to meet the needs of our syntax and the controller's expectations. We need the javascript in this file to find the form placeholder div, then render the form partial in it.
@@ -76,29 +56,31 @@ Create that file and put this content in it:
 ```js
 // app/views/critters/edit.js.erb
 
-// Find the placeholder div, then insert the HTML from
-// the `edit` partial. This is the same placehoder div we
-// used in the `new` action.
-$('#critter-form-placeholder').html("<%= escape_javascript(render partial: 'edit' ) %>");
-
-// Make sure the div is visible, since we had made it invisible previously
-document.getElementById("critter-form-placeholder").style.display = "block";
+// Locate the record being edited by its id, then render
+// the `edit` partial immediately after it
+$("#critter_<%= @critter.id %>").after("<%= escape_javascript(render partial: 'edit') %>");
 ```
 
-This javascript file is pointing to an "edit" partial that we haven't made yet. So let's make it. In Rails, when rendering a partial, we call it with `'edit'`, but Rails will be looking for a file called `_edit`. Create a file called (or rename your existing file to) `_edit.html.erb` to stand in as your "edit" view, and give it this content:
+This javascript file is pointing to an "edit" partial that we haven't made yet. So let's make it. In Rails, when rendering a partial, we call it with `'edit'`, but Rails will be looking for a file called `_edit`. Create a file called (or if you have an existing file, rename it to) `_edit.html.erb` to stand in as your "edit" view, and give it this content:
 
 ```erb
 <!-- app/views/critters/_edit.html.erb -->
 
-<h3>Editing <%= @critter.name %></h3>
-<!-- Render the form partial, passing it @critter, which was
-     set in the controller's `edit` action -->
-<%= render 'form', critter: @critter %>
+<!-- Give the form <tr> a unique id -->
+<tr id="edit-form-<%= @critter.id %>">
+  <td colspan='4'>
+    <!-- Render the form partial INSIDE A <tr>, passing it @critter,
+         which was set in the controller's `edit` action -->
+    <%= render 'form', critter: @critter %>
+  </td>
+</tr>
 ```
 
-*Just to be clear* you need both `edit.js.erb` and `_edit.html.erb` files.
+The form is being rendered inside its own `<tr>`, which makes it fall in line nicely in the table. The key here is that the form is also within the `<tr>`'s `<td>`. A form can either completely wrap a table, or be inside of a single `<td>`, but it can't wrap a `<tr>`. This tripped me up, so I'm passing that learned-it-the-hard-way knowledge on to you.
 
-### 5. Set the `edit` Form to `remote: true`
+You'll see above that the new `<tr>` has its own id. We'll need this later to make the form disappear after the form submits.
+
+### 4. Set the `edit` Form to `remote: true`
 Did rendering the `_form.html.erb` partial in the last step look familiar? This is where we get to reap the benefits of using a partial in a previous step by reusing it for our `edit` action. We already set this form's action to `remote: true`. So we're already done with this step. BOOM! High five to our past selves for being so thoughtful.
 
 ```erb
@@ -171,17 +153,17 @@ In order to update a specific HTML element with new data, we first need to be ab
 
 
 ### 3. Render the Updated Record on the Index Page
-Now that we can find the record we're looking for via it's `<tr>`, the only thing left to do is to replace the old data with the new data we just updated. Jump back to the `update.js.erb` file and replace all of the contents with this:
+Now that we can find the record we're looking for via it's `<tr>`, the only things left to do are to replace the old data with the new data we just updated and to remove the edit form from the table. We access both of those elements by their unique ids. Jump back to the `update.js.erb` file and replace all of the contents with this:
 
 ```js
 // app/views/critters/update.js.erb
 
-// Find the correct critter <tr> by id, then swap out
-// that <tr> with the <tr> from our newly-populated partial.
+// Find the exisitng critter <tr> by id, then swap it
+// with the <tr> from our newly-populated partial.
 $("#critter_<%= @critter.id %>").replaceWith("<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>")
 
-// Make sure the "edit" form disappears
-document.getElementById("critter-form-placeholder").style.display = "none";
+// Remove the "edit" form from the table
+$("#edit-form-<%= @critter.id %>").remove()
 ```
 
 Huzzah! That's it! Give it a try from start to finish by adding a new critter, editing it, then deleting it. You now have a fully-functional AJAX CRUD index page in Rails 5. As this app is currently set up, it's not handling validations or form failures. That will be a topic for another post.
