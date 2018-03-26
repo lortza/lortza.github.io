@@ -28,7 +28,7 @@ In order to do that, we need a placeholder in the HTML so the javscript knows wh
 <h1>Critters</h1>
 
 <!-- Insert an empty div with an id -->
-<div id="critter-form-placeholder"></div>
+<div id="new-form-placeholder"></div>
 
 <table class="table">
   <thead>
@@ -72,11 +72,11 @@ In this file, we want to tell the javascript to render the `new` form partial on
 // app/views/critters/new.js.erb
 
 // Change the content of this div to the partial
-$('#critter-form-placeholder').html("<%= escape_javascript(render partial: 'new' ) %>");
+$('#new-form-placeholder').html("<%= escape_javascript(render partial: 'new' ) %>");
 
 // Make the div visible (because we'll be hiding
 // it later in a separate step)
-document.getElementById("critter-form-placeholder").style.display = "block";
+document.getElementById("new-form-placeholder").style.display = "block";
 ```
 
 In Rails, when rendering a partial, we call it `'new'` but Rails will be looking for a file called `_new`. Create a file called (or rename your existing file to) `_new.html.erb` to stand in as your "new" view, and give it this content:
@@ -226,7 +226,7 @@ Now that the controller is looking for a `create.js` file, we need to supply it 
 $('tbody#critters').append("<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>");
 
 // Make sure the 'new' form is hidden
-document.getElementById("critter-form-placeholder").style.display = "none";
+document.getElementById("new-form-placeholder").style.display = "none";
 
 ```
 
