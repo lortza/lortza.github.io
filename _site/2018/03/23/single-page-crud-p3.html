@@ -114,8 +114,8 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/edit.js.erb</span>
 
 <span class="c1">// Locate the record being edited by its id, then render</span>
-<span class="c1">// the `edit` partial immediately after it</span>
-<span class="nx">$</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'edit') %&gt;"</span><span class="p">);</span>
+<span class="c1">// the `edit` partial as the sibling immediately after it</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">insertAdjacentHTML</span><span class="p">(</span><span class="s1">'afterend'</span><span class="p">,</span> <span class="s2">"&lt;%= escape_javascript(render partial: 'edit') %&gt;"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>This javascript file is pointing to an “edit” partial that we haven’t made yet. So let’s make it. In Rails, when rendering a partial, we call it with <code class="highlighter-rouge">'edit'</code>, but Rails will be looking for a file called <code class="highlighter-rouge">_edit</code>. Create a file called (or if you have an existing file, rename it to) <code class="highlighter-rouge">_edit.html.erb</code> to stand in as your “edit” view, and give it this content:</p>
@@ -210,12 +210,13 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/update.js.erb</span>
 
-<span class="c1">// Find the exisitng critter &lt;tr&gt; by id, then swap it</span>
-<span class="c1">// with the &lt;tr&gt; from our newly-populated partial.</span>
-<span class="nx">$</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">replaceWith</span><span class="p">(</span><span class="s2">"&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;"</span><span class="p">)</span>
+<span class="c1">// Find the existing critter &lt;tr&gt; by id, then replace it</span>
+<span class="c1">// with the newly-populated partial (which is also a &lt;tr&gt;).</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="s2">"&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;"</span>
 
 <span class="c1">// Remove the "edit" form from the table</span>
-<span class="nx">$</span><span class="p">(</span><span class="s2">"#edit-form-&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#edit-form-&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
 </code></pre></div></div>
 
 <p>Huzzah! That’s it! Give it a try from start to finish by adding a new critter, editing it, then deleting it. You now have a fully-functional AJAX CRUD index page in Rails 5. As this app is currently set up, it’s not handling validations or form failures. That will be a topic for another post.</p>
