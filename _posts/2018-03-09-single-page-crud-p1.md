@@ -4,9 +4,9 @@ title:  Single Page CRUD App in Rails - Part 1 - New Records
 date:   2018-03-09
 ---
 
-I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built [a sample app](https://github.com/lortza/single_page_crud) (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live.
+I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built [a sample app](https://github.com/lortza/single_page_crud) (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX and vanilla javascript. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live.
 
-This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the `index` page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I've broken this post into a few different posts, each focusing on one of the actions. This is the first post in the series.
+This series of posts walks through the process of building out the CRUD (create, read, update, destroy) actions from the `index` page via AJAX (no reloading/refreshing necessary). Since each of the CRUD actions takes several steps, I've broken this post into a few different posts, each focusing on one of the actions:
 
 - [Part 1: New Records (this post)]({% post_url 2018-03-09-single-page-crud-p1 %})
 - [Part 2: Deleting Records]({% post_url 2018-03-16-single-page-crud-p2 %})
@@ -71,12 +71,17 @@ In this file, we want to tell the javascript to render the `new` form partial on
 ```js
 // app/views/critters/new.js.erb
 
-// Change the content of this div to the partial
-$('#new-form-placeholder').html("<%= escape_javascript(render partial: 'new' ) %>");
+// Locate the placeholder in the DOM
+let placeholder = document.getElementById("new-form-placeholder")
 
-// Make the div visible (because we'll be hiding
-// it later in a separate step)
-document.getElementById("new-form-placeholder").style.display = "block";
+// Insert the partial as the content of the placeholder div
+placeholder.innerHTML = "<%= escape_javascript(render partial: 'new' ) %>"
+
+
+// Another Option:
+// Both of those lines above can be condensed to 1 line.
+// It's your call on what you feel is more readable.
+document.getElementById("new-form-placeholder").innerHTML = "<%= escape_javascript(render partial: 'new' ) %>"
 ```
 
 In Rails, when rendering a partial, we call it `'new'` but Rails will be looking for a file called `_new`. Create a file called (or rename your existing file to) `_new.html.erb` to stand in as your "new" view, and give it this content:
@@ -172,7 +177,7 @@ In order to make a new record appear in the table via javascript, we'll need a p
 
 
 ### 2. Set an `id` on the `<tbody>` Element
-Jumping back to the `index` page, we need to choose a specific place for the new critter record to be added via javascript. I'm choosing the `<tbody>` as a parent. This way, when we append each new record partial, it will be added as a child `<tr>` to that `<tbody>` parent element.
+Jumping back to the `index` page, we need to choose a specific place for the new critter record to be added via javascript. I'm choosing the `<tbody>` as a parent. This way, when we insert each new record partial, it will be added as a child `<tr>` to that `<tbody>` parent element.
 
 ```erb
 <!-- views/critters/index.html.erb -->
@@ -220,18 +225,20 @@ Now that the controller is looking for a `create.js` file, we need to supply it 
 ```javascript
 // app/views/critters/create.js.erb
 
-// Place the newly-populated `_critter` partial as the last row in the
+// Locate the <tbody> in the HTML
+let tableBody = document.querySelector('tbody#critters')
+
+// Insert the newly-populated `_critter` partial as the first row in the
 // table, passing it the @critter value as defined in the controller's
 // `create` action
-$('tbody#critters').append("<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>");
+tableBody.insertAdjacentHTML('afterbegin', "<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>")
 
-// Make sure the 'new' form is hidden
-document.getElementById("new-form-placeholder").style.display = "none";
-
+// Make the form disappear by setting the placeholder div's content
+// to an empty string
+document.getElementById("new-form-placeholder").innerHTML = ""
 ```
 
 Give it a whirl! Refresh your index page, then add a new critter. You'll see your new record appear as the last record in the table.
 
 ## Next: Deleting Records
 Alright! That's it for creating and displaying new records. It's time to move on to [Part 2: Deleting Records from the Index Page]({% post_url 2018-03-16-single-page-crud-p2 %}).
-

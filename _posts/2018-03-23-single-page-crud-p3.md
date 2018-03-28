@@ -57,8 +57,8 @@ Create that file and put this content in it:
 // app/views/critters/edit.js.erb
 
 // Locate the record being edited by its id, then render
-// the `edit` partial immediately after it
-$("#critter_<%= @critter.id %>").after("<%= escape_javascript(render partial: 'edit') %>");
+// the `edit` partial as the sibling immediately after it
+document.querySelector("#critter_<%= @critter.id %>").insertAdjacentHTML('afterend', "<%= escape_javascript(render partial: 'edit') %>")
 ```
 
 This javascript file is pointing to an "edit" partial that we haven't made yet. So let's make it. In Rails, when rendering a partial, we call it with `'edit'`, but Rails will be looking for a file called `_edit`. Create a file called (or if you have an existing file, rename it to) `_edit.html.erb` to stand in as your "edit" view, and give it this content:
@@ -158,12 +158,13 @@ Now that we can find the record we're looking for via it's `<tr>`, the only thin
 ```js
 // app/views/critters/update.js.erb
 
-// Find the exisitng critter <tr> by id, then swap it
-// with the <tr> from our newly-populated partial.
-$("#critter_<%= @critter.id %>").replaceWith("<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>")
+// Find the existing critter <tr> by id, then replace it
+// with the newly-populated partial (which is also a <tr>).
+document.querySelector("#critter_<%= @critter.id %>").outerHTML = "<%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %>"
 
 // Remove the "edit" form from the table
-$("#edit-form-<%= @critter.id %>").remove()
+document.querySelector("#edit-form-<%= @critter.id %>").remove()
+
 ```
 
 Huzzah! That's it! Give it a try from start to finish by adding a new critter, editing it, then deleting it. You now have a fully-functional AJAX CRUD index page in Rails 5. As this app is currently set up, it's not handling validations or form failures. That will be a topic for another post.

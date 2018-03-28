@@ -83,8 +83,7 @@ Remove that alert line from your `destroy.js.erb` file and replace it with the l
 ```js
 // app/views/critters/destroy.js.erb
 
-$("#critter_<%= @critter.id %>").remove();
-
+document.querySelector("#critter_<%= @critter.id %>").remove()
 ```
 
 Voila! That's it! Refresh your page again, then go through the process of deleting another record. You should see your record has been removed from the index and the page was not reloaded via the controller. Pretty nifty ;)
