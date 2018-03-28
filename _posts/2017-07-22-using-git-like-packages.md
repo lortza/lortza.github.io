@@ -131,7 +131,7 @@ Super! The box is all taped up and ready to hand to the mail carrier... but you 
 
 ### Undoing a commit, fixing the problem, and redoing the commit
 
-Have no fear! Git can do that. First, take the tape off and take the gifts back out of the box. Even though it looks a little scary, this will not undo any of the changes you've made to those files, it will just un-package them from the commit and take them out of staging:
+Have no fear! Git can do that. First, take the tape off and take the gifts back out of the box. Even though it looks a little scary, this will not undo any of the changes you've made to those files, it will only un-package them from the commit and take them out of staging:
 
 ```
 git reset HEAD~

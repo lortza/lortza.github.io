@@ -29,7 +29,7 @@ In the last post, we set up a partial for each record called `_critter.html.erb`
 </tr>
 ```
 
-In order to delete a record, we first have to be able to identify it. Fortunately for us, we already have an id for each record (courtesy of `critter.id`) and we can just add it to each record's `<tr>` element. Since javascript gets cranky about ids starting with numbers, we'll create our id in this format: `critter_3`
+In order to delete a record, we first have to be able to identify it. Fortunately for us, we already have an id for each record (courtesy of `critter.id`) and we can add it to each record's `<tr>` element. Since javascript gets cranky about ids starting with numbers, we'll create our id in this format: `critter_3`
 
 ```erb
 <!-- views/critters/_critter.html.erb -->

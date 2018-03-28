@@ -137,7 +137,7 @@ The controller wants to render an `update.js` file, so let's give it one. Create
 alert("Update.js.erb reporting for duty");
 ```
 
-Now when you refresh, click edit, then click update on the form, you should see that message pop up in your browser. If you dismiss the box and refresh the page, you'll see that your record has been updated. YAY! Our data is flowing correctly. Now we just need to make the index page reflect that change via AJAX.
+Now when you refresh, click edit, then click update on the form, you should see that message pop up in your browser. If you dismiss the box and refresh the page, you'll see that your record has been updated. YAY! Our data is flowing correctly. Now we need to make the index page reflect that change via AJAX.
 
 ### 2. Identify Each Record `<tr>` by Id
 In order to update a specific HTML element with new data, we first need to be able to identify it. Again, we can thank ourselves for the work we've already done, as we've already given unique ids to the `<tr>`s in the `_critter.html.erb` partial:

@@ -12,7 +12,7 @@ permalink: /portfolio/
 
   <h2>Rails Projects</h2>
 
-  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code now, there is so much to be improved. I just keep marching forward onto new challenges. This week's challenge: learn jekyll and customize a theme. If you're seeing this page, then my efforts have led to a successful deployment :)</p>
+  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code now, there is so much to be improved. I keep marching forward onto new challenges. This week's challenge: learn jekyll and customize a theme. If you're seeing this page, then my efforts have led to a successful deployment :)</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">

@@ -140,14 +140,14 @@ The `${1}` is the first tab-stop placeholder. This means that after I type my tr
 <a href="http://www.google.com" target="" alt="" title=""></a>
 ```
 
-When I hit the `TAB` key _again_, it moves to the second placeholder, `${2:_blank}`, which is inside the `target=""`. This placeholder is special because I gave it a default value of `_blank`. If I want to replace that default value with something else, I could just type that now.
+When I hit the `TAB` key _again_, it moves to the second placeholder, `${2:_blank}`, which is inside the `target=""`. This placeholder is special because I gave it a default value of `_blank`. If I want to replace that default value with something else, I could type that right here.
 
 ```html
 <!-- at placeholder 2 -->
 <a href="http://www.google.com" target="anything_i_want" alt="" title=""></a>
 ```
 
-But I like it as `_blank`, so I just hit the `TAB` key again and move on to the next placeholder.
+But I like it as `_blank`, so I hit the `TAB` key again and move on to the next placeholder.
 
 The third placeholder, `${3}`, is also special because there are two of them: one in the `alt=""` and one in the `title=""`. My cursor will actually be in both of those spaces at the same time, so whatever I type will show up in both of those places.
 
@@ -175,4 +175,4 @@ So hopefully this gets you started on a path to using SublimeText more efficient
   - commenting your closing ruby method `end`s or closing javascript `}` braces
   - building our your `initialize(args)` like `@name = args[:name]`s
 
-Also, just in case you want to reference a snippet you've already made, check out this post I recently wrote about <a href="http://localflavormarketing.com/how-to-access-your-sublime-snippets/">how to easily access your existing snippets</a>.
+Also, in case you want to reference a snippet you've already made, check out this post I recently wrote about <a href="http://localflavormarketing.com/how-to-access-your-sublime-snippets/">how to easily access your existing snippets</a>.
