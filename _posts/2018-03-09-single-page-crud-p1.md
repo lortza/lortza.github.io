@@ -13,14 +13,14 @@ This series of posts walks through the process of building out the CRUD (create,
 - [Part 3: Editing Records]({% post_url 2018-03-23-single-page-crud-p3 %})
 
 ## Adding a New Record
-I want to be able to click a button that says "New Critter" and have a form appear on this same page just above the existing table of critters. The following key things need to happen here to make a new record:
+Let's add a button that says "New Critter" that will make a form appear on this page above the critters table. The following key things need to happen here to make a new record:
 
 1. Create a placeholder for the `new` form
 2. Add a `new` link with `remote: true`
 3. Set up the controller `new` action and supporting javascript
 
 ### 1. Create a Placeholder for the `new` Form
-In order to do that, we need a placeholder in the HTML so the javscript knows where to render this form.
+To do that, we need a placeholder in the HTML so the javscript knows where to render this form.
 
 ```erb
 <!-- views/critters/index.html.erb -->
@@ -37,7 +37,7 @@ In order to do that, we need a placeholder in the HTML so the javscript knows wh
 ```
 
 ### 2. Add a `new` Link with `remote: true`
-Add a `link_to` with the `new_critter_path` in the normal way. Then append it with `remote: true`. This tells the controller the we're aiming for javascript and not the usual HTML response format.
+We need to tell the controller we're aiming for javascript and not the usual HTML response format. Add a `link_to` with the `new_critter_path` in the normal way. Then append it with `remote: true`.
 
 ```erb
 <!-- views/critters/index.html.erb -->
@@ -50,7 +50,7 @@ Add a `link_to` with the `new_critter_path` in the normal way. Then append it wi
 ```
 
 ### 3. Set up the Controller `new` Action and Supporting Javascript
-Since our link says `remote: true`, we need to provide the controller with the appropriate instructions to handle it. It's expecting to see javascript, so we need to tell it to  respond with javascript:
+The `remote: true` told the controller to deal in javascript, so we need to tell it how to respond with javascript:
 
 ```ruby
 # app/controllers/critters_controller.rb
@@ -64,9 +64,9 @@ class CrittersController < ApplicationController
   end
 ```
 
-This also means that the controller is expecting to find a file called `new.js`. Since we're going to render a little erb in our file, we'll call ours `new.js.erb` and the controller will still be satisfied.
+This also means that the controller is expecting to find a file called `new.js`. Since we're going to render a little erb in our file, we'll call ours `new.js.erb`. This will meet the needs of our syntax and the controller.
 
-In this file, we want to tell the javascript to render the `new` form partial on the index page. To do that, grab the placeholder div using the id, then use the Rails helper `escape_javascript` to execute javascript's `preventDefault()` function and render the partial.
+In this file, we want to tell the javascript to render the `new` form partial on the index page. Our javascript grabs the placeholder div by its id, uses the Rails helper `escape_javascript` to execute javascript's `preventDefault()` function, and then renders the partial.
 
 ```js
 // app/views/critters/new.js.erb
@@ -79,7 +79,7 @@ placeholder.innerHTML = "<%= escape_javascript(render partial: 'new' ) %>"
 
 
 // Another Option:
-// Both of those lines above can be condensed to 1 line.
+// Condensed both of those lines above to 1 line.
 // It's your call on what you feel is more readable.
 document.getElementById("new-form-placeholder").innerHTML = "<%= escape_javascript(render partial: 'new' ) %>"
 ```
@@ -95,7 +95,7 @@ In Rails, when rendering a partial, we call it `'new'` but Rails will be looking
 <%= render 'form', critter: @critter %>
 ```
 
-*Just to be clear* you need both `new.js.erb` and `_new.html.erb` files.
+*To be clear* you need both `new.js.erb` and `_new.html.erb` files.
 
 The `_new.html.erb` file is rendering _another_ partial, `_form.html.erb`, that actually houses the form. This is Rails convention and it will come in handy later when we go to edit a record. The `_form.html.erb` behaves as it usually does, with one exception: it needs to be set to `remote: true`. When I was working through this step, I first set the `submit` button link to `remote: true` and _that does not work_. Instead, you need to set the form action to `remote: true`.
 
@@ -129,20 +129,20 @@ The `_new.html.erb` file is rendering _another_ partial, `_form.html.erb`, that 
 
 At this point, you should be able to go to your index page, click the "New Critter" button, and see your form appear on the page. Hooray!
 
-If you fill out and submit your form, your critter record will save (assuming you have the default Rails `create` action set up in your controller), but your view will not change. This is the expected behavior. You can refresh the page and the new critter record will appear in the table.
+If you have the default Rails `create` action set up in your controller, you can test creating a new record now. Your critter record will save, but your view will not change. This is the expected behavior. You can refresh the page and the new critter record will appear in the table.
 
 But we want MORE, right? We still want to see the new critter record show up on the index page without needing to refresh the page.
 
 
 ## Displaying the New Record on the Index Page
-Now that we've created the new record, we want it to display dynamically on the index page. These key things need to happen here to display the record dynamically:
+Now that we've created the new record, we want to display it on the index page. These key things need to happen here to display the record via AJAX:
 
 1. Convert the HTML in the table record to a partial
 2. Set an `id` on the `<tbody>` element
 3. Set up the controller `create` action and supporting javascript
 
 ### 1. Convert the HTML in the Table Record to a Partial
-In order to make a new record appear in the table via javascript, we'll need a partial to house the data from that record. Given our current table HTML, each "record" is just a row in the table, so  extract the table row out into a partial called `_critter.html.erb`.
+To make a new record appear in the table via javascript, we'll need a partial to house the data from that record. Each "record" is a row in the table, so extract the whole table row (`<tr>`) out into a partial called `_critter.html.erb`.
 
 ```erb
 <!-- views/critters/_critter.html.erb -->
@@ -177,7 +177,7 @@ In order to make a new record appear in the table via javascript, we'll need a p
 
 
 ### 2. Set an `id` on the `<tbody>` Element
-Jumping back to the `index` page, we need to choose a specific place for the new critter record to be added via javascript. I'm choosing the `<tbody>` as a parent. This way, when we insert each new record partial, it will be added as a child `<tr>` to that `<tbody>` parent element.
+Go back to your `index.html.erb`. We need to choose a specific place to add the new critter record via javascript. I'm choosing the `<tbody>` as a parent. This way, when we insert each new record partial, it will be added as a child `<tr>` to that `<tbody>` parent element.
 
 ```erb
 <!-- views/critters/index.html.erb -->
@@ -194,8 +194,7 @@ Jumping back to the `index` page, we need to choose a specific place for the new
 
 
 ### 3. Set up the Controller `create` Action and Supporting Javascript
-
-Similarly to how we set up the `new` action, we need to set the `create` action to respond to javascript:
+Do you remember how we set up the `new` action? We'll use this method to set the `create` action to respond to javascript:
 
 ```ruby
 # app/controllers/critters_controller.rb
@@ -220,7 +219,7 @@ class CrittersController < ApplicationController
   ...
 ```
 
-Now that the controller is looking for a `create.js` file, we need to supply it with one. Similarly to when we created the `new` action, we'll create a `create.js.erb` to render the javascript. We don't need to make the `_create.html.erb` file, because we don't need to render a "create" partial. Instead, we'll be rendering our `_critter.html.erb` partial.
+Now that the controller is looking for a `create.js` file, we need to supply it with one. Following the pattern of how we set up the `new` action, we'll create a `create.js.erb` to render the javascript. We don't need to make the `_create.html.erb` file, because we don't need to render a "create" partial. Instead, we'll be rendering our `_critter.html.erb` partial.
 
 ```javascript
 // app/views/critters/create.js.erb
