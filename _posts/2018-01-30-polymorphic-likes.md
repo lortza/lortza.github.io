@@ -189,7 +189,7 @@ Are you ready to get a little meta?
 
 ### Example 2: Getting Meta by Extracting a Class from an Object and Using `send`
 
-Using `send` is probably one of my favorite means of metaprogramming. It's just so flexible! Every time I find myself thinking "aww jee, if I could just customize this method and it would solve _everything_," it usually means `send` is in order. Personally, I think you have to strike a balance between DRY and readable. Since we spend most of our time reading code, it makes sense to have easily readable code. Future me always appreciates when past me has been thoughtful in this regard. Though this method gets a little dense, I think it's still readable enough.
+Using `send` is probably one of my favorite means of metaprogramming. It's so flexible! Every time I find myself thinking "aww jee, if I could only customize this method and it would solve _everything_," it usually means `send` is in order. Personally, I think you have to strike a balance between DRY and readable. Since we spend most of our time reading code, it makes sense to have easily readable code. Future me always appreciates when past me has been thoughtful in this regard. Though this method gets a little dense, I think it's still readable enough.
 
 When a user is looking at a stream of content (blog posts, photos, and their respective comments), I needed to give them the option to `Like` and `Unlike` any of these objects. This helper method toggles the `Like` / `Unlike` links.
 

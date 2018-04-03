@@ -63,7 +63,7 @@
   </header>
 
   <article class="post-content">
-    <p>This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven’t seen <a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records</a>, I recommend you check it out first as it sets the stage for the app’s codebase. The code in this tutorial is from <a href="https://github.com/lortza/single_page_crud">an app I built</a> in Rails 5.0.6, Ruby 2.4.2.</p>
+    <p>This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records directly on the index page without reloading or refreshing the page. If you haven’t seen <a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records</a>, I recommend you check it out first as it sets the stage for the app’s codebase. The code in this tutorial is from <a href="https://github.com/lortza/single_page_crud">an app I built</a> in Rails 5.0.6, Ruby 2.4.2.</p>
 
 <h2 id="deleting-a-record">Deleting a Record</h2>
 <p>The process for deleting a record is very similar to the process for creating a new record. These key things need to happen in order to delete a record:</p>
@@ -88,7 +88,7 @@
 <span class="nt">&lt;/tr&gt;</span>
 </code></pre></div></div>
 
-<p>In order to delete a record, we first have to be able to identify it. Fortunately for us, we already have an id for each record (courtesy of <code class="highlighter-rouge">critter.id</code>) and we can just add it to each record’s <code class="highlighter-rouge">&lt;tr&gt;</code> element. Since javascript gets cranky about ids starting with numbers, we’ll create our id in this format: <code class="highlighter-rouge">critter_3</code></p>
+<p>To delete a record, we first have to find it in the HTML. The easiest way to do this is to assign the record’s id number to the <code class="highlighter-rouge">&lt;tr&gt;</code> like this: <code class="highlighter-rouge">&lt;tr id="critter_3"&gt;</code>. Then we retrieve it later with javascript.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
 
@@ -99,7 +99,7 @@
 </code></pre></div></div>
 
 <h3 id="2-convert-the-delete-link-to-remote-true">2. Convert the “Delete” Link to <code class="highlighter-rouge">remote: true</code></h3>
-<p>Still working inside the <code class="highlighter-rouge">_critter.html.erb</code> partial, we need to tell the existing delete link to request javascript instead of following the usual HTTP protocol. Just like we did with the “New Critter” button, we’ll add <code class="highlighter-rouge">remote: true</code> to the “Delete” link.</p>
+<p>Inside that <code class="highlighter-rouge">&lt;tr&gt;</code>, we need to tell the delete link to request javascript instead of following the usual HTTP protocol. Like we did with the “New Critter” button, we’ll add <code class="highlighter-rouge">remote: true</code> to the “Delete” link.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
 
@@ -110,7 +110,7 @@
 </code></pre></div></div>
 
 <h3 id="3-set-up-the-controller-destroy-method">3. Set up the Controller <code class="highlighter-rouge">destroy</code> Method</h3>
-<p>The controller’s <code class="highlighter-rouge">destroy</code> method handles the HTTP <code class="highlighter-rouge">delete</code> action, so we need to tell it how to respond to this request for javascript. We do that the same way we did in the other controller actions, by setting <code class="highlighter-rouge">respond_to</code> to <code class="highlighter-rouge">js</code>:</p>
+<p>Next we need to look at the controller’s <code class="highlighter-rouge">destroy</code> method because it handles the HTTP <code class="highlighter-rouge">delete</code> action. Tell it how to respond to the request for javascript by setting <code class="highlighter-rouge">respond_to</code> to <code class="highlighter-rouge">js</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
 
@@ -123,24 +123,24 @@
 <span class="o">...</span>
 </code></pre></div></div>
 
-<p>The controller is now expecting to find a file called <code class="highlighter-rouge">destroy.js</code>, so we need to make one. We’ll be using a little erb syntax in our file, so we’ll create a file in the <code class="highlighter-rouge">app/views/critters</code> directory called <code class="highlighter-rouge">destroy.js.erb</code> and the controller will still be happy.</p>
+<p>The controller is now expecting to find a file called <code class="highlighter-rouge">destroy.js</code>, so we need to make one. Our  javascript will incorporate a little erb syntax, so create a file called <code class="highlighter-rouge">destroy.js.erb</code> in the <code class="highlighter-rouge">app/views/critters/</code> directory and put this in it:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
 
 <span class="nx">alert</span><span class="p">(</span><span class="s2">"Hey! The destroy.js.erb file is responding!"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>If you refresh your page, then click the delete button, you’ll get an alert box that says “Are you sure?”. Click “ok”, then you’ll see a new box pop up that says “Hey! The destroy.js.erb file is reponding!” After you dismiss that box, you’ll notice that your content is still on the index page. This is the expected behavior. All that’s left is to remove it with a little javascript.</p>
+<p>If you refresh your page, then click the delete button, you’ll get an alert box that says “Are you sure?”. Click “ok”, then you’ll see a new box pop up that says “Hey! The destroy.js.erb file is reponding!” After you dismiss that box, you’ll notice that your content is still on the index page – even though it’s been removed from the database. This is the expected behavior. Now we need to remove it from the index with javascript.</p>
 
 <h3 id="4-remove-the-record-from-the-index-page">4. Remove the Record from the <code class="highlighter-rouge">index</code> Page</h3>
-<p>Remove that alert line from your <code class="highlighter-rouge">destroy.js.erb</code> file and replace it with the line that will actually remove the record. Here we’re using the <code class="highlighter-rouge">@critter</code> object that was defined in the controller’s <code class="highlighter-rouge">destroy</code> action to find the exact <code class="highlighter-rouge">&lt;tr&gt;</code> on the table. Then we remove it by calling <code class="highlighter-rouge">.remove()</code> on it.</p>
+<p>Let’s replace that alert in the <code class="highlighter-rouge">destroy.js.erb</code> file with the line that will actually remove the record from the index page. The <code class="highlighter-rouge">@critter</code> object was defined in the controller’s <code class="highlighter-rouge">destroy</code> action, so we have access to its <code class="highlighter-rouge">id</code>. We will use that to find the exact <code class="highlighter-rouge">&lt;tr&gt;</code> on the table. Then we remove it by calling <code class="highlighter-rouge">.remove()</code> on it.</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
 
 <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Voila! That’s it! Refresh your page again, then go through the process of deleting another record. You should see your record has been removed from the index and the page was not reloaded via the controller. Pretty nifty ;)</p>
+<p>Voila! That’s it! Refresh your page again, then go through the process of deleting another record. You should see that your record is no longer on the index. Pretty nifty ;)</p>
 
 <h2 id="next-editing-records">Next: Editing Records</h2>
 <p>Alright! That’s it for creating and displaying new records. It’s time to move on to <a href="/2018/03/23/single-page-crud-p3.html">Part 3: Editing Records from the Index Page</a>.</p>

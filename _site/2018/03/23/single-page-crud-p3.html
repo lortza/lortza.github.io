@@ -63,13 +63,13 @@
   </header>
 
   <article class="post-content">
-    <p>Well here we are in the final stretch of making our Rails app AJAX CRUDdy! I saved this section for last because, well, it was the last section I figured out how to do, and because it builds on patterns we used in both the <a href="/2018/03/09/single-page-crud-p1.html">creating (Part 1)</a> and the <a href="/2018/03/16/single-page-crud-p2.html">destroying (Part 2)</a> processes.</p>
+    <p>Well here we are in the final stretch of making our Rails app AJAX CRUDdy! In this series, I explain how to interact with database records on the index page without reloading or refreshing the page.</p>
 
-<p>This is the third and final post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven’t seen the previous parts, I recommend you start with <a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records</a> as it sets the stage for the app’s codebase. The code in this tutorial is from <a href="https://github.com/lortza/single_page_crud">an app I built</a> in Rails 5.0.6, Ruby 2.4.2.</p>
+<p>I saved this section for last because it builds on patterns we used in both the <a href="/2018/03/09/single-page-crud-p1.html">creating (Part 1)</a> and the <a href="/2018/03/16/single-page-crud-p2.html">destroying (Part 2)</a> processes. If you haven’t seen the previous parts, I recommend you start with <a href="/2018/03/09/single-page-crud-p1.html">Part 1: New Records</a> as it sets the stage for the app’s codebase. The code in this tutorial is from <a href="https://github.com/lortza/single_page_crud">an app I built</a> in Rails 5.0.6, Ruby 2.4.2.</p>
 
 <h2 id="editing-a-record">Editing a Record</h2>
 
-<p>These are the key things we’ll need to accomplish in order to edit a record from the index page via AJAX:</p>
+<p>These are the key things we’ll need to do to edit a record from the index page via AJAX:</p>
 
 <ol>
   <li>Set the record partial’s “Edit” link to <code class="highlighter-rouge">remote: true</code></li>
@@ -79,7 +79,7 @@
 </ol>
 
 <h3 id="1-set-the-record-partials-edit-link-to-remote-true">1. Set the Record Partial’s “Edit” Link to <code class="highlighter-rouge">remote: true</code></h3>
-<p>When we click the “Edit” link on the critter record, we want stay on the index page and have the edit form appear in the table directly below the record being edited. In order to do this, we need to render that form via AJAX. We do that by using the Rails helper <code class="highlighter-rouge">remote: true</code>.</p>
+<p>When we click the “Edit” link on a record, we want to have the edit form appear in the table directly below that record. Rendering the form requires AJAX and we invoke it by using the Rails helper <code class="highlighter-rouge">remote: true</code>.</p>
 
 <p>Each record in our critters table is rendered using a partial called <code class="highlighter-rouge">_critter.html.erb</code>. In the partial, add <code class="highlighter-rouge">remote: true</code> to the end of the “Edit” <code class="highlighter-rouge">link_to</code> helper like this:</p>
 
@@ -92,7 +92,7 @@
 <p>This will tell the controller that we want to use an AJAX response, not the default HTTP response.</p>
 
 <h3 id="2-set-up-the-controller-edit-method">2. Set up the Controller <code class="highlighter-rouge">edit</code> Method</h3>
-<p>Since the controller has been instructed by <code class="highlighter-rouge">remote: true</code> to speak in AJAX terms, we need to provide the <code class="highlighter-rouge">edit</code> method with a way to respond to this request. We do that by telling it to <code class="highlighter-rouge">respond_to :js</code> like this:</p>
+<p>Using <code class="highlighter-rouge">remote: true</code> told the controller to speak in AJAX terms. We need to provide the <code class="highlighter-rouge">edit</code> method with a way to respond to this request. We do that by telling it to <code class="highlighter-rouge">respond_to :js</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
 
@@ -105,9 +105,9 @@
 </code></pre></div></div>
 
 <h3 id="3-render-an-edit-partial">3. Render an <code class="highlighter-rouge">edit</code> Partial</h3>
-<p>By default in Rails, controller methods render a view file as their last action. Unless you specify a different view, the view it renders will be the one named the same as the controller method. This means, for the <code class="highlighter-rouge">edit</code> controller method, Rails is looking in the <code class="highlighter-rouge">app/views/critters</code> directory for a file named <code class="highlighter-rouge">edit.[some extension]</code> and since we told it to respond to javascript (with <code class="highlighter-rouge">:js</code>), it’s looking for a file called <code class="highlighter-rouge">edit.js</code>.</p>
+<p>By default in Rails, controller methods render a view file as their last action. Unless you specify a different view, the view it renders will be the one named the same as the controller method. After the <code class="highlighter-rouge">edit</code> controller method runs, Rails looks in the <code class="highlighter-rouge">app/views/critters</code> directory for a file named <code class="highlighter-rouge">edit.[some extension]</code>. Since we told it to respond to javascript (with <code class="highlighter-rouge">:js</code>), it’s looking for a file called <code class="highlighter-rouge">edit.js</code>.</p>
 
-<p>Our file will contain a little erb syntax in it, so we need to name our file <code class="highlighter-rouge">edit.js.erb</code> to meet the needs of our syntax and the controller’s expectations. We need the javascript in this file to find the form placeholder div, then render the form partial in it.</p>
+<p>Let’s name our file <code class="highlighter-rouge">edit.js.erb</code> so it can handle the erb syntax we’ll be using inside it. We want the javascript in this file to find the form placeholder div, then render the form partial in it.</p>
 
 <p>Create that file and put this content in it:</p>
 
@@ -118,7 +118,7 @@
 <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#critter_&lt;%= @critter.id %&gt;"</span><span class="p">).</span><span class="nx">insertAdjacentHTML</span><span class="p">(</span><span class="s1">'afterend'</span><span class="p">,</span> <span class="s2">"&lt;%= escape_javascript(render partial: 'edit') %&gt;"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>This javascript file is pointing to an “edit” partial that we haven’t made yet. So let’s make it. In Rails, when rendering a partial, we call it with <code class="highlighter-rouge">'edit'</code>, but Rails will be looking for a file called <code class="highlighter-rouge">_edit</code>. Create a file called (or if you have an existing file, rename it to) <code class="highlighter-rouge">_edit.html.erb</code> to stand in as your “edit” view, and give it this content:</p>
+<p>This javascript file is pointing to an “edit” partial that we haven’t made yet. So let’s make it. In Rails, when rendering a partial, we call it with <code class="highlighter-rouge">'edit'</code>, but Rails will be looking for a file named <code class="highlighter-rouge">_edit</code>. Create a file called (or rename your existing file to) <code class="highlighter-rouge">_edit.html.erb</code>, and give it this content:</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_edit.html.erb --&gt;</span>
 
@@ -132,7 +132,7 @@
 <span class="nt">&lt;/tr&gt;</span>
 </code></pre></div></div>
 
-<p>The form is being rendered inside its own <code class="highlighter-rouge">&lt;tr&gt;</code>, which makes it fall in line nicely in the table. The key here is that the form is also within the <code class="highlighter-rouge">&lt;tr&gt;</code>’s <code class="highlighter-rouge">&lt;td&gt;</code>. A form can either completely wrap a table, or be inside of a single <code class="highlighter-rouge">&lt;td&gt;</code>, but it can’t wrap a <code class="highlighter-rouge">&lt;tr&gt;</code>. This tripped me up, so I’m passing that learned-it-the-hard-way knowledge on to you.</p>
+<p>The form is being rendered in a <code class="highlighter-rouge">&lt;tr&gt;</code>, which makes it fit nicely in the table. The key here is that the form is also within the <code class="highlighter-rouge">&lt;tr&gt;</code>’s <code class="highlighter-rouge">&lt;td&gt;</code>. A form can either completely wrap a table, or be inside of a single <code class="highlighter-rouge">&lt;td&gt;</code>, but it can’t wrap a <code class="highlighter-rouge">&lt;tr&gt;</code>. This tripped me up, so I’m passing that learned-it-the-hard-way knowledge on to you.</p>
 
 <p>You’ll see above that the new <code class="highlighter-rouge">&lt;tr&gt;</code> has its own id. We’ll need this later to make the form disappear after the form submits.</p>
 
@@ -153,7 +153,7 @@
 <p>At this point, you can refresh your browser and click the “Edit” link. Your edit form should pop up. Submitting it won’t do what you want it to do yet.</p>
 
 <h2 id="updating-a-record">Updating a Record</h2>
-<p>When editing a record, step #1 is changing the data (<code class="highlighter-rouge">edit</code>) and step #2 is saving (<code class="highlighter-rouge">update</code>) that change. We’ve enabled the editing, now we need to enable the saving. These are the key things we’ll need to accomplish in order to update a record from the index page via AJAX:</p>
+<p>When editing a record, step #1 is changing the data in the form (<code class="highlighter-rouge">edit</code>), and step #2 is saving (<code class="highlighter-rouge">update</code>) that change to the database. We’ve enabled the editing, now we need to enable the saving. These are the key things we’ll need to do to update a record from the index page via AJAX:</p>
 
 <ol>
   <li>Set up the controller <code class="highlighter-rouge">update</code> method and supporting partials</li>
@@ -162,7 +162,7 @@
 </ol>
 
 <h3 id="1-set-up-the-controller-update-method">1. Set up the Controller <code class="highlighter-rouge">update</code> Method</h3>
-<p>Since our form action is already communicating via its <code class="highlighter-rouge">remote: true</code> setting that it wants to be processed with AJAX, we need to tell the controller’s <code class="highlighter-rouge">update</code> method how to handle that request. We do that, once again, with <code class="highlighter-rouge">respond_to :js</code>.</p>
+<p>Our form action is already communicating via <code class="highlighter-rouge">remote: true</code> that it wants to be processed with AJAX. Now we need to tell the controller’s <code class="highlighter-rouge">update</code> method how to handle that request. We do that, once again, with <code class="highlighter-rouge">respond_to :js</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/critters_controller.rb</span>
 
@@ -192,10 +192,10 @@
 <span class="nx">alert</span><span class="p">(</span><span class="s2">"Update.js.erb reporting for duty"</span><span class="p">);</span>
 </code></pre></div></div>
 
-<p>Now when you refresh, click edit, then click update on the form, you should see that message pop up in your browser. If you dismiss the box and refresh the page, you’ll see that your record has been updated. YAY! Our data is flowing correctly. Now we just need to make the index page reflect that change via AJAX.</p>
+<p>Now when you refresh, click edit, then click update on the form, you should see that message pop up in your browser. If you dismiss the box and refresh the page, you’ll see that your record has been updated. YAY! Our data is flowing correctly. Now we need to make the index page reflect that change via AJAX.</p>
 
 <h3 id="2-identify-each-record-tr-by-id">2. Identify Each Record <code class="highlighter-rouge">&lt;tr&gt;</code> by Id</h3>
-<p>In order to update a specific HTML element with new data, we first need to be able to identify it. Again, we can thank ourselves for the work we’ve already done, as we’ve already given unique ids to the <code class="highlighter-rouge">&lt;tr&gt;</code>s in the <code class="highlighter-rouge">_critter.html.erb</code> partial:</p>
+<p>To update a specific HTML element with new data, we first need to be able to identify it. Again, we can thank ourselves for the work we’ve already done. The <code class="highlighter-rouge">&lt;tr&gt;</code>s in the <code class="highlighter-rouge">_critter.html.erb</code> partial already have unique ids:</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/critters/_critter.html.erb --&gt;</span>
 
@@ -206,7 +206,7 @@
 </code></pre></div></div>
 
 <h3 id="3-render-the-updated-record-on-the-index-page">3. Render the Updated Record on the Index Page</h3>
-<p>Now that we can find the record we’re looking for via it’s <code class="highlighter-rouge">&lt;tr&gt;</code>, the only things left to do are to replace the old data with the new data we just updated and to remove the edit form from the table. We access both of those elements by their unique ids. Jump back to the <code class="highlighter-rouge">update.js.erb</code> file and replace all of the contents with this:</p>
+<p>Now that we can identify the correct <code class="highlighter-rouge">&lt;tr&gt;</code>, we can replace it with a partial that’s been freshly-populated with your new data. We don’t need to see the edit form any more, so we’ll remove it from the table. Jump back to the <code class="highlighter-rouge">update.js.erb</code> file and replace all of the contents with this:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/update.js.erb</span>
 

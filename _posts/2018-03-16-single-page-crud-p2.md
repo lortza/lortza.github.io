@@ -4,7 +4,7 @@ title:  Single Page CRUD App in Rails - Part 2 - Deleting Records
 date:   2018-03-16
 ---
 
-This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records from the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app's codebase. The code in this tutorial is from [an app I built](https://github.com/lortza/single_page_crud) in Rails 5.0.6, Ruby 2.4.2.
+This is the second post in my Single Page CRUD App in Rails series. In this series, I explain how to make changes to database records directly on the index page without reloading or refreshing the page. If you haven't seen [Part 1: New Records]({% post_url 2018-03-09-single-page-crud-p1 %}), I recommend you check it out first as it sets the stage for the app's codebase. The code in this tutorial is from [an app I built](https://github.com/lortza/single_page_crud) in Rails 5.0.6, Ruby 2.4.2.
 
 ## Deleting a Record
 The process for deleting a record is very similar to the process for creating a new record. These key things need to happen in order to delete a record:
@@ -29,7 +29,7 @@ In the last post, we set up a partial for each record called `_critter.html.erb`
 </tr>
 ```
 
-In order to delete a record, we first have to be able to identify it. Fortunately for us, we already have an id for each record (courtesy of `critter.id`) and we can just add it to each record's `<tr>` element. Since javascript gets cranky about ids starting with numbers, we'll create our id in this format: `critter_3`
+To delete a record, we first have to find it in the HTML. The easiest way to do this is to assign the record's id number to the `<tr>` like this: `<tr id="critter_3">`. Then we retrieve it later with javascript.
 
 ```erb
 <!-- views/critters/_critter.html.erb -->
@@ -41,7 +41,7 @@ In order to delete a record, we first have to be able to identify it. Fortunatel
 ```
 
 ### 2. Convert the "Delete" Link to `remote: true`
-Still working inside the `_critter.html.erb` partial, we need to tell the existing delete link to request javascript instead of following the usual HTTP protocol. Just like we did with the "New Critter" button, we'll add `remote: true` to the "Delete" link.
+Inside that `<tr>`, we need to tell the delete link to request javascript instead of following the usual HTTP protocol. Like we did with the "New Critter" button, we'll add `remote: true` to the "Delete" link.
 
 ```erb
 <!-- views/critters/_critter.html.erb -->
@@ -53,7 +53,7 @@ Still working inside the `_critter.html.erb` partial, we need to tell the existi
 ```
 
 ### 3. Set up the Controller `destroy` Method
-The controller's `destroy` method handles the HTTP `delete` action, so we need to tell it how to respond to this request for javascript. We do that the same way we did in the other controller actions, by setting `respond_to` to `js`:
+Next we need to look at the controller's `destroy` method because it handles the HTTP `delete` action. Tell it how to respond to the request for javascript by setting `respond_to` to `js`:
 
 ```ruby
 # app/controllers/critters_controller.rb
@@ -67,7 +67,7 @@ class CrittersController < ApplicationController
 ...
 ```
 
-The controller is now expecting to find a file called `destroy.js`, so we need to make one. We'll be using a little erb syntax in our file, so we'll create a file in the `app/views/critters` directory called `destroy.js.erb` and the controller will still be happy.
+The controller is now expecting to find a file called `destroy.js`, so we need to make one. Our  javascript will incorporate a little erb syntax, so create a file called `destroy.js.erb` in the `app/views/critters/` directory and put this in it:
 
 ```js
 // app/views/critters/destroy.js.erb
@@ -75,10 +75,10 @@ The controller is now expecting to find a file called `destroy.js`, so we need t
 alert("Hey! The destroy.js.erb file is responding!")
 ```
 
-If you refresh your page, then click the delete button, you'll get an alert box that says "Are you sure?". Click "ok", then you'll see a new box pop up that says "Hey! The destroy.js.erb file is reponding!" After you dismiss that box, you'll notice that your content is still on the index page. This is the expected behavior. All that's left is to remove it with a little javascript.
+If you refresh your page, then click the delete button, you'll get an alert box that says "Are you sure?". Click "ok", then you'll see a new box pop up that says "Hey! The destroy.js.erb file is reponding!" After you dismiss that box, you'll notice that your content is still on the index page -- even though it's been removed from the database. This is the expected behavior. Now we need to remove it from the index with javascript.
 
 ### 4. Remove the Record from the `index` Page
-Remove that alert line from your `destroy.js.erb` file and replace it with the line that will actually remove the record. Here we're using the `@critter` object that was defined in the controller's `destroy` action to find the exact `<tr>` on the table. Then we remove it by calling `.remove()` on it.
+Let's replace that alert in the `destroy.js.erb` file with the line that will actually remove the record from the index page. The `@critter` object was defined in the controller's `destroy` action, so we have access to its `id`. We will use that to find the exact `<tr>` on the table. Then we remove it by calling `.remove()` on it.
 
 ```js
 // app/views/critters/destroy.js.erb
@@ -86,7 +86,7 @@ Remove that alert line from your `destroy.js.erb` file and replace it with the l
 document.querySelector("#critter_<%= @critter.id %>").remove()
 ```
 
-Voila! That's it! Refresh your page again, then go through the process of deleting another record. You should see your record has been removed from the index and the page was not reloaded via the controller. Pretty nifty ;)
+Voila! That's it! Refresh your page again, then go through the process of deleting another record. You should see that your record is no longer on the index. Pretty nifty ;)
 
 ## Next: Editing Records
 Alright! That's it for creating and displaying new records. It's time to move on to [Part 3: Editing Records from the Index Page]({% post_url 2018-03-23-single-page-crud-p3 %}).
