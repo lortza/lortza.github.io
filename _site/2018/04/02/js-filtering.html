@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Filtering Table Records with Javascript</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/04/02/js-filtering.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Filtering Table Records with Javascript</h1>
+    <p class="post-meta">April 2, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I like Rails. I’ve felt pretty darned comfortable in the Rails ecosystem for a couple of years now. Branching out into javascript features, however, has been out of my comfort zone. It makes the learning hard, but so satisfying when I figure out something new!</p>
+
+<p>Today I decided to implement a filter on a table to practice DOM manipulation. The context for this post’s code is <a href="https://github.com/lortza/single_page_crud">a sample app</a> (Rails 5.0.6, Ruby 2.4.2, postgres) with a main table called <code class="highlighter-rouge">critters</code>. The <code class="highlighter-rouge">critters</code> table lists a bunch of pets with some details about them.</p>
+
+<p>As I learn my way out of my belief that “front end JS just does magic and those who wield it are magicians,” I’m finding that most of the solutions are not terribly complex. Phew!</p>
+
+<p>Here’s how I implemented filtering by critter name via vanilla javascript.</p>
+
+<h2 id="add-a-filter-input-field-to-the-view">Add a Filter Input Field to the View</h2>
+
+<p>On the index page, I added an input field above the table so a user can type the name of the critter they’re looking for. The input field lives within the <code class="highlighter-rouge">filter</code> class.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
+...
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"filter"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;label&gt;</span>On-Page Javascript Filtering:<span class="nt">&lt;/label&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"filter"</span> <span class="na">id=</span><span class="s">"filter"</span> <span class="na">placeholder=</span><span class="s">"Filter by Critter Name"</span> <span class="na">class=</span><span class="s">"form-control"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span> <span class="c">&lt;!-- filter --&gt;</span>
+
+<span class="nt">&lt;table&gt;</span>
+...
+</code></pre></div></div>
+
+<div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* assets/stylesheets/shared.scss */</span>
+
+<span class="nc">.filter</span> <span class="p">{</span>
+  <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">20px</span> <span class="nb">auto</span><span class="p">;</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
+  <span class="nl">min-width</span><span class="p">:</span> <span class="m">300px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="insert-a-script-tag-on-the-index-page">Insert a Script Tag on the Index Page</h2>
+
+<p>I’m still looking into the best place to put javascript with event listeners in a Rails project so that it doesn’t require or conflict with TurboLinks. As of right now, I’ve put it in a <code class="highlighter-rouge">script</code> tag at the bottom of the <code class="highlighter-rouge">index</code> page. This placement ensures that it loads at the correct time and also keeps it in close proximity to where it’s ultimately being called.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
+...
+<span class="nt">&lt;/table&gt;</span>
+
+<span class="c">&lt;!-- Insert the script tag at the very end of the index page--&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="p">...</span>
+<span class="nt">&lt;/script&gt;</span>
+
+</code></pre></div></div>
+
+<h2 id="locate-the-filter-field-with-javascript-and-add-an-event-listener">Locate the Filter Field with Javascript and Add an Event Listener</h2>
+
+<p>Inside the script tag, I located the input field and added an event listener to it. The listener responds every time a user lifts their finger off of a key while in this field. When that happens, it fires off a callback function called <code class="highlighter-rouge">filterCritter</code>.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
+...
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+
+  <span class="c1">// Locate the filter input field in the HTML</span>
+  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
+
+  <span class="c1">// Listen for each keystroke release happening in this field</span>
+  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<h2 id="write-the-filtering-function">Write the Filtering Function</h2>
+
+<p>Now for the fun part. The <code class="highlighter-rouge">filterCritters</code> function is a callback function, so it automatically has an argument for the “event” that was listened for. Here, I’m refering to it as <code class="highlighter-rouge">e</code>. I grab the input text from the input field via the event’s <code class="highlighter-rouge">target</code> function.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
+...
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
+  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+
+  <span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="c1">// Capture the text from the filter input field</span>
+    <span class="kd">const</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+
+    <span class="c1">// Grab all `tr`s, then loop through them to get the critter name.</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+      <span class="c1">// Extract the critter name text out of the tr by finding it</span>
+      <span class="c1">// inside the element with the `name` class</span>
+      <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="p">...</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_critter.html.erb --&gt;</span>
+
+<span class="nt">&lt;tr</span> <span class="na">id=</span><span class="s">"critter_</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">id</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- Add the class `name` to the h4 housing the name data --&gt;</span>
+  <span class="nt">&lt;td&gt;&lt;h4</span> <span class="na">class=</span><span class="s">"name"</span><span class="nt">&gt;</span><span class="cp">&lt;%=</span> <span class="n">critter</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h4&gt;&lt;/td&gt;</span>
+  ...
+</code></pre></div></div>
+
+<p>Back inside the <code class="highlighter-rouge">&lt;tr&gt;</code> loop, it’s time to hide/show the <code class="highlighter-rouge">&lt;tr&gt;</code>s based on whether the critter name matches the input data.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+  <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+
+  <span class="c1">// If the input text appears anywhere in the critter's name, use default</span>
+  <span class="c1">// display settings. Otherwise, hide the `&lt;tr&gt;`</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">''</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">'none'</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Tip: if you try to use <code class="highlighter-rouge">tr.style.display = 'block'</code> to counteract the <code class="highlighter-rouge">display = 'none'</code>, you’re going to get some funky formatting. Use <code class="highlighter-rouge">display = ''</code> to allow the browser to render its default display settings for a <code class="highlighter-rouge">&lt;tr&gt;</code>.</p>
+
+<h2 id="add-a-reset-button-to-the-html">Add a Reset Button to the HTML</h2>
+
+<p>Though you can see all of the critters again by deleting the text from the input field, a “Reset” button is a nice feature. Add a <code class="highlighter-rouge">link_to</code> to the view up inside the <code class="highlighter-rouge">div class="filter"&gt;</code>:</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html.erb --&gt;</span>
+...
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"filter"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;label&gt;</span>On-Page Javascript Filtering:<span class="nt">&lt;/label&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"filter"</span> <span class="na">id=</span><span class="s">"filter"</span> <span class="na">placeholder=</span><span class="s">"Filter by Critter Name"</span> <span class="na">class=</span><span class="s">"form-control"</span><span class="nt">&gt;&lt;br&gt;</span>
+
+  <span class="c">&lt;!-- Add a link to "reset" the view using Bootstrap button classes.
+       Give the link an id of 'reset-button'. --&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'Reset'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="ss">class: </span><span class="s1">'btn btn-sm btn-secondary'</span><span class="p">,</span> <span class="ss">id: </span><span class="s1">'reset-button'</span> <span class="cp">%&gt;</span>
+<span class="nt">&lt;/div&gt;</span> <span class="c">&lt;!-- filter --&gt;</span>
+...
+</code></pre></div></div>
+
+<h2 id="locate-the-reset-button-with-javascript">Locate the Reset Button with Javascript</h2>
+
+<p>Now that there’s a button, find it with javascript and set an event listener on it with a callback function of <code class="highlighter-rouge">resetResults</code>.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Locate the reset button via its id</span>
+<span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#reset-button'</span><span class="p">);</span>
+
+<span class="c1">// Add an event listener to run a callback after a click</span>
+<span class="nx">reset</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="write-the-resetresults-callback">Write the <code class="highlighter-rouge">resetResults</code> Callback</h2>
+
+<p>The callback function is ready to fire. To reset the table back to its original state, clear the input field and set <code class="highlighter-rouge">&lt;tr&gt;</code> display back to default.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+  <span class="c1">// Clear the filter text out of the input field.</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="s1">''</span>
+
+  <span class="c1">// Loop through all of the `tr`s and reset their display to the default.</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">''</span>
+  <span class="p">})</span>
+
+  <span class="c1">// Prevent the link from reloading the page</span>
+  <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>So that’s it! Since this approach does not hit the database, it is a nice solution for fast filtering of data on a single page. If you’re using pagination, you won’t be filtering anything beyond what you see on the current page and will need to implement a different solution.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
