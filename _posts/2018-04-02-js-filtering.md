@@ -39,63 +39,59 @@ On the index page, I added an input field above the table so a user can type the
 }
 ```
 
-## Insert a Script Tag on the Index Page
+## Set Up the Javascript File
 
-I'm still looking into the best place to put javascript with event listeners in a Rails project so that it doesn't require or conflict with TurboLinks. As of right now, I've put it in a `script` tag at the bottom of the `index` page. This placement ensures that it loads at the correct time and also keeps it in close proximity to where it's ultimately being called.
+If you use [Rails generators](http://guides.rubyonrails.org/command_line.html#rails-generate) like `rails g controller Critter`, you'll get some nice freebies like stylesheets and CoffeeScript files named after your asset. This is handy for keeping code organized. In this case, I took advantage of my freebie and renamed my `critters.coffee` to `critters.js` to house my javascript.
 
-```html
-<!-- app/views/critters/index.html -->
-...
-</table>
+If I weren't working in Rails, I would have put this javascript in a `<script>` tag at the bottom of the `index.html.erb` file. But _I am_ in Rails, so I put it in its Railsy place. The down side is, the file will run whenever it wants -- unless I tell it otherwise. I wrapped my code in a `DOMContentLoaded` listener, so it will run when the DOM is ready.
 
-<!-- Insert the script tag at the very end of the index page-->
-<script type="text/javascript">
-  ...
-</script>
 
+```js
+// app/assets/javascripts/critters.js
+
+// Listen for the DOM to be loaded before running any of the
+// javascript inside this function
+document.addEventListener('DOMContentLoaded', function(){
+
+  // CODE GOES HERE
+
+})
 ```
+
 
 ## Locate the Filter Field with Javascript and Add an Event Listener
 
-Inside the script tag, I located the input field and added an event listener to it. The listener responds every time a user lifts their finger off of a key while in this field. When that happens, it fires off a callback function called `filterCritter`.
+Inside the `critters.js` file, I located the input field from the `index` page and added an event listener to it. The listener responds every time a user lifts their finger off of a key while in this field. When that happens, it fires off a callback function called `filterCritters`.
 
-```html
-<!-- app/views/critters/index.html -->
-...
-<script type="text/javascript">
+```js
+// app/assets/javascripts/critters.js
 
-  // Locate the filter input field in the HTML
-  const filter = document.querySelector('.filter > input');
+// Locate the filter input field in the HTML
+const filter = document.querySelector('.filter > input');
 
-  // Listen for each keystroke release happening in this field
-  filter.addEventListener('keyup', filterCritters)
-</script>
+// Listen for each keystroke release happening in this field
+filter.addEventListener('keyup', filterCritters)
 ```
 
 ## Write the Filtering Function
 
 Now for the fun part. The `filterCritters` function is a callback function, so it automatically has an argument for the "event" that was listened for. Here, I'm refering to it as `e`. I grab the input text from the input field via the event's `target` function.
 
-```html
-<!-- app/views/critters/index.html -->
+```js
+// app/assets/javascripts/critters.js
 ...
-<script type="text/javascript">
-  const filter = document.querySelector('.filter > input');
-  filter.addEventListener('keyup', filterCritters)
+function filterCritters(e){
+  // Capture the text from the filter input field
+  const inputText = e.target.value.toLowerCase()
 
-  function filterCritters(e){
-    // Capture the text from the filter input field
-    const inputText = e.target.value.toLowerCase()
-
-    // Grab all `tr`s, then loop through them to get the critter name.
-    document.querySelectorAll('tbody > tr').forEach(function(tr){
-      // Extract the critter name text out of the tr by finding it
-      // inside the element with the `name` class
-      const critterName = tr.querySelector('.name').textContent.toLowerCase()
-      ...
-    })
-  }
-</script>
+  // Grab all `tr`s, then loop through them to get the critter name.
+  document.querySelectorAll('tbody > tr').forEach(function(tr){
+    // Extract the critter name text out of the tr by finding it
+    // inside the element with the `name` class
+    const critterName = tr.querySelector('.name').textContent.toLowerCase()
+    ...
+  })
+}
 ```
 
 ```erb
@@ -110,6 +106,8 @@ Now for the fun part. The `filterCritters` function is a callback function, so i
 Back inside the `<tr>` loop, it's time to hide/show the `<tr>`s based on whether the critter name matches the input data.
 
 ```js
+// app/assets/javascripts/critters.js
+...
 document.querySelectorAll('tbody > tr').forEach(function(tr){
   const critterName = tr.querySelector('.name').textContent.toLowerCase()
 
@@ -148,6 +146,8 @@ Though you can see all of the critters again by deleting the text from the input
 Now that there's a button, find it with javascript and set an event listener on it with a callback function of `resetResults`.
 
 ```js
+// app/assets/javascripts/critters.js
+...
 // Locate the reset button via its id
 const reset = document.querySelector('#reset-button');
 
@@ -172,6 +172,57 @@ function resetResults(e){
   // Prevent the link from reloading the page
   e.preventDefault()
 }
+```
+
+### Recap: All of the Javascript
+
+Just to recap, this is what all of the Javascript looks like together:
+
+```js
+// app/assets/javascripts/critters.js
+
+// Listen for the DOM to finish loading
+document.addEventListener('DOMContentLoaded', function(){
+
+  // Locate the filter field in the HTML
+  const filter = document.querySelector('.filter > input');
+  filter.addEventListener('keyup', filterCritters)
+
+  // Locate the reset button in the HTML
+  const reset = document.querySelector('#reset-button');
+  reset.addEventListener('click', resetResults)
+
+  function filterCritters(e){
+    // Capture the text from the filter input field
+    let inputText = e.target.value.toLowerCase()
+
+    // Grab all <tr>s that can be filtered and loop through them
+    document.querySelectorAll('tbody > tr').forEach(function(tr){
+
+      // Extract the text out of the tr
+      const critterName = tr.querySelector('.name').textContent.toLowerCase()
+
+      if(critterName.includes(inputText)){
+        tr.style.display = ''
+      } else {
+        tr.style.display = 'none'
+      }
+    })
+  }
+
+  function resetResults(e){
+    // Clear the filter text out of the input field.
+    document.querySelector('.filter > input').value = ''
+
+    // Loop through all of the `tr`s and reset their display to the default.
+    document.querySelectorAll('tbody > tr').forEach(function(tr){
+      tr.style.display = ''
+    })
+
+    // Prevent the link from reloading the page.
+    e.preventDefault()
+  }
+})
 ```
 
 

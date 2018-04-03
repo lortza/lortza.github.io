@@ -96,60 +96,54 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h2 id="insert-a-script-tag-on-the-index-page">Insert a Script Tag on the Index Page</h2>
+<h2 id="set-up-the-javascript-file">Set Up the Javascript File</h2>
 
-<p>I’m still looking into the best place to put javascript with event listeners in a Rails project so that it doesn’t require or conflict with TurboLinks. As of right now, I’ve put it in a <code class="highlighter-rouge">script</code> tag at the bottom of the <code class="highlighter-rouge">index</code> page. This placement ensures that it loads at the correct time and also keeps it in close proximity to where it’s ultimately being called.</p>
+<p>If you use <a href="http://guides.rubyonrails.org/command_line.html#rails-generate">Rails generators</a> like <code class="highlighter-rouge">rails g controller Critter</code>, you’ll get some nice freebies like stylesheets and CoffeeScript files named after your asset. This is handy for keeping code organized. In this case, I took advantage of my freebie and renamed my <code class="highlighter-rouge">critters.coffee</code> to <code class="highlighter-rouge">critters.js</code> to house my javascript.</p>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
-...
-<span class="nt">&lt;/table&gt;</span>
+<p>If I weren’t working in Rails, I would have put this javascript in a <code class="highlighter-rouge">&lt;script&gt;</code> tag at the bottom of the <code class="highlighter-rouge">index.html.erb</code> file. But <em>I am</em> in Rails, so I put it in its Railsy place. The down side is, the file will run whenever it wants – unless I tell it otherwise. I wrapped my code in a <code class="highlighter-rouge">DOMContentLoaded</code> listener, so it will run when the DOM is ready.</p>
 
-<span class="c">&lt;!-- Insert the script tag at the very end of the index page--&gt;</span>
-<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="p">...</span>
-<span class="nt">&lt;/script&gt;</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 
+<span class="c1">// Listen for the DOM to be loaded before running any of the</span>
+<span class="c1">// javascript inside this function</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'DOMContentLoaded'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+
+  <span class="c1">// CODE GOES HERE</span>
+
+<span class="p">})</span>
 </code></pre></div></div>
 
 <h2 id="locate-the-filter-field-with-javascript-and-add-an-event-listener">Locate the Filter Field with Javascript and Add an Event Listener</h2>
 
-<p>Inside the script tag, I located the input field and added an event listener to it. The listener responds every time a user lifts their finger off of a key while in this field. When that happens, it fires off a callback function called <code class="highlighter-rouge">filterCritter</code>.</p>
+<p>Inside the <code class="highlighter-rouge">critters.js</code> file, I located the input field from the <code class="highlighter-rouge">index</code> page and added an event listener to it. The listener responds every time a user lifts their finger off of a key while in this field. When that happens, it fires off a callback function called <code class="highlighter-rouge">filterCritters</code>.</p>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
-...
-<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 
-  <span class="c1">// Locate the filter input field in the HTML</span>
-  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
+<span class="c1">// Locate the filter input field in the HTML</span>
+<span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
 
-  <span class="c1">// Listen for each keystroke release happening in this field</span>
-  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
-<span class="nt">&lt;/script&gt;</span>
+<span class="c1">// Listen for each keystroke release happening in this field</span>
+<span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h2 id="write-the-filtering-function">Write the Filtering Function</h2>
 
 <p>Now for the fun part. The <code class="highlighter-rouge">filterCritters</code> function is a callback function, so it automatically has an argument for the “event” that was listened for. Here, I’m refering to it as <code class="highlighter-rouge">e</code>. I grab the input text from the input field via the event’s <code class="highlighter-rouge">target</code> function.</p>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/index.html --&gt;</span>
-...
-<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
-  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
-  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
+<span class="p">...</span>
+<span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+  <span class="c1">// Capture the text from the filter input field</span>
+  <span class="kd">const</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
 
-  <span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
-    <span class="c1">// Capture the text from the filter input field</span>
-    <span class="kd">const</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
-
-    <span class="c1">// Grab all `tr`s, then loop through them to get the critter name.</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
-      <span class="c1">// Extract the critter name text out of the tr by finding it</span>
-      <span class="c1">// inside the element with the `name` class</span>
-      <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
-      <span class="p">...</span>
-    <span class="p">})</span>
-  <span class="p">}</span>
-<span class="nt">&lt;/script&gt;</span>
+  <span class="c1">// Grab all `tr`s, then loop through them to get the critter name.</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+    <span class="c1">// Extract the critter name text out of the tr by finding it</span>
+    <span class="c1">// inside the element with the `name` class</span>
+    <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+    <span class="p">...</span>
+  <span class="p">})</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/critters/_critter.html.erb --&gt;</span>
@@ -162,7 +156,9 @@
 
 <p>Back inside the <code class="highlighter-rouge">&lt;tr&gt;</code> loop, it’s time to hide/show the <code class="highlighter-rouge">&lt;tr&gt;</code>s based on whether the critter name matches the input data.</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
+<span class="p">...</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
   <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
 
   <span class="c1">// If the input text appears anywhere in the critter's name, use default</span>
@@ -198,7 +194,9 @@
 
 <p>Now that there’s a button, find it with javascript and set an event listener on it with a callback function of <code class="highlighter-rouge">resetResults</code>.</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Locate the reset button via its id</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
+<span class="p">...</span>
+<span class="c1">// Locate the reset button via its id</span>
 <span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#reset-button'</span><span class="p">);</span>
 
 <span class="c1">// Add an event listener to run a callback after a click</span>
@@ -221,6 +219,56 @@
   <span class="c1">// Prevent the link from reloading the page</span>
   <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
 <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="recap-all-of-the-javascript">Recap: All of the Javascript</h3>
+
+<p>Just to recap, this is what all of the Javascript looks like together:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
+
+<span class="c1">// Listen for the DOM to finish loading</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'DOMContentLoaded'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+
+  <span class="c1">// Locate the filter field in the HTML</span>
+  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">);</span>
+  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+
+  <span class="c1">// Locate the reset button in the HTML</span>
+  <span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#reset-button'</span><span class="p">);</span>
+  <span class="nx">reset</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
+
+  <span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="c1">// Capture the text from the filter input field</span>
+    <span class="kd">let</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+
+    <span class="c1">// Grab all &lt;tr&gt;s that can be filtered and loop through them</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+
+      <span class="c1">// Extract the text out of the tr</span>
+      <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.name'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+
+      <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
+        <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">''</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">'none'</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="kd">function</span> <span class="nx">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="c1">// Clear the filter text out of the input field.</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.filter &gt; input'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="s1">''</span>
+
+    <span class="c1">// Loop through all of the `tr`s and reset their display to the default.</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">'tbody &gt; tr'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+      <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">''</span>
+    <span class="p">})</span>
+
+    <span class="c1">// Prevent the link from reloading the page.</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">})</span>
 </code></pre></div></div>
 
 <p>So that’s it! Since this approach does not hit the database, it is a nice solution for fast filtering of data on a single page. If you’re using pagination, you won’t be filtering anything beyond what you see on the current page and will need to implement a different solution.</p>
