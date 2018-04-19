@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Quick & Dirty Favorite/Unfavorite Toggle on Single Rails Model</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/04/19/favorite-unfavorite.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Quick & Dirty Favorite/Unfavorite Toggle on Single Rails Model</h1>
+    <p class="post-meta">April 19, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>If you’re looking to add a quick &amp; dirty system of favoriting / unfavoriting to a single Rails 5 model, you’re in the right place.</p>
+
+<p>This post uses the example of a task list app that allows you to click a ☆ next to the task name to toggle that task’s “favorite” setting. The task itself updates with HTTP and will refresh the index page upon click of the star. In a subsequent post, I’ll get into updating the favorite status via javascript so no page reload is needed.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ex:
+★ Wrestle with kittens  &lt;== favorite &amp; best ever!!
+☆ Take out the trash    &lt;== meh, not my favorite
+</code></pre></div></div>
+
+<p>These are the steps to accomplish the favoriting:</p>
+
+<ul>
+  <li>Add the Favorite Boolean to the Tasks Table</li>
+  <li>Add Favoriting Methods to the Task Model</li>
+  <li>Set up the Routes and Controller Actions</li>
+  <li>Add a View Helper to Display the Star Toggle ★ / ☆</li>
+</ul>
+
+<h2 id="add-the-favorite-boolean-to-the-tasks-table">Add the Favorite Boolean to the Tasks Table</h2>
+
+<p>Generate a new migration to add the new boolean column to the existing <code class="highlighter-rouge">tasks</code> table. On the command line, type:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration AddFavoriteToTasks favorite:boolean
+</code></pre></div></div>
+
+<p>Open the migration file (the last file in your db/migrate directory) and add <code class="highlighter-rouge">default: false</code> to the <code class="highlighter-rouge">add_column</code> method:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/migrate/20180419165453_add_favorite_to_tasks.rb</span>
+
+<span class="k">class</span> <span class="nc">AddFavoriteToTasks</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">5.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">add_column</span> <span class="ss">:tasks</span><span class="p">,</span> <span class="ss">:favorite</span><span class="p">,</span> <span class="ss">:boolean</span><span class="p">,</span> <span class="ss">default: </span><span class="kp">false</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Save the file and run the migration:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rake db:migrate
+</code></pre></div></div>
+
+<p>Take a look at the <code class="highlighter-rouge">schema.rb</code> file to ensure the new <code class="highlighter-rouge">favorite</code> column is there.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/schema.rb</span>
+
+<span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Schema</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">version: </span><span class="mi">20180419165453</span><span class="p">)</span> <span class="k">do</span>
+
+  <span class="n">create_table</span> <span class="s2">"tasks"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">text</span>     <span class="s2">"name"</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">text</span>     <span class="s2">"description"</span><span class="p">,</span>   <span class="ss">default: </span><span class="s2">""</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">boolean</span>  <span class="s2">"favorite"</span><span class="p">,</span>      <span class="ss">default: </span><span class="kp">false</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">datetime</span> <span class="s2">"created_at"</span><span class="p">,</span>    <span class="ss">null: </span><span class="kp">false</span>
+    <span class="n">t</span><span class="p">.</span><span class="nf">datetime</span> <span class="s2">"updated_at"</span><span class="p">,</span>    <span class="ss">null: </span><span class="kp">false</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>If your Rails server is running, now is a good time to restart it. I have forgotten to do this many times. It usually comes back to bite me when I try to save a value to my new field and it won’t save.</p>
+
+<p>Another step that’s easy to miss is adding your new field to the params whitelist in the matching controller. Missing this step will also cause your form submissions to skip saving data in that field.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/tasks_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">TasksController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">task_params</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:task</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:favorite</span><span class="p">)</span>
+  <span class="k">end</span>
+ <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="add-favoriting-methods-to-the-task-model">Add Favoriting Methods to the Task Model</h2>
+
+<p>Open the <code class="highlighter-rouge">task</code> model and add these public methods.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/task.rb</span>
+
+<span class="k">class</span> <span class="nc">Task</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="o">...</span>
+  <span class="c1"># Set the task's favorite setting to true and save the task</span>
+  <span class="k">def</span> <span class="nf">favorite!</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">favorite</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">save!</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Set the task's favorite setting to false and save the task</span>
+  <span class="k">def</span> <span class="nf">unfavorite!</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">favorite</span> <span class="o">=</span> <span class="kp">false</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">save!</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>At this point, it’s a good idea to pop into your rails console to make sure these methods work.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Start rails server</span>
+<span class="n">rails</span> <span class="n">console</span>
+
+<span class="c1"># Set variable t to the first task</span>
+<span class="n">t</span> <span class="o">=</span> <span class="no">Task</span><span class="p">.</span><span class="nf">first</span>
+
+<span class="c1"># Check the value of t's favorite boolean</span>
+<span class="n">t</span><span class="p">.</span><span class="nf">favorite</span> <span class="c1"># ==&gt; false</span>
+
+<span class="c1"># Call the `favorite!` method</span>
+<span class="n">t</span><span class="p">.</span><span class="nf">favorite!</span>
+
+<span class="c1"># Check the value of t's favorite boolean</span>
+<span class="n">t</span><span class="p">.</span><span class="nf">favorite</span> <span class="c1"># ==&gt; true. Great! It works.</span>
+
+<span class="c1"># Call the `unfavorite!` method</span>
+<span class="n">t</span><span class="p">.</span><span class="nf">unfavorite!</span>
+
+<span class="c1"># Check the value of t's favorite boolean</span>
+<span class="n">t</span><span class="p">.</span><span class="nf">favorite</span> <span class="c1"># ==&gt; false. Great! It works.</span>
+</code></pre></div></div>
+
+<h2 id="set-up-the-routes-and-controller-actions">Set up the Routes and Controller Actions</h2>
+<p>The only actions we’ll need to do with our <code class="highlighter-rouge">favorites</code> are <code class="highlighter-rouge">update</code> and <code class="highlighter-rouge">destroy</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/routes.rb</span>
+
+<span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">draw</span> <span class="k">do</span>
+  <span class="o">...</span>
+  <span class="n">root</span> <span class="s1">'tasks#index'</span>
+  <span class="n">resources</span> <span class="ss">:tasks</span>
+  <span class="n">resources</span> <span class="ss">:favorites</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Create a new controller file for the favorites controller. Just like in the routes file, we only need the <code class="highlighter-rouge">update</code> and <code class="highlighter-rouge">destroy</code> actions.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">FavoritesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="n">before_action</span> <span class="ss">:set_task</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
+
+  <span class="c1"># Write the update action that corresponds to the update route</span>
+  <span class="k">def</span> <span class="nf">update</span>
+    <span class="c1"># Use the `favorite!` method to set the task's favorite boolean to true</span>
+    <span class="vi">@task</span><span class="p">.</span><span class="nf">favorite!</span>
+    <span class="n">redirect_to</span> <span class="n">tasks_url</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Write the update action that corresponds to the destroy route</span>
+  <span class="k">def</span> <span class="nf">destroy</span>
+    <span class="c1"># Use the `unfavorite!` method to set the task's favorite boolean to false</span>
+    <span class="vi">@task</span><span class="p">.</span><span class="nf">unfavorite!</span>
+    <span class="n">redirect_to</span> <span class="n">tasks_url</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">set_task</span>
+    <span class="vi">@task</span> <span class="o">=</span> <span class="no">Task</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="add-a-view-helper-to-display-the-star-toggle---">Add a View Helper to Display the Star Toggle ★ / ☆</h2>
+
+<p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="highlighter-rouge">favorite_unfavorite</code> to the task in the view. Pass it the task as an argument.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/tasks/_task.html.erb
+...
+<span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
+</code></pre></div></div>
+
+<p>This example uses Font Awesome icons. <a href="https://fontawesome.com/get-started">Check out their getting started to get a CDN link</a> or…</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c">&lt;!-- app/views/layouts/application.html.erb --&gt;</span>
+
+ <span class="cp">&lt;!DOCTYPE html&gt;</span>
+  <span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+      ...
+      <span class="c">&lt;!-- Add CDN as the last line before your `&lt;/head&gt;` --&gt;</span>
+      <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"https://use.fontawesome.com/releases/v5.0.6/css/all.css"</span> <span class="na">rel=</span><span class="s">"stylesheet"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+  ...
+  <span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>Define the <code class="highlighter-rouge">favorite_unfavorite</code> method in the tasks helper using the icon classes and the links to the <code class="highlighter-rouge">favorites_controller</code>’s <code class="highlighter-rouge">destroy</code> and <code class="highlighter-rouge">update</code> methods.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
+
+<span class="k">module</span> <span class="nn">TasksHelper</span>
+
+  <span class="k">def</span> <span class="nf">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="c1"># If the task has been favorited...</span>
+    <span class="k">if</span> <span class="n">task</span><span class="p">.</span><span class="nf">favorite</span>
+      <span class="c1"># Show the ★ and link to "unfavorite" it</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='fa fa-star favorite'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">method: :delete</span>
+    <span class="k">else</span>
+      <span class="c1"># Show the ☆ and link to "favorite" it</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">method: :patch</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Lastly, give a little style to the stars.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">#</span> <span class="nt">app</span><span class="o">/</span><span class="nt">assets</span><span class="o">/</span><span class="nt">stylesheets</span><span class="o">/</span><span class="nt">tasks</span><span class="nc">.scss</span>
+
+<span class="nc">.fa-star</span> <span class="p">{</span>
+  <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">70%</span><span class="p">;</span>
+  <span class="nl">margin-top</span><span class="p">:</span> <span class="m">5px</span><span class="p">;</span>
+  <span class="nl">margin-right</span><span class="p">:</span> <span class="m">5px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.favorite</span> <span class="p">{</span> <span class="nl">color</span><span class="p">:</span> <span class="no">yellow</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>And that’s it. Now you should be able to click on a star by a task name to toggle its favorite state.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
