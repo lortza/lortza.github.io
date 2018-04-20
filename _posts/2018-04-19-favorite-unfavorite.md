@@ -185,12 +185,12 @@ end
 
 ## Add a View Helper to Toggle ★\|☆ and Link Destination
 
-With the routing and controller actions in place, it's time to write the links in the view. Add a view helper called `favorite_unfavorite` to the task in the view. Pass it the task as an argument.
+With the routing and controller actions in place, it's time to write the links in the view. Add a view helper called `toggle_favorite` to the task in the view. Pass it the task as an argument.
 
 ```erb
 # app/tasks/_task.html.erb
 ...
-<h1><%= favorite_unfavorite(task) %> <%= task.name %></h1>
+<h1><%= toggle_favorite(task) %> <%= task.name %></h1>
 ```
 
 
@@ -210,14 +210,14 @@ With the routing and controller actions in place, it's time to write the links i
   </html>
  ```
 
-Define the `favorite_unfavorite` method in the tasks helper using the icon classes and the links to the `favorites_controller`'s `destroy` and `update` methods.
+Define the `toggle_favorite` method in the tasks helper using the icon classes and the links to the `favorites_controller`'s `destroy` and `update` methods.
 
 ```ruby
 # app/helpers/tasks_helper.rb
 
 module TasksHelper
 
-  def favorite_unfavorite(task)
+  def toggle_favorite(task)
     # If the task has been favorited...
     if task.favorite
       # Show the ★ and link to "unfavorite" it
@@ -255,21 +255,21 @@ Head back over to the task view and add a unique identifier to the parent object
 # app/tasks/_task.html.erb
 
 <article id="<%= dom_id(task) %>">
-  <h1><%= favorite_unfavorite(task) %> <%= task.name %></h1>
+  <h1><%= toggle_favorite(task) %> <%= task.name %></h1>
   <p><%= task.description %></p>
 </article>
 ```
 
 The `<article id="<%= dom_id(task) %>">` will output something like `<article id="task_25">`, which is perfect for our javascript needs.
 
-In the task helper, update the links in the `favorite_unfavorite` method to include `remote: true`. This will indicate to the controller that we want to use javascript to carry out the response to this request.
+In the task helper, update the links in the `toggle_favorite` method to include `remote: true`. This will indicate to the controller that we want to use javascript to carry out the response to this request.
 
 ```ruby
 # app/helpers/tasks_helper.rb
 
 module TasksHelper
 ...
-  def favorite_unfavorite(task)
+  def toggle_favorite(task)
     if task.favorite
       # Add `remote: true` to the link
       link_to raw("<i class='fa fa-star favorite'></i>"), favorite_path(task), remote: true, method: :delete
@@ -317,9 +317,9 @@ Put this code in both of those files. Yep, it's redundant.
 // <article> on the index page and then grab its star <i>
 let starIcon = document.querySelector("#task_<%= @task.id %>").querySelector('.fa-star')
 
-// Reuse the logic from the `favorite_unfavorite` method to
+// Reuse the logic from the `toggle_favorite` method to
 // update the star icon styles and the link destination
-starIcon.parentElement.outerHTML = "<%= escape_javascript(favorite_unfavorite(@task)) %>"
+starIcon.parentElement.outerHTML = "<%= escape_javascript(toggle_favorite(@task)) %>"
 ```
 
 And there you have it! Now you can toggle the stars to your heart's delight without reloading the index page. If you'd like to see a similar example of this feature done with jQuery, check out [this post by Dan Cunning](https://www.topdan.com/ruby-on-rails/ajax-toggle-buttons.html).
