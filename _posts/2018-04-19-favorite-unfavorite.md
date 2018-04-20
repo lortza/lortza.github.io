@@ -136,7 +136,7 @@ t.favorite # ==> false. Great! It works.
 
 
 ## Set up the Routes and Controller Actions
-The only actions we'll need to do with our `favorites` are `update` and `destroy`.
+The only actions we'll need to do with our `favorites` are `create` and `destroy`.
 
 ```ruby
 # config/routes.rb
@@ -145,28 +145,28 @@ Rails.application.routes.draw do
   ...
   root 'tasks#index'
   resources :tasks
-  resources :favorites, only: [:update, :destroy]
+  resources :favorites, only: [:create, :destroy]
 
 end
 ```
 
-Create a new controller file for the favorites controller. Just like in the routes file, we only need the `update` and `destroy` actions.
+Create a new controller file for the favorites controller. Just like in the routes file, we only need the `create` and `destroy` actions.
 
 ```ruby
 # app/controllers/favorites_controller.rb
 
 class FavoritesController < ApplicationController
 
-  before_action :set_task, only: [:update, :destroy]
+  before_action :set_task, only: [:create, :destroy]
 
-  # Write the update action that corresponds to the update route
-  def update
+  # Write the create action that corresponds to the POST route
+  def create
     # Use the `favorite!` method to set the task's favorite boolean to true
     @task.favorite!
     redirect_to tasks_url
   end
 
-  # Write the update action that corresponds to the destroy route
+  # Write the destroy action that corresponds to the DELETE route
   def destroy
     # Use the `unfavorite!` method to set the task's favorite boolean to false
     @task.unfavorite!
@@ -210,7 +210,7 @@ With the routing and controller actions in place, it's time to write the links i
   </html>
  ```
 
-Define the `toggle_favorite` method in the tasks helper using the icon classes and the links to the `favorites_controller`'s `destroy` and `update` methods.
+Define the `toggle_favorite` method in the tasks helper using the icon classes and the links to the `favorites_controller`'s `destroy` and `create` methods.
 
 ```ruby
 # app/helpers/tasks_helper.rb
@@ -224,7 +224,7 @@ module TasksHelper
       link_to raw("<i class='fa fa-star favorite'></i>"), favorite_path(task), method: :delete
     else
       # Show the ☆ and link to "favorite" it
-      link_to raw("<i class='far fa-star'></i>"), favorite_path(task), method: :patch
+      link_to raw("<i class='far fa-star'></i>"), favorites_path(id: task.id), method: :post
     end
   end
 end
@@ -275,21 +275,21 @@ module TasksHelper
       link_to raw("<i class='fa fa-star favorite'></i>"), favorite_path(task), remote: true, method: :delete
     else
       # Add `remote: true` to the link
-      link_to raw("<i class='far fa-star'></i>"), favorite_path(task), remote: true, method: :patch
+      link_to raw("<i class='far fa-star'></i>"), favorites_path(id: task.id), remote: true, method: :post
     end
   end
 
 end
 ```
 
-Go back to the favorites controller and remove the instruction to redirect to the index from both the `update` and the `destroy` methods:
+Go back to the favorites controller and remove the instruction to redirect to the index from both the `create` and the `destroy` methods:
 
 ```ruby
 # app/controllers/favorites_controller.rb
 
 class FavoritesController < ApplicationController
 ...
-  def update
+  def create
     @task.favorite!
     # redirect_to tasks_url <== remove this
   end
@@ -302,12 +302,12 @@ class FavoritesController < ApplicationController
 end
 ```
 
-Create a new folder called `favorites` in `app/views` and make `js.erb` files for both the `update` and the `destroy` methods inside of it.
+Create a new folder called `favorites` in `app/views` and make `js.erb` files for both the `create` and the `destroy` methods inside of it.
 
 ```
 - app/views/favorites/
   - destroy.js.erb
-  - update.js.erb
+  - create.js.erb
 ```
 
 Put this code in both of those files. Yep, it's redundant.
