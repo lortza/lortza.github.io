@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Anne Richardson | Quick & Dirty Favorite/Unfavorite Toggle on Single Rails Model</title>
+    <title>Anne Richardson | Favorite/Unfavorite Toggle on Single Rails Model</title>
     <meta name="description" content="Anne Richardson Rails Developer
  blog and portfolio">
 
@@ -58,14 +58,14 @@
         <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Quick & Dirty Favorite/Unfavorite Toggle on Single Rails Model</h1>
+    <h1 class="post-title">Favorite/Unfavorite Toggle on Single Rails Model</h1>
     <p class="post-meta">April 19, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>If you’re looking to add a quick &amp; dirty system of favoriting / unfavoriting to a single Rails 5 model, you’re in the right place.</p>
+    <p>If you’re looking to add a system of favoriting / unfavoriting to a single Rails 5 model, you’re in the right place.</p>
 
-<p>This post uses the example of a task list app that allows you to click a ☆ next to the task name to toggle that task’s “favorite” setting. The task itself updates with HTTP and will refresh the index page upon click of the star. In a subsequent post, I’ll get into updating the favorite status via javascript so no page reload is needed.</p>
+<p>This post uses the example of a single-user task list app that allows you to click a ☆ next to the task name to toggle that task’s “favorite” setting. The task is updated with javascript, so you stay right there on the tasks index page and there is no reloading of the page.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ex:
 ★ Wrestle with kittens  &lt;== favorite &amp; best ever!!
@@ -75,10 +75,11 @@
 <p>These are the steps to accomplish the favoriting:</p>
 
 <ul>
-  <li>Add the Favorite Boolean to the Tasks Table</li>
-  <li>Add Favoriting Methods to the Task Model</li>
-  <li>Set up the Routes and Controller Actions</li>
-  <li>Add a View Helper to Display the Star Toggle ★ / ☆</li>
+  <li>Add the “favorite” boolean field to the tasks table</li>
+  <li>Add favoriting methods to the task model</li>
+  <li>Set up the routes and controller actions</li>
+  <li>Add a view helper toggle ★|☆ and link destinations</li>
+  <li>Wire up the javascript for updating without refreshing</li>
 </ul>
 
 <h2 id="add-the-favorite-boolean-to-the-tasks-table">Add the Favorite Boolean to the Tasks Table</h2>
@@ -229,7 +230,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h2 id="add-a-view-helper-to-display-the-star-toggle---">Add a View Helper to Display the Star Toggle ★ / ☆</h2>
+<h2 id="add-a-view-helper-to-toggle--and-link-destination">Add a View Helper to Toggle ★|☆ and Link Destination</h2>
 
 <p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="highlighter-rouge">favorite_unfavorite</code> to the task in the view. Pass it the task as an argument.</p>
 
@@ -286,8 +287,79 @@
 <span class="nc">.favorite</span> <span class="p">{</span> <span class="nl">color</span><span class="p">:</span> <span class="no">yellow</span><span class="p">;</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>And that’s it. Now you should be able to click on a star by a task name to toggle its favorite state.</p>
+<p>At this point, you should be able to click on a star by a task name to toggle its favorite state. The index page WILL be reloading at this point. But not for long…</p>
 
+<h2 id="wire-up-the-javascript-for-updating-without-refreshing-the-index-page">Wire up the Javascript for Updating Without Refreshing the Index Page</h2>
+
+<p>Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of <a href="https://apidock.com/rails/ActionView/RecordIdentifier/dom_id">Rails’ <code class="highlighter-rouge">dom_id</code> method</a> which will generate a unique id based on the object’s model and its id number in the table.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/tasks/_task.html.erb
+
+<span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">"</span><span class="cp">&lt;%=</span> <span class="n">dom_id</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;p&gt;</span><span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">description</span> <span class="cp">%&gt;</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/article&gt;</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">&lt;article id="&lt;%= dom_id(task) %&gt;"&gt;</code> will output something like <code class="highlighter-rouge">&lt;article id="task_25"&gt;</code>, which is perfect for our javascript needs.</p>
+
+<p>In the task helper, update the links in the <code class="highlighter-rouge">favorite_unfavorite</code> method to include <code class="highlighter-rouge">remote: true</code>. This will indicate to the controller that we want to use javascript to carry out the response to this request.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
+
+<span class="k">module</span> <span class="nn">TasksHelper</span>
+<span class="o">...</span>
+  <span class="k">def</span> <span class="nf">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">task</span><span class="p">.</span><span class="nf">favorite</span>
+      <span class="c1"># Add `remote: true` to the link</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='fa fa-star favorite'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">method: :delete</span>
+    <span class="k">else</span>
+      <span class="c1"># Add `remote: true` to the link</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">method: :patch</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Go back to the favorites controller and remove the instruction to redirect to the index from both the <code class="highlighter-rouge">update</code> and the <code class="highlighter-rouge">destroy</code> methods:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">FavoritesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<span class="o">...</span>
+  <span class="k">def</span> <span class="nf">update</span>
+    <span class="vi">@task</span><span class="p">.</span><span class="nf">favorite!</span>
+    <span class="c1"># redirect_to tasks_url &lt;== remove this</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">destroy</span>
+    <span class="vi">@task</span><span class="p">.</span><span class="nf">unfavorite!</span>
+    <span class="c1"># redirect_to tasks_url &lt;== remove this</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Create a new folder called <code class="highlighter-rouge">favorites</code> in <code class="highlighter-rouge">app/views</code> and make <code class="highlighter-rouge">js.erb</code> files for both the <code class="highlighter-rouge">update</code> and the <code class="highlighter-rouge">destroy</code> methods inside of it.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- app/views/favorites/
+  - destroy.js.erb
+  - update.js.erb
+</code></pre></div></div>
+
+<p>Put this code in both of those files. Yep, it’s redundant.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Use that handy `dom_id` from before to identify the correct</span>
+<span class="c1">// &lt;article&gt; on the index page and then grab its star &lt;i&gt;</span>
+<span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#task_&lt;%= @task.id %&gt;"</span><span class="p">).</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.fa-star'</span><span class="p">)</span>
+
+<span class="c1">// Reuse the logic from the `favorite_unfavorite` method to</span>
+<span class="c1">// update the star icon styles and the link destination</span>
+<span class="nx">starIcon</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="s2">"&lt;%= escape_javascript(favorite_unfavorite(@task)) %&gt;"</span>
+</code></pre></div></div>
+
+<p>And there you have it! Now you can toggle the stars to your heart’s delight without reloading the index page. If you’d like to see a similar example of this feature done with jQuery, check out <a href="https://www.topdan.com/ruby-on-rails/ajax-toggle-buttons.html">this post by Dan Cunning</a>.</p>
 
   </article>
 

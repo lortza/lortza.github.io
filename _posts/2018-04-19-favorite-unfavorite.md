@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  Quick & Dirty Favorite/Unfavorite Toggle on Single Rails Model
+title:  Favorite/Unfavorite Toggle on Single Rails Model
 date:   2018-04-19
 ---
 
-If you're looking to add a quick & dirty system of favoriting / unfavoriting to a single Rails 5 model, you're in the right place.
+If you're looking to add a system of favoriting / unfavoriting to a single Rails 5 model, you're in the right place.
 
-This post uses the example of a task list app that allows you to click a ☆ next to the task name to toggle that task's "favorite" setting. The task itself updates with HTTP and will refresh the index page upon click of the star. In a subsequent post, I'll get into updating the favorite status via javascript so no page reload is needed.
+This post uses the example of a single-user task list app that allows you to click a ☆ next to the task name to toggle that task's "favorite" setting. The task is updated with javascript, so you stay right there on the tasks index page and there is no reloading of the page.
 
 ```
 ex:
@@ -16,10 +16,11 @@ ex:
 
 These are the steps to accomplish the favoriting:
 
-  - Add the Favorite Boolean to the Tasks Table
-  - Add Favoriting Methods to the Task Model
-  - Set up the Routes and Controller Actions
-  - Add a View Helper to Display the Star Toggle ★ / ☆
+  - Add the "favorite" boolean field to the tasks table
+  - Add favoriting methods to the task model
+  - Set up the routes and controller actions
+  - Add a view helper toggle ★\|☆ and link destinations
+  - Wire up the javascript for updating without refreshing
 
 
 ## Add the Favorite Boolean to the Tasks Table
@@ -182,7 +183,7 @@ end
 ```
 
 
-## Add a View Helper to Display the Star Toggle ★ / ☆
+## Add a View Helper to Toggle ★\|☆ and Link Destination
 
 With the routing and controller actions in place, it's time to write the links in the view. Add a view helper called `favorite_unfavorite` to the task in the view. Pass it the task as an argument.
 
@@ -244,5 +245,81 @@ Lastly, give a little style to the stars.
 .favorite { color: yellow; }
 ```
 
-And that's it. Now you should be able to click on a star by a task name to toggle its favorite state.
+At this point, you should be able to click on a star by a task name to toggle its favorite state. The index page WILL be reloading at this point. But not for long...
 
+## Wire up the Javascript for Updating Without Refreshing the Index Page
+
+Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of [Rails' `dom_id` method](https://apidock.com/rails/ActionView/RecordIdentifier/dom_id) which will generate a unique id based on the object's model and its id number in the table.
+
+```erb
+# app/tasks/_task.html.erb
+
+<article id="<%= dom_id(task) %>">
+  <h1><%= favorite_unfavorite(task) %> <%= task.name %></h1>
+  <p><%= task.description %></p>
+</article>
+```
+
+The `<article id="<%= dom_id(task) %>">` will output something like `<article id="task_25">`, which is perfect for our javascript needs.
+
+In the task helper, update the links in the `favorite_unfavorite` method to include `remote: true`. This will indicate to the controller that we want to use javascript to carry out the response to this request.
+
+```ruby
+# app/helpers/tasks_helper.rb
+
+module TasksHelper
+...
+  def favorite_unfavorite(task)
+    if task.favorite
+      # Add `remote: true` to the link
+      link_to raw("<i class='fa fa-star favorite'></i>"), favorite_path(task), remote: true, method: :delete
+    else
+      # Add `remote: true` to the link
+      link_to raw("<i class='far fa-star'></i>"), favorite_path(task), remote: true, method: :patch
+    end
+  end
+
+end
+```
+
+Go back to the favorites controller and remove the instruction to redirect to the index from both the `update` and the `destroy` methods:
+
+```ruby
+# app/controllers/favorites_controller.rb
+
+class FavoritesController < ApplicationController
+...
+  def update
+    @task.favorite!
+    # redirect_to tasks_url <== remove this
+  end
+
+  def destroy
+    @task.unfavorite!
+    # redirect_to tasks_url <== remove this
+  end
+  ...
+end
+```
+
+Create a new folder called `favorites` in `app/views` and make `js.erb` files for both the `update` and the `destroy` methods inside of it.
+
+```
+- app/views/favorites/
+  - destroy.js.erb
+  - update.js.erb
+```
+
+Put this code in both of those files. Yep, it's redundant.
+
+```js
+// Use that handy `dom_id` from before to identify the correct
+// <article> on the index page and then grab its star <i>
+let starIcon = document.querySelector("#task_<%= @task.id %>").querySelector('.fa-star')
+
+// Reuse the logic from the `favorite_unfavorite` method to
+// update the star icon styles and the link destination
+starIcon.parentElement.outerHTML = "<%= escape_javascript(favorite_unfavorite(@task)) %>"
+```
+
+And there you have it! Now you can toggle the stars to your heart's delight without reloading the index page. If you'd like to see a similar example of this feature done with jQuery, check out [this post by Dan Cunning](https://www.topdan.com/ruby-on-rails/ajax-toggle-buttons.html).
