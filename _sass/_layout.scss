@@ -240,7 +240,10 @@ img.about-pic {
     text-transform: lowercase;
   }
   .rails-sites { overflow: auto; }
-  .projects-subhead { text-align: center; }
+  .projects-subhead {
+    text-align: center;
+    h1 { margin: 50px 0px 20px 0px; }
+  }
   .featured {
     clear: both;
     margin: 0 auto;
@@ -266,7 +269,10 @@ img.about-pic {
       min-width: 100px;
       float: left;
     }
-    h3 { font-size: 1.125em; }
+    h3 {
+      font-size: 1.125em;
+      margin-top: 0.5em;
+    }
     p {
       font-size: 0.85em;
       line-height: 1.25em;

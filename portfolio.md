@@ -8,16 +8,15 @@ permalink: /portfolio/
 
   <h2>Skills</h2>
 
-  <p class="section-explanation">Ruby, Rails, Git, Sass, CSS, JavaScript, jQuery, Node.js, PHP, CodeIgniter, MySQL, PostgreSQL, SQLite, Heroku, AWS S3, Jekyll, XML, Database Design, transactional Spanish, Card Game Design, and Bicycle Repair</p>
+  <p class="section-explanation">Ruby, Rails, Rails API, Sass, CSS, JavaScript, React, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, Heroku, AWS S3, Jekyll, XML, Database Design, transactional Spanish, Card Game Design, and Bicycle Repair</p>
 
   <h2>Rails Projects</h2>
 
-  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code now, there is so much to be improved. I keep marching forward onto new challenges. This week's challenge: learn jekyll and customize a theme. If you're seeing this page, then my efforts have led to a successful deployment :)</p>
+  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code now, there is so much to be improved. I keep marching forward onto new challenges.</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">
       <h1>Featured Project</h1>
-      <p>For those of you reviewing projects in a hurry, start here</p>
     </div> <!-- projects-subhead -->
   {% for project in site.featured_projects %}
     <div class="featured">
@@ -42,7 +41,6 @@ permalink: /portfolio/
   <div class="rails-sites">
     <div class="projects-subhead">
       <h1>More Projects</h1>
-      <p>For those of you who want to see a little more</p>
     </div> <!-- projects-subhead -->
 
   {% for project in site.projects %}

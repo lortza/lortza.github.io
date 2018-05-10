@@ -373,6 +373,8 @@ img.about-pic {
   overflow: auto; }
 .portfolio-index .projects-subhead {
   text-align: center; }
+  .portfolio-index .projects-subhead h1 {
+    margin: 50px 0px 20px 0px; }
 .portfolio-index .featured {
   clear: both;
   margin: 0 auto;
@@ -397,7 +399,8 @@ img.about-pic {
       min-width: 100px;
       float: left; }
     .products article h3 {
-      font-size: 1.125em; }
+      font-size: 1.125em;
+      margin-top: 0.5em; }
     .products article p {
       font-size: 0.85em;
       line-height: 1.25em; }
