@@ -188,7 +188,7 @@ end
 With the routing and controller actions in place, it's time to write the links in the view. Add a view helper called `toggle_favorite` to the task in the view. Pass it the task as an argument.
 
 ```erb
-# app/tasks/_task.html.erb
+<!-- app/tasks/_task.html.erb  -->
 ...
 <h1><%= toggle_favorite(task) %> <%= task.name %></h1>
 ```
@@ -233,7 +233,7 @@ end
 Lastly, give a little style to the stars.
 
 ```css
-# app/assets/stylesheets/tasks.scss
+/* app/assets/stylesheets/tasks.scss */
 
 .fa-star {
   float: left;
@@ -252,7 +252,7 @@ At this point, you should be able to click on a star by a task name to toggle it
 Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of [Rails' `dom_id` method](https://apidock.com/rails/ActionView/RecordIdentifier/dom_id) which will generate a unique id based on the object's model and its id number in the table.
 
 ```erb
-# app/tasks/_task.html.erb
+<!-- app/tasks/_task.html.erb -->
 
 <article id="<%= dom_id(task) %>">
   <h1><%= toggle_favorite(task) %> <%= task.name %></h1>

@@ -186,7 +186,7 @@
 </code></pre></div></div>
 
 <h2 id="set-up-the-routes-and-controller-actions">Set up the Routes and Controller Actions</h2>
-<p>The only actions we’ll need to do with our <code class="highlighter-rouge">favorites</code> are <code class="highlighter-rouge">update</code> and <code class="highlighter-rouge">destroy</code>.</p>
+<p>The only actions we’ll need to do with our <code class="highlighter-rouge">favorites</code> are <code class="highlighter-rouge">create</code> and <code class="highlighter-rouge">destroy</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/routes.rb</span>
 
@@ -194,27 +194,27 @@
   <span class="o">...</span>
   <span class="n">root</span> <span class="s1">'tasks#index'</span>
   <span class="n">resources</span> <span class="ss">:tasks</span>
-  <span class="n">resources</span> <span class="ss">:favorites</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
+  <span class="n">resources</span> <span class="ss">:favorites</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
 
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Create a new controller file for the favorites controller. Just like in the routes file, we only need the <code class="highlighter-rouge">update</code> and <code class="highlighter-rouge">destroy</code> actions.</p>
+<p>Create a new controller file for the favorites controller. Just like in the routes file, we only need the <code class="highlighter-rouge">create</code> and <code class="highlighter-rouge">destroy</code> actions.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
 
 <span class="k">class</span> <span class="nc">FavoritesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
-  <span class="n">before_action</span> <span class="ss">:set_task</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
+  <span class="n">before_action</span> <span class="ss">:set_task</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:destroy</span><span class="p">]</span>
 
-  <span class="c1"># Write the update action that corresponds to the update route</span>
-  <span class="k">def</span> <span class="nf">update</span>
+  <span class="c1"># Write the create action that corresponds to the POST route</span>
+  <span class="k">def</span> <span class="nf">create</span>
     <span class="c1"># Use the `favorite!` method to set the task's favorite boolean to true</span>
     <span class="vi">@task</span><span class="p">.</span><span class="nf">favorite!</span>
     <span class="n">redirect_to</span> <span class="n">tasks_url</span>
   <span class="k">end</span>
 
-  <span class="c1"># Write the update action that corresponds to the destroy route</span>
+  <span class="c1"># Write the destroy action that corresponds to the DELETE route</span>
   <span class="k">def</span> <span class="nf">destroy</span>
     <span class="c1"># Use the `unfavorite!` method to set the task's favorite boolean to false</span>
     <span class="vi">@task</span><span class="p">.</span><span class="nf">unfavorite!</span>
@@ -232,11 +232,11 @@
 
 <h2 id="add-a-view-helper-to-toggle--and-link-destination">Add a View Helper to Toggle ★|☆ and Link Destination</h2>
 
-<p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="highlighter-rouge">favorite_unfavorite</code> to the task in the view. Pass it the task as an argument.</p>
+<p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="highlighter-rouge">toggle_favorite</code> to the task in the view. Pass it the task as an argument.</p>
 
-<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/tasks/_task.html.erb
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/tasks/_task.html.erb  --&gt;</span>
 ...
-<span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">toggle_favorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
 </code></pre></div></div>
 
 <p>This example uses Font Awesome icons. <a href="https://fontawesome.com/get-started">Check out their getting started to get a CDN link</a> or…</p>
@@ -254,20 +254,20 @@
   <span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
-<p>Define the <code class="highlighter-rouge">favorite_unfavorite</code> method in the tasks helper using the icon classes and the links to the <code class="highlighter-rouge">favorites_controller</code>’s <code class="highlighter-rouge">destroy</code> and <code class="highlighter-rouge">update</code> methods.</p>
+<p>Define the <code class="highlighter-rouge">toggle_favorite</code> method in the tasks helper using the icon classes and the links to the <code class="highlighter-rouge">favorites_controller</code>’s <code class="highlighter-rouge">destroy</code> and <code class="highlighter-rouge">create</code> methods.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
 
 <span class="k">module</span> <span class="nn">TasksHelper</span>
 
-  <span class="k">def</span> <span class="nf">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">toggle_favorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
     <span class="c1"># If the task has been favorited...</span>
     <span class="k">if</span> <span class="n">task</span><span class="p">.</span><span class="nf">favorite</span>
       <span class="c1"># Show the ★ and link to "unfavorite" it</span>
       <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='fa fa-star favorite'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">method: :delete</span>
     <span class="k">else</span>
       <span class="c1"># Show the ☆ and link to "favorite" it</span>
-      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">method: :patch</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorites_path</span><span class="p">(</span><span class="ss">id: </span><span class="n">task</span><span class="p">.</span><span class="nf">id</span><span class="p">),</span> <span class="ss">method: :post</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -275,7 +275,7 @@
 
 <p>Lastly, give a little style to the stars.</p>
 
-<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">#</span> <span class="nt">app</span><span class="o">/</span><span class="nt">assets</span><span class="o">/</span><span class="nt">stylesheets</span><span class="o">/</span><span class="nt">tasks</span><span class="nc">.scss</span>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* app/assets/stylesheets/tasks.scss */</span>
 
 <span class="nc">.fa-star</span> <span class="p">{</span>
   <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
@@ -293,42 +293,42 @@
 
 <p>Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of <a href="https://apidock.com/rails/ActionView/RecordIdentifier/dom_id">Rails’ <code class="highlighter-rouge">dom_id</code> method</a> which will generate a unique id based on the object’s model and its id number in the table.</p>
 
-<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/tasks/_task.html.erb
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/tasks/_task.html.erb --&gt;</span>
 
 <span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">"</span><span class="cp">&lt;%=</span> <span class="n">dom_id</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;h1&gt;</span><span class="cp">&lt;%=</span> <span class="n">toggle_favorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="cp">%&gt;</span> <span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="nt">&lt;/h1&gt;</span>
   <span class="nt">&lt;p&gt;</span><span class="cp">&lt;%=</span> <span class="n">task</span><span class="p">.</span><span class="nf">description</span> <span class="cp">%&gt;</span><span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/article&gt;</span>
 </code></pre></div></div>
 
 <p>The <code class="highlighter-rouge">&lt;article id="&lt;%= dom_id(task) %&gt;"&gt;</code> will output something like <code class="highlighter-rouge">&lt;article id="task_25"&gt;</code>, which is perfect for our javascript needs.</p>
 
-<p>In the task helper, update the links in the <code class="highlighter-rouge">favorite_unfavorite</code> method to include <code class="highlighter-rouge">remote: true</code>. This will indicate to the controller that we want to use javascript to carry out the response to this request.</p>
+<p>In the task helper, update the links in the <code class="highlighter-rouge">toggle_favorite</code> method to include <code class="highlighter-rouge">remote: true</code>. This will indicate to the controller that we want to use javascript to carry out the response to this request.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
 
 <span class="k">module</span> <span class="nn">TasksHelper</span>
 <span class="o">...</span>
-  <span class="k">def</span> <span class="nf">favorite_unfavorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">toggle_favorite</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">task</span><span class="p">.</span><span class="nf">favorite</span>
       <span class="c1"># Add `remote: true` to the link</span>
       <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='fa fa-star favorite'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">method: :delete</span>
     <span class="k">else</span>
       <span class="c1"># Add `remote: true` to the link</span>
-      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorite_path</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">method: :patch</span>
+      <span class="n">link_to</span> <span class="n">raw</span><span class="p">(</span><span class="s2">"&lt;i class='far fa-star'&gt;&lt;/i&gt;"</span><span class="p">),</span> <span class="n">favorites_path</span><span class="p">(</span><span class="ss">id: </span><span class="n">task</span><span class="p">.</span><span class="nf">id</span><span class="p">),</span> <span class="ss">remote: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">method: :post</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Go back to the favorites controller and remove the instruction to redirect to the index from both the <code class="highlighter-rouge">update</code> and the <code class="highlighter-rouge">destroy</code> methods:</p>
+<p>Go back to the favorites controller and remove the instruction to redirect to the index from both the <code class="highlighter-rouge">create</code> and the <code class="highlighter-rouge">destroy</code> methods:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
 
 <span class="k">class</span> <span class="nc">FavoritesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 <span class="o">...</span>
-  <span class="k">def</span> <span class="nf">update</span>
+  <span class="k">def</span> <span class="nf">create</span>
     <span class="vi">@task</span><span class="p">.</span><span class="nf">favorite!</span>
     <span class="c1"># redirect_to tasks_url &lt;== remove this</span>
   <span class="k">end</span>
@@ -341,11 +341,11 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Create a new folder called <code class="highlighter-rouge">favorites</code> in <code class="highlighter-rouge">app/views</code> and make <code class="highlighter-rouge">js.erb</code> files for both the <code class="highlighter-rouge">update</code> and the <code class="highlighter-rouge">destroy</code> methods inside of it.</p>
+<p>Create a new folder called <code class="highlighter-rouge">favorites</code> in <code class="highlighter-rouge">app/views</code> and make <code class="highlighter-rouge">js.erb</code> files for both the <code class="highlighter-rouge">create</code> and the <code class="highlighter-rouge">destroy</code> methods inside of it.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- app/views/favorites/
   - destroy.js.erb
-  - update.js.erb
+  - create.js.erb
 </code></pre></div></div>
 
 <p>Put this code in both of those files. Yep, it’s redundant.</p>
@@ -354,9 +354,9 @@
 <span class="c1">// &lt;article&gt; on the index page and then grab its star &lt;i&gt;</span>
 <span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#task_&lt;%= @task.id %&gt;"</span><span class="p">).</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.fa-star'</span><span class="p">)</span>
 
-<span class="c1">// Reuse the logic from the `favorite_unfavorite` method to</span>
+<span class="c1">// Reuse the logic from the `toggle_favorite` method to</span>
 <span class="c1">// update the star icon styles and the link destination</span>
-<span class="nx">starIcon</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="s2">"&lt;%= escape_javascript(favorite_unfavorite(@task)) %&gt;"</span>
+<span class="nx">starIcon</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="s2">"&lt;%= escape_javascript(toggle_favorite(@task)) %&gt;"</span>
 </code></pre></div></div>
 
 <p>And there you have it! Now you can toggle the stars to your heart’s delight without reloading the index page. If you’d like to see a similar example of this feature done with jQuery, check out <a href="https://www.topdan.com/ruby-on-rails/ajax-toggle-buttons.html">this post by Dan Cunning</a>.</p>
