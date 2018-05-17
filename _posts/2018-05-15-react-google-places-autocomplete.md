@@ -94,8 +94,8 @@ The readme is full of great configuration information: [https://github.com/kenny
 <!-- public/index.html -->
 <head>
   ...
-  <!-- As of 5/2018 this non-api-key version is working. -->
-  <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&language=en"></script>
+  <!-- As of 5/2018 this non-api-key version is working but soon may be deprecated. -->
+  <script src="https://maps.googleapis.com/maps/api/js?libraries=places&language=en"></script>
 
   <!-- You may need to switch to the api-key version -->
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
