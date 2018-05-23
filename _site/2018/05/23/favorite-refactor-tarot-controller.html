@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | My Favorite Refactor - A Look Back at Growth</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/05/23/favorite-refactor-tarot-controller.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">My Favorite Refactor - A Look Back at Growth</h1>
+    <p class="post-meta">May 23, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>When I first started learning programming, I made a command line app that does tarot readings. (You can play with that app <a href="https://repl.it/@lortz/tarotreadings">here</a>.) As a first project, it’s really lovely! It works and has no bugs. The logic is very linear and doesn’t take advantage of any principles of OOP – except for saving values in instance variables… all over the place. It was a little unruly in that regard. And it was this version of past me that needed to turn that command line app into a Rails app. I was totally overwhelmed.</p>
+
+<h2 id="my-first-foray-from-command-line-into-rails">My First Foray from Command Line into Rails</h2>
+
+<p>My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1         Position 2          Position 3
+       You          The Other Person    The Relationship
+     ________           ________            ________
+    |        |         |        |          |        |
+    | card 1 |         | card 2 |          | card 3 |
+    |  goes  |         |  goes  |          |  goes  |
+    |  here  |         |  here  |          |  here  |
+    |________|         |________|          |________|
+</code></pre></div></div>
+
+<p>So I made a <code class="highlighter-rouge">SpreadController</code> controller. I wasn’t really sure what a controller <em>did</em> exactly, but I knew it made pages. I also knew I wanted my app to have 3 different types of spreads, so I made 3 different <code class="highlighter-rouge">spread</code> methods: <code class="highlighter-rouge">spread1</code>, <code class="highlighter-rouge">spread2</code>, and <code class="highlighter-rouge">spread3</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SpreadController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="k">def</span> <span class="nf">spread1</span>
+   <span class="o">...</span>
+  <span class="k">end</span> <span class="c1">#spread1</span>
+
+  <span class="k">def</span> <span class="nf">spread2</span>
+   <span class="o">...</span>
+  <span class="k">end</span> <span class="c1">#spread2</span>
+
+  <span class="k">def</span> <span class="nf">spread3</span>
+    <span class="o">...</span>
+  <span class="k">end</span> <span class="c1">#spread3</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>I knew that to make a “reading,” I’d need a spread of cards – meaning a page that had spaces for cards, and the cards to go in them. I was already confusing myself with the naming of objects. So I did what I knew:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SpreadController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="k">def</span> <span class="nf">spread1</span>
+    <span class="c1"># I grabbed all of the cards from the magical database</span>
+    <span class="vi">@cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span>
+
+    <span class="c1"># I hoisted a reading array to hold the cards I'd be using</span>
+    <span class="vi">@reading</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># I grabbed 3 of the cards from the variable that held the cards</span>
+    <span class="vi">@cards</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">card</span><span class="o">|</span>
+      <span class="c1"># and I pushed them into the reading array.</span>
+      <span class="vi">@reading</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>I did this exact same thing for <code class="highlighter-rouge">spread2</code> and <code class="highlighter-rouge">spread3</code>. It worked and there were no bugs! In fact, it felt like I used <em>all</em> of my Ruby knowledge at once in these controller actions. Hooray for total n00b me!</p>
+
+<h2 id="the-first-refactor">The First Refactor</h2>
+
+<p>About a year later, I came back to the project to see if there was anything to refactor. I decided this controller could use some work. I had a much better understanding of how controllers work and how the router and controller work together. I wanted pretty urls like <code class="highlighter-rouge">/readings/relationship</code>. So I renamed my controller to <code class="highlighter-rouge">ReadingsController</code> and renamed my methods as well. I also condensed all of that hoisting, eaching, and pushing into 1 line for each method.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="k">def</span> <span class="nf">relationship</span>
+    <span class="vi">@cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">confidence</span>
+    <span class="vi">@cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">conflict</span>
+    <span class="vi">@cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>That felt like a really tidy refactor! My controller was much skinnier and the methods made more sense to read. Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for <em>each card on the page</em>. And I was extracting data from the <code class="highlighter-rouge">@cards</code> array using the index number to insert it into custom text about the reading.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- Multiply this code by as many cards as there are on a page.
+     That's a lot of hard-coded HTML. --&gt;</span>
+
+
+<span class="c">&lt;!-- Truncated Sample of Card 1 HTML --&gt;</span>
+<span class="nt">&lt;h4&gt;</span>You<span class="nt">&lt;/h4&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"#card1Modal"</span> <span class="na">role=</span><span class="s">"button"</span> <span class="na">data-toggle=</span><span class="s">"modal"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"firstcard"</span><span class="nt">&gt;</span>
+    <span class="cp">&lt;%=</span> <span class="n">image_tag</span> <span class="vi">@reading</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">imagefile</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/a&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"modal fade"</span> <span class="na">id=</span><span class="s">"card1Modal"</span> <span class="na">tabindex=</span><span class="s">"-1"</span> <span class="na">role=</span><span class="s">"dialog"</span> <span class="na">aria-labelledby=</span><span class="s">"myModalLabel"</span> <span class="na">aria-hidden=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+
+  <span class="c">&lt;!-- SO MUCH Bootstrap HTML goes here... --&gt;</span>
+  <span class="nt">&lt;h4&gt;</span>The <span class="cp">&lt;%=</span> <span class="vi">@reading</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">name</span> <span class="cp">%&gt;</span> Card Represents:<span class="nt">&lt;/h4&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">image_tag</span> <span class="vi">@reading</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">imagefile</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;h3&gt;</span>Your Role in This Relationship<span class="nt">&lt;/h3&gt;</span>
+  <span class="nt">&lt;p&gt;</span>According to the <span class="cp">&lt;%=</span> <span class="vi">@reading</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">name</span> <span class="cp">%&gt;</span> card, you are currently manifesting qualities like <span class="cp">&lt;%=</span> <span class="vi">@reading</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">meaning</span><span class="p">.</span><span class="nf">downcase</span> <span class="cp">%&gt;</span> in this relationship.<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Card 1 Javascript --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">"#firstcard"</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">"click"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">'.firstcard-hidden'</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">"display"</span><span class="p">,</span> <span class="s2">"block"</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>I was storing data about the readings in the HTML, but that was a problem for another day. It worked and there were no bugs! Hooray!</p>
+
+<h2 id="the-major-refactor">The Major Refactor</h2>
+
+<p>About a year later, it was time to face that problem. I needed to make this app scalable. I wanted to be able to make a bunch of new readings on a whim AND I wanted those readings each to have as many cards as necessary in them. I wanted a 3-card reading to be treated no differently than a 10-card reading and I wanted an admin section in which to build these readings.</p>
+
+<p>The current setup was no longer sustainable. It was time to restructure. My schema grew from just a <code class="highlighter-rouge">cards</code> table to one that included:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cards
+- name
+- keywords
+- image_file
+
+readings
+- name
+- description
+- image_file
+
+reading_positions
+- reading_id
+- theme
+- meaning
+</code></pre></div></div>
+
+<p>And now my <code class="highlighter-rouge">ReadingsController</code> finally became RESTful with proper <code class="highlighter-rouge">show</code> and <code class="highlighter-rouge">index</code> actions.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="vi">@reading</span><span class="p">.</span><span class="nf">positions</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="ss">:position_number</span><span class="p">).</span><span class="nf">to_a</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
+    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">cards</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@readings</span> <span class="o">=</span> <span class="no">Reading</span><span class="p">.</span><span class="nf">all</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>That is a <em>much</em> skinnier controller than where I started. More importantly, it was following the principles of <a href="https://codeplanet.io/principles-good-restful-api-design/">RESTful routing</a> and <a href="http://www.poodr.com/">OOP</a>, and the <a href="http://guides.rubyonrails.org/action_controller_overview.html">conventions of Rails controllers</a>. It also enabled me to handle my HTML and jQuery iteratively from inside an <code class="highlighter-rouge">each</code> loop.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;%</span> <span class="vi">@positioned_cards</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">position</span><span class="p">,</span> <span class="n">card</span><span class="o">|</span> <span class="cp">%&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'positioned_card'</span><span class="p">,</span> <span class="ss">position: </span><span class="n">position</span><span class="p">,</span> <span class="ss">card: </span><span class="n">card</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<h2 id="and-it-will-keep-on-changing">And it will keep on changing…</h2>
+
+<p>I have to be honest. Though this refactor happened months ago, as I was writing this post, I just moved all of my <code class="highlighter-rouge">positioned_card</code> code into the partial you see mentioned above. It had been living on the show page, directly inside the <code class="highlighter-rouge">each</code> loop.</p>
+
+<p>Which brings me to my point that this codebase will keep changing as the scope of the project changes and as my skillset changes.</p>
+
+<p>In this look back, it’s been interesting for me to see what I understood at any given time and then how I used all of my current knowledge to build the best thing I could. Learning software engineering can feel daunting! There is an insurmountable amount of things to learn and directions to go – plus a lot of conflicting opinions about which direction is the best direction to go. It is easy to feel like I’ll never “get there.” It is good to take a moment to reflect on how much I’ve grown in the past couple of years and it is so exciting to imagine how much more I’ll be able to accomplish in the future.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
