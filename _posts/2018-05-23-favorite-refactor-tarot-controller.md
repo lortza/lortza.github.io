@@ -8,7 +8,7 @@ When I first started learning programming, I made a command line app that does t
 
 ## My First Foray from Command Line into Rails
 
-My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread:
+My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:
 
 ```
     Position 1         Position 2          Position 3
