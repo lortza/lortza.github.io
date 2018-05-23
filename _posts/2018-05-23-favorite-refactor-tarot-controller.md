@@ -164,7 +164,7 @@ And now my `ReadingsController` finally became RESTful with proper `show` and `i
 class ReadingsController < ApplicationController
   ...
   def show
-    positions = @reading.positions.order(:position_number).to_a
+    positions = @reading.positions.to_a
     cards = Card.all.sample(positions.count)
     @positioned_cards = positions.zip(cards)
   end
