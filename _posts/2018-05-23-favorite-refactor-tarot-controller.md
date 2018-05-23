@@ -8,17 +8,20 @@ When I first started learning programming, I made a command line app that does t
 
 ## My First Foray from Command Line into Rails
 
-My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:
+Before that command line app became [the web app it is today](http://modernmystic.herokuapp.com/), I had to picture how it would look on the screen. My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:
 
 ```
-    Position 1         Position 2          Position 3
-       You          The Other Person    The Relationship
-     ________           ________            ________
-    |        |         |        |          |        |
-    | card 1 |         | card 2 |          | card 3 |
-    |  goes  |         |  goes  |          |  goes  |
-    |  here  |         |  here  |          |  here  |
-    |________|         |________|          |________|
+    Position 1            Position 2              Position 3
+        Me             The Other Person        The Relationship
+     _________            _________              ___________
+    |         |          |         |            |           |
+    |  The    |          |  3 of   |            | Ace of    |
+    | Chariot |          |  Wands  |            | Pentacles |
+    |         |          |         |            |           |
+    |_________|          |_________|            |___________|
+    "self-control,       "entrepreneur,        "material strength,
+    willpower,            leadership,          prosperity,
+    ambition, focus"      visionary"           practicality"
 ```
 
 So I made a `SpreadController` controller. I wasn't really sure what a controller *did* exactly, but I knew it made pages. I also knew I wanted my app to have 3 different types of spreads, so I made 3 different `spread` methods: `spread1`, `spread2`, and `spread3`.

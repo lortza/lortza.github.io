@@ -67,16 +67,19 @@
 
 <h2 id="my-first-foray-from-command-line-into-rails">My First Foray from Command Line into Rails</h2>
 
-<p>My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:</p>
+<p>Before that command line app became <a href="http://modernmystic.herokuapp.com/">the web app it is today</a>, I had to picture how it would look on the screen. My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1         Position 2          Position 3
-       You          The Other Person    The Relationship
-     ________           ________            ________
-    |        |         |        |          |        |
-    | card 1 |         | card 2 |          | card 3 |
-    |  goes  |         |  goes  |          |  goes  |
-    |  here  |         |  here  |          |  here  |
-    |________|         |________|          |________|
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1            Position 2              Position 3
+        Me             The Other Person        The Relationship
+     _________            _________              ___________
+    |         |          |         |            |           |
+    |  The    |          |  3 of   |            | Ace of    |
+    | Chariot |          |  Wands  |            | Pentacles |
+    |         |          |         |            |           |
+    |_________|          |_________|            |___________|
+    "self-control,       "entrepreneur,        "material strength,
+    willpower,            leadership,          prosperity,
+    ambition, focus"      visionary"           practicality"
 </code></pre></div></div>
 
 <p>So I made a <code class="highlighter-rouge">SpreadController</code> controller. I wasn’t really sure what a controller <em>did</em> exactly, but I knew it made pages. I also knew I wanted my app to have 3 different types of spreads, so I made 3 different <code class="highlighter-rouge">spread</code> methods: <code class="highlighter-rouge">spread1</code>, <code class="highlighter-rouge">spread2</code>, and <code class="highlighter-rouge">spread3</code>.</p>
