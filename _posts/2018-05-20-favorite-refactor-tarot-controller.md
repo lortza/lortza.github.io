@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  My Favorite Refactor - A Look Back at Growth
-date:   2018-05-23
+date:   2018-05-20
 ---
 
 When I first started learning programming, I made a command line app that does tarot readings. (You can play with that app [here](https://repl.it/@lortz/tarotreadings).) As a first project, it's really lovely! It works and has no bugs. The logic is very linear and doesn't take advantage of any principles of OOP -- except for saving values in instance variables... all over the place. It was a little unruly in that regard. And it was this version of past me that needed to turn that command line app into a Rails app. I was totally overwhelmed.
