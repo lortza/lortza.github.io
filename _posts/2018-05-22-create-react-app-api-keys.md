@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  How to Store API Keys and ENV Vars in create-react-app
+title:  How to Store API Keys and ENV Vars in a create-react-app Project
 date:   2018-05-22
 ---
 
