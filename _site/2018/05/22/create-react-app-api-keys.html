@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Store API Keys and ENV Vars in create-react-app</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/05/22/create-react-app-api-keys.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Store API Keys and ENV Vars in create-react-app</h1>
+    <p class="post-meta">May 22, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>Conveniently, <a href="https://github.com/facebook/create-react-app">create-react-app</a> has some built-in functionality to make storing and accessing your API keys and ENV variables easier. There’s no need to install any other packages. Thank you <a href="https://geodoo.work/hide-secure-api-keys-created-app-create-react-app/">George Karametas</a> for this insight. To access that functionality, you need to:</p>
+
+<h3 id="1-create-a-file-called-env-in-the-root-of-your-projects-directory">1. Create a file called <code class="highlighter-rouge">.env</code> in the root of your project’s directory.</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- your_project_folder
+  - node_modules
+  - public
+  - src
+  - .env         &lt;-- create it here
+  - .gitignore
+  - package-lock.json
+  - package.json
+</code></pre></div></div>
+
+<p>From the command line, check that you are in your project directory and type:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>touch .env
+</code></pre></div></div>
+
+<p>This will create the file for you.</p>
+
+<h3 id="2-inside-the-env-file-prepend-react_app_-to-your-api-key-name-of-choice-and-assign-it">2. Inside the <code class="highlighter-rouge">.env</code> file, prepend <code class="highlighter-rouge">REACT_APP_</code> to your API key name of choice and assign it.</h3>
+
+<p>The create-react-app tool uses <code class="highlighter-rouge">REACT_APP_</code> to identify these variables. If you don’t start your API key name with it, create-react-app won’t see it.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># .env</span>
+
+<span class="no">REACT_APP_YOUR_API_KEY_NAME</span><span class="o">=</span><span class="n">your_api_key</span>  <span class="o">&lt;--</span> <span class="n">yes</span>
+<span class="no">YOUR_API_KEY_NAME</span><span class="o">=</span><span class="n">your_api_key</span>            <span class="o">&lt;--</span> <span class="n">no</span>
+
+<span class="c1"># Example:</span>
+<span class="no">REACT_APP_WEATHER_API_KEY</span><span class="o">=</span><span class="mi">123456123456123456</span>
+</code></pre></div></div>
+<h3 id="3-add-the-env-file-to-your-gitignore-file">3. Add the <code class="highlighter-rouge">.env</code> file to your <code class="highlighter-rouge">.gitignore</code> file.</h3>
+
+<p>You can add a single line with <code class="highlighter-rouge">.env</code> anywhere in your <code class="highlighter-rouge">.gitignore</code> file. You may want to give it a heading to keep your file organized. After you add it, save the <code class="highlighter-rouge">.gitignore</code> file and do a <code class="highlighter-rouge">git status</code> to make sure your <code class="highlighter-rouge">.env</code> file does not appear as a new file in git.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># .gitignore</span>
+
+<span class="c1"># api keys</span>
+<span class="p">.</span><span class="nf">env</span>       <span class="o">&lt;--</span> <span class="n">add</span> <span class="n">this</span> <span class="n">line</span>
+
+<span class="c1"># dependencies</span>
+<span class="sr">/node_modules...
+</span></code></pre></div></div>
+
+<h3 id="4-access-the-api-key-via-the-processenv-object">4. Access the API key via the <code class="highlighter-rouge">process.env</code> object.</h3>
+
+<p>Now you can access your API key from anywhere in your app with:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>process.env.REACT_APP_YOUR_API_KEY_NAME
+</code></pre></div></div>
+
+<p>To make sure it works, go to your <code class="highlighter-rouge">App.js</code> file and add a <code class="highlighter-rouge">console.log</code> at the top below the require statements. After saving the file and refreshing the browser, if the console log does not show your API key, try restarting the react server. Remove the console log line before committing your code.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/App.js</span>
+
+<span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'react'</span><span class="p">;</span>
+<span class="k">import</span> <span class="s1">'./App.css'</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REACT_APP_WEATHER_API_KEY</span><span class="p">)</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="p">...</span>
+</code></pre></div></div>
+
+<p>I’ve posted this as <a href="https://stackoverflow.com/a/50457996/5009528">an answer on StackOverflow</a>. If you found it helpful, <a href="https://stackoverflow.com/a/50457996/5009528">please upvote</a>.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
