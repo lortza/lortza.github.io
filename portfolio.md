@@ -8,7 +8,7 @@ permalink: /portfolio/
 
   <h2>Skills</h2>
 
-  <p class="section-explanation">Ruby, Rails, Rails API, Sass, CSS, JavaScript, React, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, Heroku, AWS S3, Jekyll, XML, Database Design, transactional Spanish, Card Game Design, and Bicycle Repair</p>
+  <p class="section-explanation">Ruby, Rails, Rails API, Sass, CSS, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, Heroku, AWS S3, Jekyll, XML, Database Design, <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a>, transactional Spanish, <a href="https://www.thegamecrafter.com/designers/anne-richardson" target="_blank">Card Game Design</a>, and Bicycle Repair</p>
 
   <h2>Rails Projects</h2>
 
@@ -114,4 +114,3 @@ permalink: /portfolio/
 </div> <!-- writing -->
 
 </div> <!-- portfolio-index -->
-
