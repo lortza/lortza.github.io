@@ -63,6 +63,23 @@ permalink: /portfolio/
   {% endfor %}
   </div> <!-- .rails-sites -->
 
+<h2>Open Source Contributions</h2>
+
+<div class="open-source">
+
+  {% for contribution in site.opensource_contributions reversed %}
+    <article>
+      <h3>
+        <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
+        <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
+      </h3>
+      <p><span>Repo Description:</span> {{contribution.content}}</p>
+    </article>
+  {% endfor %}
+
+</div><!-- open-source -->
+
+
 <h2>Published Works</h2>
 
 <p class="section-explanation">Whenever I have an idea for something that solves a particular problem, I jump right in and make it. Sometimes it's a solution I can use right now (zipper pocket underpants) and other times, it's a solution that I wish had existed when I needed it (book on packing), so I created it to solve the problem for other people.</p>

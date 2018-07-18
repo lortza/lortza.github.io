@@ -410,17 +410,17 @@ img.about-pic {
       width: 71%; }
 
 /* .products */
-.writing {
+.writing, .open-source {
   /* article */ }
-  .writing article {
+  .writing article, .open-source article {
     margin-bottom: 2em;
     /* h4 */
     /* p */ }
-    .writing article h4 {
+    .writing article h4, .open-source article h4 {
       font-weight: bold;
       font-size: 1.25em;
       margin-bottom: 0px; }
-    .writing article p {
+    .writing article p, .open-source article p {
       margin: 0;
       font-size: 0.85em;
       line-height: 1.25em; }

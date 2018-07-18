@@ -34,7 +34,8 @@ collections:
   products:
     output: true
     permalink: /products/:path/
+  opensource_contributions:
+    output: true
   writings:
     output: true
     permalink: /writing/:path/
-
