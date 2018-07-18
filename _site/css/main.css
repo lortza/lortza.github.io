@@ -383,6 +383,15 @@ img.about-pic {
   text-align: center; }
 
 /* .portfolio-index */
+.centered {
+  width: 50%;
+  margin: 0 auto; }
+  .centered h3 {
+    text-align: center;
+    text-transform: lowercase; }
+  .centered li {
+    text-align: left; }
+
 .products {
   overflow: auto; }
   .products article {

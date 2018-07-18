@@ -252,6 +252,18 @@ img.about-pic {
   .section-explanation { text-align: center; }
 } /* .portfolio-index */
 
+.centered {
+  h3 {
+    text-align: center;
+    text-transform: lowercase;
+  }
+  width: 50%;
+  margin: 0 auto;
+  li {
+    text-align: left;
+  }
+}
+
 .products {
   overflow: auto;
 
