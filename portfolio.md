@@ -11,7 +11,7 @@ permalink: /portfolio/
   <p class="section-explanation">Ruby, Rails, Rails API, Sass, CSS, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, Heroku, AWS S3, Jekyll, XML, Database Design, <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a>, transactional Spanish, <a href="https://www.thegamecrafter.com/designers/anne-richardson" target="_blank">Card Game Design</a>, and Bicycle Repair</p>
 
 <div class="centered">
-  <h3>How I'm Upping My Game</h3>
+  <h3>How I'm Regularly Upping My Game</h3>
   <ul>
     <li>daily tutorials</li>
     <li>daily slack community engagement</li>
