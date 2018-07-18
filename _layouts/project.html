@@ -14,13 +14,17 @@ layout: default
   <p>Check out the <a href="{{ page.repo }}" target="_blank" alt="{{ page.name }} repo">repo README</a> for a tour of the app<br>complete with code snippet explanations and screenshots.</p>
   {% endif %}
 
+  <p><strong>Tech Used:</strong> {{ page.tech_used }}</p>
+
   <p><strong>My Role:</strong> {{ page.role }}</p>
 
   <div class="link-buttons">
     {% unless page.site == nil %}
     <a href="{{ page.site }}" target="_blank" alt="{{ page.name }}"><i class="fa fa-external-link"></i> Site</a>
     {% endunless %}
+    {% unless page.repo == nil %}
     <a href="{{ page.repo }}" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
+    {% endunless %}
   </div> <!-- links -->
 
   <article class="post-content">

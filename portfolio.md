@@ -12,7 +12,7 @@ permalink: /portfolio/
 
   <h2>Rails Projects</h2>
 
-  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code now, there is so much to be improved. I keep marching forward onto new challenges.</p>
+  <p class="section-explanation">Here are some of the Rails apps I've made. Of course, looking back at the code, there is opportunity for refactoring. Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">
