@@ -85,7 +85,7 @@ permalink: /portfolio/
         <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
         <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
       </h3>
-      <p><span>Repo Description:</span> {{contribution.content}}</p>
+      <p>{{contribution.content}}</p>
     </article>
   {% endfor %}
 
