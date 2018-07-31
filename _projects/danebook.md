@@ -6,8 +6,8 @@ site: https://lortzadanebook.herokuapp.com
 repo: https://github.com/lortza/project_danebook
 readme: true
 img: /img/project_danebook.jpg
-tagline: A Standard Facebook App
-description: Create an account, create posts and upload photos, friend and unfriend people, like and unlike posts and comments. It's a FakeBook with image hosting on AWS, and a bunch of seeded profiles from movie characters. It's rocking polymorphic associations and some nifty metaprogramming.
-tech_used: Rails 5.0.6, Ruby 2.4.2, PostgreSQL, Heroku, AWS S3
+tagline: Restful Rails with Polymorphic & Self-Referencing Models
+description: Create an account, create posts and upload photos, friend and unfriend people, like and unlike posts and comments (instantly via javascript). It's a FakeBook with image hosting on AWS. It's rocking RESTful routes, polymorphic associations, self-referencing models, and some nifty metaprogramming.
+tech_used: Rails 5.0.6, Ruby 2.4.2, PostgreSQL, Heroku, javascript, AWS S3
 role: solo project, full stack
 ---

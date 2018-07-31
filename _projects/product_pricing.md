@@ -1,7 +1,7 @@
 ---
 layout: project
 name: Personal Profit Projections
-date: 2017-01-04
+date: 2017-01-15
 site:
 repo: https://github.com/lortza/product_pricing
 readme: false

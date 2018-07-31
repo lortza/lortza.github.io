@@ -48,12 +48,13 @@ permalink: /portfolio/
       </div>
     </div>
   {% endfor %}
-  </div> <!-- .rails-sites -->
+  </div>
 
   <div class="rails-sites">
     <div class="projects-subhead">
       <h1>More Projects</h1>
-    </div> <!-- projects-subhead -->
+    </div>
+
 
   {% for project in site.projects %}
     <div class="project">
@@ -73,7 +74,7 @@ permalink: /portfolio/
       </div>
     </div>
   {% endfor %}
-  </div> <!-- .rails-sites -->
+  </div>
 
 <h2>Open Source Contributions</h2>
 
