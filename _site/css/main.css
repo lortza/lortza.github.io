@@ -453,6 +453,8 @@ img.about-pic {
   vertical-align: middle;
   box-sizing: border-box;
   padding: 10px; }
+  .project p {
+    line-height: 1.3em; }
 
 .thumbnail {
   text-align: center;
@@ -489,7 +491,7 @@ img.about-pic {
 .thumbnail a:hover span {
   display: block; }
 
-/******** Rails Projects ********/
+/******** Projects ********/
 .portfolio-show {
   text-align: center;
   /* links */ }

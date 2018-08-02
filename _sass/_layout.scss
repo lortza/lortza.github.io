@@ -334,6 +334,7 @@ img.about-pic {
   vertical-align: middle;
   box-sizing: border-box;
   padding: 10px;
+  p { line-height: 1.3em; }
 }
 .thumbnail{
   text-align: center;
@@ -371,7 +372,7 @@ img.about-pic {
   display: block;
 }
 
-/******** Rails Projects ********/
+/******** Projects ********/
 
 .portfolio-show {
   text-align: center;
