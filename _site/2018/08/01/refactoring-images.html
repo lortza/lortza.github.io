@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Legacy Refactor: Separation of Concerns in Sorry Girl Rails app</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/08/01/refactoring-images.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Legacy Refactor: Separation of Concerns in Sorry Girl Rails app</h1>
+    <p class="post-meta">August 1, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>It’s handy to be applying for jobs because it gives me the excuse to go back to some of my Rails portfolio projects and refactor them. Whenever I undertake a refactor of my own work, there are 2 important people I keep in mind: Past Me and Future Me. Past Me did the darned best she could with what she knew at the time and deserves compassion. Future Me loves easy-to-read and easy-to-maintain code and she deserves to get what she loves. I believe this refactor will leave Future Me appreciating Future Past Me’s choices… or something like that.</p>
+
+<p>Now on to the show…</p>
+
+<p>The app of choice for this refactor is <a href="https://sorrygirl.herokuapp.com/">Sorry Girl - The Apology You Needed to Hear, but from Ryan Gosling</a>. The concept of the app is that a user writes a short apology note with a picture of Ryan Gosling to send to a friend via social media.</p>
+
+<p>The basic mechanics are:</p>
+
+<ol>
+  <li>A user submits <code class="highlighter-rouge">apology.body</code> data on the <code class="highlighter-rouge">apology</code> form.</li>
+  <li>The <code class="highlighter-rouge">Image</code> class is prompted to select a random image from the <code class="highlighter-rouge">app/assets/images</code> directory.</li>
+  <li>The <code class="highlighter-rouge">apology.image</code> attribute is set to that image file and the <code class="highlighter-rouge">apology</code> is saved.</li>
+  <li>After save, the <code class="highlighter-rouge">apologies#show</code> page is rendered.</li>
+</ol>
+
+<h2 id="refactoring-the-apology-model">Refactoring the ‘Apology’ model</h2>
+
+<p>First on my list to refactor was the <code class="highlighter-rouge">Apology</code> model. Two years ago, when I built this app, I didn’t know much about separation of concerns. Looking back at it today, I’ve found a great example of one model knowing too much about another one. It needed to be separated out into 2 models that each have their own responsibilities.</p>
+
+<h3 id="before-apology-model">Before: Apology Model</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/apology.rb</span>
+
+<span class="k">class</span> <span class="nc">Apology</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+
+  <span class="c1"># This model knows what all of the images are. In fact, it is the sole</span>
+  <span class="c1"># location of this knowledge. And it is documented in one very long line.</span>
+  <span class="c1"># Hard-coded. Difficult to maintain. Too unwieldy to scale.</span>
+  <span class="c1"># Go on, scrolllll to the right to see that long line...</span>
+  <span class="no">IMAGES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ryan-gosling01.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling02.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling03.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling04.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling05.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling06.png"</span><span class="p">,</span> <span class="s2">"ryan-gosling07.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling08.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling09.jpg"</span><span class="p">,</span> <span class="s2">"ryan-gosling10.jpg"</span><span class="p">]</span>
+
+  <span class="c1"># Assigns a random image every time the object is saved.</span>
+  <span class="c1"># That means both 'create' and 'update' assign a random image.</span>
+  <span class="n">before_save</span> <span class="ss">:generate_image</span>
+
+  <span class="c1"># This is fine until you need to know this character max in other</span>
+  <span class="c1"># parts of the app. Spoiler alert: that happened.</span>
+  <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">length: </span><span class="p">{</span> <span class="ss">maximum: </span><span class="mi">170</span> <span class="p">}</span>
+
+  <span class="k">def</span> <span class="nf">generate_image</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">image</span> <span class="o">=</span> <span class="no">IMAGES</span><span class="p">.</span><span class="nf">sample</span>
+  <span class="k">end</span>
+
+ <span class="k">end</span>
+</code></pre></div></div>
+
+<p>Crawling back into Past Me’s brain, I’ll venture that I built that giant <code class="highlighter-rouge">IMAGES</code> array because it was a simple way to access the files. There was a finite set of images (10) stored in the <code class="highlighter-rouge">app/assets/images</code> directory and this was the easiest way I knew to grab them.</p>
+
+<h4 id="why-it-needs-refactoring">Why It Needs Refactoring</h4>
+<p>Firstly, there is a long list of hand-entered, hard-coded filenames. Low-hanging fruit? Break it up into separate lines. We are humans after all, and code should be readable:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="no">IMAGES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"ryan-gosling01.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling02.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling03.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling04.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling05.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling06.png"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling07.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling08.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling09.jpg"</span><span class="p">,</span>
+    <span class="s2">"ryan-gosling10.jpg"</span>
+  <span class="p">]</span>
+</code></pre></div></div>
+
+<p>If I want to modify this inventory of photos (and I do), I’ll need to manually edit this list. That’s unpleasant for a list of only 10 images, but it becomes unwieldy if my image inventory were to grow to say, 30, or 300, or a whole API of images. This approach also assumes that I will make no mistakes when entering filenames. I don’t want to make that assumption about any human, even myself. There is still more work to do.</p>
+
+<h3 id="after-apology-model">After: Apology Model</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/apology.rb</span>
+
+<span class="k">class</span> <span class="nc">Apology</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+
+  <span class="c1"># Constant stores character max so it is found easily by a person</span>
+  <span class="c1"># updating this value for the entire app.</span>
+  <span class="no">CHARACTER_MAX</span> <span class="o">=</span> <span class="mi">170</span>
+
+  <span class="c1"># Assigns the image upon creation instead of save, otherwise a new</span>
+  <span class="c1"># image is assigned any time the record is edited</span>
+  <span class="n">before_validation</span> <span class="ss">:assign_image</span><span class="p">,</span> <span class="ss">on: :create</span>
+
+  <span class="c1"># The character max now comes directly from the constant</span>
+  <span class="n">validates</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">length: </span><span class="p">{</span> <span class="ss">maximum: </span><span class="no">CHARACTER_MAX</span> <span class="p">}</span>
+  <span class="c1"># Adds validation on the image field</span>
+  <span class="n">validates</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+
+  <span class="c1"># This ordering was previously in the controller, but belongs here.</span>
+  <span class="n">scope</span> <span class="ss">:ordered</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">all</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="s2">"created_at DESC"</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="c1"># Makes the character max easily accessible by other parts of the</span>
+  <span class="c1"># app such as tests, javascript functions, and the view</span>
+  <span class="k">def</span> <span class="nf">character_max</span>
+    <span class="no">CHARACTER_MAX</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Changes from 'IMAGE.sample' to 'Image.sample' because now the</span>
+  <span class="c1"># 'Image' class handles the logic behind the image selection.</span>
+  <span class="k">def</span> <span class="nf">assign_image</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">image</span> <span class="o">=</span> <span class="no">Image</span><span class="p">.</span><span class="nf">sample</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The need to extract the <code class="highlighter-rouge">CHARACTER_MAX</code> into a constant became evident when I wrote javascript form feedback for this app. As I tinkered with the hard-coded character count over and over, I had to do it in 3 places. That was irritating! When I had to do it a 4th time while writing tests, that was the last straw. Now the <code class="highlighter-rouge">CHARACTER_MAX</code> is set in 1 place and it is referenced in these other places:</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/views/apologies/_form.html.erb
+
+<span class="cp">&lt;%=</span> <span class="n">form_for</span><span class="p">(</span><span class="vi">@apology</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="cp">%&gt;</span>
+
+  <span class="c">&lt;!-- Used HERE in the text --&gt;</span>
+  <span class="nt">&lt;span</span> <span class="na">id=</span><span class="s">"character-count"</span><span class="nt">&gt;</span><span class="cp">&lt;%=</span> <span class="vi">@apology</span><span class="p">.</span><span class="nf">character_max</span> <span class="cp">%&gt;</span><span class="nt">&lt;/span&gt;</span> characters remaining
+
+  <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">text_area</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">autofocus: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">required: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">placeholder: </span><span class="s2">"Hey Girl, I'm sorry I was such a jerkface..."</span> <span class="cp">%&gt;</span>
+
+  <span class="cp">&lt;%=</span> <span class="n">f</span><span class="p">.</span><span class="nf">submit</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+
+<span class="nt">&lt;script&gt;</span>
+  <span class="c1">// Used HERE in the javascript</span>
+  <span class="nx">remainingCharacters</span><span class="p">(</span><span class="cp">&lt;%=</span> <span class="vi">@apology</span><span class="p">.</span><span class="nf">character_max</span> <span class="cp">%&gt;</span><span class="p">)</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># spec/models/apology_model_spec.rb</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">describe</span> <span class="no">Apology</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="ss">:model</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:apology</span><span class="p">)</span> <span class="p">{</span> <span class="no">Apology</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">body: </span><span class="s1">'lorem'</span><span class="p">,</span> <span class="ss">image: </span><span class="s1">'image.jpg'</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="c1"># Used HERE to set up testing limitations</span>
+  <span class="n">character_max</span> <span class="o">=</span> <span class="no">Apology</span><span class="o">::</span><span class="no">CHARACTER_MAX</span>
+  <span class="n">string_at_char_max</span> <span class="o">=</span> <span class="s1">'x'</span> <span class="o">*</span> <span class="n">character_max</span>
+  <span class="n">string_over_char_max</span> <span class="o">=</span> <span class="s1">'x'</span> <span class="o">*</span> <span class="p">(</span><span class="n">character_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Used HERE to make a clear explanation of expectations</span>
+    <span class="n">it</span> <span class="s2">"permits up to </span><span class="si">#{</span><span class="n">character_max</span><span class="si">}</span><span class="s2"> characters in the body field"</span> <span class="k">do</span>
+      <span class="n">apology</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="n">string_at_char_max</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">apology</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_valid</span>
+
+      <span class="n">apology</span><span class="p">.</span><span class="nf">body</span> <span class="o">=</span> <span class="n">string_over_char_max</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">apology</span><span class="p">).</span><span class="nf">to_not</span> <span class="n">be_valid</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now for the elephant in the room… well, more like, where did that giant <code class="highlighter-rouge">IMAGES</code> array elephant go? Our <code class="highlighter-rouge">Images</code> array grew up and became a class. Hooray! You go little <code class="highlighter-rouge">Images</code> array, you go!</p>
+
+<h2 id="refactoring-from-an-array-into-an-image-model">Refactoring from an Array into an ‘Image’ Model</h2>
+
+<p>What’s cool about this refactor is that the interface with the <code class="highlighter-rouge">Apology</code> class barely changes. The clunky array is gone, but the <code class="highlighter-rouge">Apology.assign_image</code> method is nearly identical. That makes it really easy to pluck the <code class="highlighter-rouge">Image</code> responsibilities out and make them more robust.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
+
+<span class="k">class</span> <span class="nc">Image</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">sample</span>
+    <span class="p">[</span>
+      <span class="s2">"ryan-gosling01.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling02.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling03.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling04.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling05.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling06.png"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling07.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling08.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling09.jpg"</span><span class="p">,</span>
+      <span class="s2">"ryan-gosling10.jpg"</span>
+    <span class="p">].</span><span class="nf">sample</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Closer, but not there yet.</p>
+
+<p>As I previously bemoaned, there are a couple of problems with that array of image names above: 1) maintenance and 2) scalability – because guess who wants to add 20 more pictures of Ryan Gosling to the app? This girl. And guess who wasn’t going to type in a bunch of new filenames? Me again. You know who’s really good at looking in a folder of images and just telling me the files that are in them? Ruby. Let’s let Ruby do its thing.</p>
+
+<p>Ruby has a nifty <code class="highlighter-rouge">Dir</code> library that let’s us do these kinds of things. The <code class="highlighter-rouge">Dir.glob</code> method lets us search in a specific directory for specific filetypes. Perfect!</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
+
+<span class="k">class</span> <span class="nc">Image</span>
+
+  <span class="c1"># Assign the file location and formats to constants so they 1) are</span>
+  <span class="c1"># easy to find for future edits and 2) to make the methods that use  </span>
+  <span class="c1"># them more readable.</span>
+  <span class="no">IMAGES_DIRECTORY</span> <span class="o">=</span> <span class="s1">'/assets/images/'</span>
+  <span class="no">ACCEPTABLE_FORMATS</span> <span class="o">=</span> <span class="sx">%w(jpg jpeg png)</span>
+
+  <span class="c1"># WIP: an array of full filepaths is ALMOST what we need</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">sample</span>
+  <span class="c1"># Gets an array of image filepaths from the '/assets/images/' directory.</span>
+  <span class="c1"># Ex: 'app/assets/images/ryan-gosling05.jpg'</span>
+    <span class="no">Dir</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="s2">"*</span><span class="si">#{</span><span class="no">IMAGES_DIRECTORY</span><span class="si">}</span><span class="s2">*.{</span><span class="si">#{</span><span class="no">ACCEPTABLE_FORMATS</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span><span class="si">}</span><span class="s2">}"</span><span class="p">).</span><span class="nf">sample</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Since I may change my mind about which image file types are acceptable (and because I’m going to need to access them for testing), I’ve made them available as constants. The same goes for the location of the files. With that information in place, I can use <code class="highlighter-rouge">Dir.glob</code> to provide me with an array of image filepaths. That’s <em>almost</em> the same array that we had before, but <em>I didn’t have to type a single filename</em>. :high_five:, Ruby, I love you. This is serious progress.</p>
+
+<p>To convert the array of filepaths into an array of just the filenames, I first reached for <code class="highlighter-rouge">regex</code>. I used the Ruby <code class="highlighter-rouge">match</code> method to take everything after the <code class="highlighter-rouge">IMAGES_DIRECTORY</code> text. That approach looked like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">image_file_names</span>
+  <span class="c1"># Using 'match' is convenient for regex, but regex is hard to read</span>
+  <span class="n">array_of_filepaths</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span> <span class="n">path</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="sr">/</span><span class="si">#{</span><span class="no">IMAGES_DIRECTORY</span><span class="si">}</span><span class="sr">(.*)/</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Since I am a human, I find regex a bit cumbersome to read. Good thing Ruby has another nifty library to help with that. <code class="highlighter-rouge">File</code> has a handy method called <code class="highlighter-rouge">basename</code> that knows how to extract just the filename out of a filepath. Thanks, Ruby.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">image_file_names</span>
+  <span class="c1"># Much easier to read or to google for more info</span>
+  <span class="n">array_of_filepaths</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span> <span class="no">File</span><span class="p">.</span><span class="nf">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="after-image-model">After: Image Model</h3>
+<p>The shiny new <code class="highlighter-rouge">Image</code> class looks like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
+
+<span class="k">class</span> <span class="nc">Image</span>
+
+  <span class="no">IMAGES_DIRECTORY</span> <span class="o">=</span> <span class="s1">'/assets/images/'</span>
+  <span class="no">ACCEPTABLE_FORMATS</span> <span class="o">=</span> <span class="sx">%w(jpg jpeg png)</span>
+
+  <span class="c1"># Use the new array of filenames to grab a .sample</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">sample</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">image_file_names</span><span class="p">.</span><span class="nf">sample</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># Map the array into just the image filenames</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">image_file_names</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">filepaths</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span> <span class="no">File</span><span class="p">.</span><span class="nf">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">filepaths</span>
+    <span class="no">Dir</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="s2">"*</span><span class="si">#{</span><span class="no">IMAGES_DIRECTORY</span><span class="si">}</span><span class="s2">*.{</span><span class="si">#{</span><span class="no">ACCEPTABLE_FORMATS</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span><span class="si">}</span><span class="s2">}"</span><span class="p">)</span>    
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>With this fancy new scalable <code class="highlighter-rouge">Image</code> structure in place, I added 20 more Ryan Gosling pics, for a total of 30 possible random images to be assigned to an apology, and that’s better for everyone… except maybe Ryan Gosling.</p>
+
+<h3 id="but-why-didnt-you">But why didn’t you…?</h3>
+
+<p>But why didn’t I make the <code class="highlighter-rouge">Image</code> class a fully-instantiable, database-backed model? Good question. I considered it. I decided that it was overkill to have a whole table dedicated to a single <code class="highlighter-rouge">filename</code> field when I have no plans to allow users to upload their own photos or for an admin person to need this feature. It adds complexity to the database. It adds complexity to the relationship between <code class="highlighter-rouge">Apology</code> and <code class="highlighter-rouge">Image</code>. And for the foreseeable future, it’s not necessary.</p>
+
+<p>But why didn’t I make a <code class="highlighter-rouge">@character_max = Apologies::CHARACTER_MAX</code> instance variable in the <code class="highlighter-rouge">apologies_controller</code> for the apologies views and javascript to access instead of adding it as an attribute on the <code class="highlighter-rouge">@apology</code> object? An instance variable in a controller is wild wild beast. It’s essentially global, which is awesome if you’re able to confirm that there won’t be collisions in other parts of the app. But I’m not app-omniscient (yet… right ;) ) and I’m not sure what technical debt it might bring. So right now, I like to try to release as few wild beasts as possible into the views.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
