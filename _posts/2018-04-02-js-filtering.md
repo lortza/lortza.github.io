@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Filtering Table Records with Javascript
+title:  Filtering Rails Table Records with Javascript
 date:   2018-04-02
 ---
 
