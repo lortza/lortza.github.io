@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Legacy Refactor: Separation of Concerns in Sorry Girl Rails app'
-date:   2018-08-01
+date:   2018-08-02
 ---
 It's handy to be applying for jobs because it gives me the excuse to go back to some of my Rails portfolio projects and refactor them. Whenever I undertake a refactor of my own work, there are 2 important people I keep in mind: Past Me and Future Me. Past Me did the darned best she could with what she knew at the time and deserves compassion. Future Me loves easy-to-read and easy-to-maintain code and she deserves to get what she loves. I believe this refactor will leave Future Me appreciating Future Past Me's choices... or something like that.
 
