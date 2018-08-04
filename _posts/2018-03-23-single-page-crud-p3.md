@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 3 - Editing Records
+title:  'Single Page CRUD App in Rails: Part 3 - Editing Records'
 date:   2018-03-23
 ---
 

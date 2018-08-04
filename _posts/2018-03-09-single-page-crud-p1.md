@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 1 - New Records
+title:  'Single Page CRUD App in Rails: Part 1 - New Records'
 date:   2018-03-09
 ---
 

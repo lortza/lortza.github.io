@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 2 - Deleting Records
+title:  'Single Page CRUD App in Rails: Part 2 - Deleting Records'
 date:   2018-03-16
 ---
 
@@ -90,5 +90,3 @@ Voila! That's it! Refresh your page again, then go through the process of deleti
 
 ## Next: Editing Records
 Alright! That's it for creating and displaying new records. It's time to move on to [Part 3: Editing Records from the Index Page]({% post_url 2018-03-23-single-page-crud-p3 %}).
-
-
