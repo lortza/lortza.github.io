@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Personal Challenge: Action Cable Responses from both the DOM and the Console</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/07/31/actioncable-cars.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Personal Challenge: Action Cable Responses from both the DOM and the Console</h1>
+    <p class="post-meta">July 31, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>Google’s <a href="https://firebase.google.com/">Firebase</a> is a database tool that (among many other things) pushes updated data to all instances of a browser. I think that is pretty nifty. I also think that it’s a bit unreasonable to restructure an existing Rails app’s entire Postgres situation just for this one feature. For this reason, I started to explore Rails’ <a href="https://guides.rubyonrails.org/action_cable_overview.html">Action Cable</a>.</p>
+
+<p>The <a href="https://guides.rubyonrails.org/action_cable_overview.html">Rails docs</a> docs say:</p>
+
+<blockquote>
+  <p>Action Cable seamlessly integrates WebSockets with the rest of your Rails application. It allows for real-time features to be written in Ruby in the same style and form as the rest of your Rails application, while still being performant and scalable. It’s a full-stack offering that provides both a client-side JavaScript framework and a server-side Ruby framework. You have access to your full domain model written with Active Record or your ORM of choice.</p>
+</blockquote>
+
+<p>As a personal challenge, I built an app that tracks the status of vehicles on a car lot. It pushes updates to users’ browsers via Action Cable when the <code class="highlighter-rouge">status_id</code> field of a car changes. It works both for browser-initiated and console-initiated updates. Normally in an app, the browser-initiated updates would suffice, but I wanted to go the extra mile. In the case of <a href="https://en.wikipedia.org/wiki/Extract,_transform,_load">ETL</a>-style database updates, there wouldn’t be a user sending changes from the DOM to the controller. I needed my app to be able to response with Action Cable even if the database were being updated in some other way.</p>
+
+<h2 id="the-rules-for-my-challenge">The Rules for My Challenge</h2>
+
+<ul>
+  <li>When a DOM user updates a car’s status via the browser, they get the normal Rails notice and all other users get a jQuery alert via Action Cable.</li>
+  <li>If an update happens via the console, all users get an alert via Action Cable.</li>
+  <li>Only send an alert when the <code class="highlighter-rouge">car.status_id</code> field is updated</li>
+  <li>Do <em>not</em> send an alert when a <code class="highlighter-rouge">Car</code> record is created</li>
+</ul>
+
+<h3 id="the-app-stats">The App Stats</h3>
+
+<ul>
+  <li>Ruby 2.5.0</li>
+  <li>Rails ~&gt; 5.0.1</li>
+  <li>Postgres ~&gt; 0.18</li>
+  <li>Redis 3.3.1</li>
+</ul>
+
+<h2 id="how-it-works">How it Works</h2>
+
+<p>Instead of giving details of a full Action Cable implementation, I’ll just hit the highlights needed to make both the DOM/controller-driven and console-driven approaches work in the same app. If you’d like a full tutorial on implementing Action Cable, here are 2 suggestions:</p>
+
+<ul>
+  <li><a href="https://medium.com/rubyinside/action-cable-hello-world-with-rails-5-1-efc475b0208b">alerts via the console</a></li>
+  <li><a href="https://www.learnenough.com/action-cable-tutorial">alerts via the DOM</a></li>
+</ul>
+
+<h3 id="the-action-cable-channel">The Action Cable Channel</h3>
+
+<p>Action Cable needs a channel for objects to subscribe to, so we set up a <code class="highlighter-rouge">status_notifications_channel</code> for our specific car status-related notifications.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/channels/status_notifications_channel.rb</span>
+
+<span class="k">class</span> <span class="nc">StatusNotificationsChannel</span> <span class="o">&lt;</span> <span class="no">ApplicationCable</span><span class="o">::</span><span class="no">Channel</span>
+  <span class="k">def</span> <span class="nf">subscribed</span>
+    <span class="n">stream_from</span> <span class="s2">"status_notifications_channel"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="the-cars-controller">The Cars Controller</h3>
+
+<p>At some point, we need to initiate a broadcast and it <em>seems</em> like the <code class="highlighter-rouge">cars_controller</code> would be a good place for that. But knowing when and what to broadcast is not the <code class="highlighter-rouge">cars_controller</code>’s job. All it cares about is passing data between the car views and data source. So we give it an object that already knows the broadcasting info, which lets the controller stick to its normal duties.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/cars_controller.rb</span>
+
+<span class="k">def</span> <span class="nf">update</span>
+  <span class="c1"># Pass the @car and its updated params to the `CarWithBroadcast` class</span>
+  <span class="vi">@car_with_broadcast</span> <span class="o">=</span> <span class="no">CarWithBroadcast</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="vi">@car</span><span class="p">,</span> <span class="n">car_params</span><span class="p">)</span>
+
+  <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+    <span class="c1"># And use that class's object just as we would have used the @car object under default circumstances</span>
+    <span class="k">if</span> <span class="vi">@car_with_broadcast</span><span class="p">.</span><span class="nf">save</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="p">{</span> <span class="n">redirect_to</span> <span class="n">cars_url</span><span class="p">,</span> <span class="ss">notice: </span><span class="s2">"The </span><span class="si">#{</span><span class="vi">@car_with_broadcast</span><span class="p">.</span><span class="nf">car</span><span class="p">.</span><span class="nf">display</span><span class="si">}</span><span class="s2"> was successfully updated."</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="n">cars_url</span><span class="p">,</span> <span class="ss">status: :ok</span><span class="p">,</span> <span class="ss">location: </span><span class="vi">@car_with_broadcast</span><span class="p">.</span><span class="nf">car</span> <span class="p">}</span>
+    <span class="k">else</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">:edit</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json: </span><span class="vi">@car_with_broadcast</span><span class="p">.</span><span class="nf">car</span><span class="p">.</span><span class="nf">errors</span><span class="p">,</span> <span class="ss">status: :unprocessable_entity</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="the-broadcasting-class">The Broadcasting Class</h3>
+
+<p>The <code class="highlighter-rouge">CarWithBroadcast</code> class holds the what/when logic of broadcasting a car’s status. So we give it a <code class="highlighter-rouge">@car</code> and let it initiate a broadcast to the <code class="highlighter-rouge">status_notifications_channel</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/car_with_broadcast.rb</span>
+
+<span class="k">class</span> <span class="nc">CarWithBroadcast</span>
+  <span class="nb">attr_reader</span> <span class="ss">:car</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">car</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="vi">@car</span> <span class="o">=</span> <span class="n">car</span>
+    <span class="vi">@car</span><span class="p">.</span><span class="nf">assign_attributes</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="vi">@status_changed</span> <span class="o">=</span> <span class="vi">@car</span><span class="p">.</span><span class="nf">status_id_changed?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">save</span>
+    <span class="k">if</span> <span class="n">car</span><span class="p">.</span><span class="nf">valid?</span>
+      <span class="n">car</span><span class="p">.</span><span class="nf">save</span>
+      <span class="c1"># Here we broadcast a message to the `status_notifications_channel` via ActionCable's methods</span>
+      <span class="no">ActionCable</span><span class="p">.</span><span class="nf">server</span><span class="p">.</span><span class="nf">broadcast</span><span class="p">(</span><span class="s1">'status_notifications_channel'</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="nf">to_broadcast</span><span class="p">)</span> <span class="k">if</span> <span class="vi">@status_changed</span>
+      <span class="kp">true</span>
+    <span class="k">else</span>
+      <span class="kp">false</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">Car</code> class knows how it wants to talk about itself in a broadcast. Hence the <code class="highlighter-rouge">car.to_broadcast</code> above.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/car.rb</span>
+
+<span class="k">class</span> <span class="nc">Car</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">to_broadcast</span>
+    <span class="p">{</span>
+      <span class="ss">status: </span><span class="n">status</span><span class="p">.</span><span class="nf">with_id</span><span class="p">,</span>
+      <span class="ss">car_id: </span><span class="nb">id</span><span class="p">,</span>
+      <span class="ss">message: </span><span class="s2">"The </span><span class="si">#{</span><span class="nb">display</span><span class="si">}</span><span class="s2"> is now </span><span class="si">#{</span><span class="n">status</span><span class="p">.</span><span class="nf">display</span><span class="si">}</span><span class="s2">."</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">display</span>
+    <span class="s2">"</span><span class="si">#{</span><span class="n">color</span><span class="p">.</span><span class="nf">display</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">make</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="the-alert-coffee-script">The Alert Coffee Script</h3>
+
+<p>When the <code class="highlighter-rouge">status_notifications_channel</code> receives the broadcast data, we use Coffee Script and jQuery to insert the HTML for the alert message.</p>
+
+<div class="language-coffeescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/assets/javascripts/channels/status_notifications.coffee</span>
+
+<span class="nx">App</span><span class="p">.</span><span class="na">status_notifications</span> <span class="o">=</span> <span class="nx">App</span><span class="p">.</span><span class="na">cable</span><span class="p">.</span><span class="na">subscriptions</span><span class="p">.</span><span class="na">create</span> <span class="s">"StatusNotificationsChannel"</span><span class="p">,</span>
+  <span class="na">received</span><span class="o">:</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="c1"># Called when there's incoming data on the websocket for this channel</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">'#messages'</span><span class="p">).</span><span class="na">html</span><span class="p">(</span><span class="s">"&lt;p class='alert'&gt;</span><span class="si">#{</span><span class="nx">data</span><span class="p">.</span><span class="na">message</span><span class="si">}</span><span class="s"> &lt;span class='dismiss'&gt;X&lt;/span&gt;&lt;/p&gt;"</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">"#</span><span class="si">#{</span><span class="nx">data</span><span class="p">.</span><span class="na">car_id</span><span class="si">}</span><span class="s">"</span><span class="p">).</span><span class="na">text</span><span class="p">(</span><span class="s">"</span><span class="si">#{</span><span class="nx">data</span><span class="p">.</span><span class="na">status</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">"#</span><span class="si">#{</span><span class="nx">data</span><span class="p">.</span><span class="na">car_id</span><span class="si">}</span><span class="s">"</span><span class="p">).</span><span class="na">parent</span><span class="p">().</span><span class="na">addClass</span><span class="p">(</span><span class="s">'highlight'</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">'.dismiss'</span><span class="p">).</span><span class="na">on</span> <span class="s">'click'</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">'.alert'</span><span class="p">).</span><span class="na">remove</span><span class="p">()</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">"#</span><span class="si">#{</span><span class="nx">data</span><span class="p">.</span><span class="na">car_id</span><span class="si">}</span><span class="s">"</span><span class="p">).</span><span class="na">parent</span><span class="p">().</span><span class="na">removeClass</span><span class="p">(</span><span class="s">'highlight'</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h3 id="sending-alerts">Sending Alerts</h3>
+
+<h4 id="from-the-dom">From the DOM</h4>
+
+<ul>
+  <li>Go to <code class="highlighter-rouge">localhost:3000</code> in 2 browser windows, the second one as an incognito window.</li>
+  <li>Edit &amp; Save a car via the web interface.</li>
+  <li>See the normal notice in User 1’s browser and the alert message in User 2’s browser. Clear the alerts.</li>
+</ul>
+
+<h4 id="from-the-console">From the Console</h4>
+
+<ul>
+  <li>Update a car’s status in the console (as below) and see the both users’ browsers receive the alert.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># rails console</span>
+
+<span class="no">CarWithBroadcast</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Car</span><span class="p">.</span><span class="nf">first</span><span class="p">,</span> <span class="p">{</span><span class="ss">status_id: </span><span class="no">Status</span><span class="p">.</span><span class="nf">last</span><span class="p">.</span><span class="nf">id</span><span class="p">}).</span><span class="nf">save</span>
+</code></pre></div></div>
+
+<h2 id="why-didnt-you">Why Didn’t You…?</h2>
+
+<p>So why not use an <code class="highlighter-rouge">after_update</code> callback in the <code class="highlighter-rouge">Car</code> model instead of creating the <code class="highlighter-rouge">CarWithBroadcast</code> class? With a model callback, we’re inextricably tied to having a broadcast happen <em>every</em> time a <code class="highlighter-rouge">car</code> object is updated. The <code class="highlighter-rouge">CarWithBroadcast</code> class gives us the flexibility to choose where and when we want to broadcast.</p>
+
+<p>For example, updating a <code class="highlighter-rouge">car</code> in the console like this does not produce the alert,</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># rails console</span>
+
+<span class="no">Car</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">update!</span><span class="p">(</span><span class="ss">status_id: </span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>and that makes for a better user experience if you need to make changes to the production database and you don’t need users to witness the whole process. If we had used <code class="highlighter-rouge">after_update</code> the broadcast would have been sent – and possibly without our realizing it.</p>
+
+<p>The <code class="highlighter-rouge">CarWithBroadcast</code> class is not a <em>perfect</em> solution. It feels a little clunky and the naming seems a touch off. But it’s the solution for right now and when the code grows, a better name and purpose may reveal itself.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
