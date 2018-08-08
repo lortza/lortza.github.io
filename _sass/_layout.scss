@@ -252,11 +252,7 @@ img.about-pic {
   .section-explanation { text-align: center; }
 } /* .portfolio-index */
 
-.centered {
-  h3 {
-    text-align: center;
-    text-transform: lowercase;
-  }
+.center-column {
   width: 50%;
   margin: 0 auto;
   li {
