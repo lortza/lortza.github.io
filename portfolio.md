@@ -6,25 +6,9 @@ permalink: /portfolio/
 
 <div class="portfolio-index">
 
-  <h2>Current Skills</h2>
+  <h2>Web Applications</h2>
 
-  <p class="section-explanation">Ruby, Rails, Rails API, Sass, CSS, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, Heroku, AWS S3, Jekyll, XML, Database Design, <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a>, transactional Spanish, <a href="https://www.thegamecrafter.com/designers/anne-richardson" target="_blank">Card Game Design</a>, and Bicycle Repair</p>
-
-<div class="centered">
-  <h3>How I'm Regularly Upping My Game</h3>
-  <ul>
-    <li>daily tutorials</li>
-    <li>daily slack community engagement</li>
-    <li>weekly mentor sessions</li>
-    <li>weekly tech meetups</li>
-    <li>occasional open source contributions</li>
-    <li>year of Viking Code School for breadth & depth</li>
-  </ul>
-</div>
-
-  <h2>Application Projects</h2>
-
-  <p class="section-explanation">Rails is my preferred framework, so you'll see most of these apps are Rails-based. Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
+  <p class="section-explanation">Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">
@@ -76,54 +60,64 @@ permalink: /portfolio/
   {% endfor %}
   </div>
 
-<h2>Open Source Contributions</h2>
+  <h2>Current Skills</h2>
 
-<div class="open-source">
+  <p class="section-explanation">Ruby, Rails, Rails API, Action Cable, Sinatra, Sass, CSS3, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, GitHub, BitBucket, Heroku production apps, Firebase, AWS S3, Jekyll, XML, Database Design, and <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a></p>
 
-  {% for contribution in site.opensource_contributions reversed %}
-    <article>
-      <h3>
-        <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
-        <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
-      </h3>
-      <p>{{contribution.content}}</p>
-    </article>
-  {% endfor %}
+  <h2>Open Source Contributions</h2>
 
-</div><!-- open-source -->
-
-
-<h2>Published Works</h2>
-
-<p class="section-explanation">Whenever I have an idea for something that solves a particular problem, I jump right in and make it. Sometimes it's a solution I can use right now (zipper pocket underpants) and other times, it's a solution that I wish had existed when I needed it (book on packing), so I created it to solve the problem for other people.</p>
-
-<div class="products">
-
-  {% for product in site.products reversed %}
-    <article>
-      <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><img src="{{product.img}}"></a>
-      <div class="explanation">
-        <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><h3>{{product.name}}</h3></a>
-        <p>{{product.description}} <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}">See it on {{product.store_name}}</a></p>
-      </div>
-    </article>
-  {% endfor %}
-
-</div><!-- products -->
+  <div class="open-source">
+    {% for contribution in site.opensource_contributions reversed %}
+      <article>
+        <h3>
+          <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
+          <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
+        </h3>
+        {{contribution.content}}
+      </article>
+    {% endfor %}
+  </div><!-- open-source -->
 
 
-<h2>Writing</h2>
-<p class="section-explanation">These are some of the sites that I maintain or where I have contributed posts.</p>
+  <h2>How I Pursue to Ongoing Learning</h2>
+  <div class="center-column">
+    <ul>
+      <li>Daily tutorials</li>
+      <li>Daily slack community engagement</li>
+      <li>Weekly mentor sessions</li>
+      <li>Weekly tech meetups</li>
+      <li>Occasional open source contributions</li>
+      <li>Year of Viking Code School for breadth & depth</li>
+    </ul>
+  </div>
 
-<div class="writing">
+  <h2>Published Works</h2>
 
-{% for writing in site.writings reversed %}
-  <article>
-    <h4><a href="{{ writing.site_url }}">{{ writing.title }}</a></h4>
-    <p>{{ writing.content }}</p>
-  </article>
-{% endfor %}
+  <p class="section-explanation">Whenever I have an idea for something that solves a particular problem, I dive in and start creating. Sometimes it's a solution I can use right now (zipper pocket underpants) and other times, it's a solution that I wish had existed when I needed it (book on packing), so I created it to solve the problem for other people.</p>
 
-</div> <!-- writing -->
+  <div class="products">
+    {% for product in site.products reversed %}
+      <article>
+        <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><img src="{{product.img}}"></a>
+        <div class="explanation">
+          <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><h3>{{product.name}}</h3></a>
+          <p>{{product.description}} <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}">See it on {{product.store_name}}</a></p>
+        </div>
+      </article>
+    {% endfor %}
+  </div><!-- products -->
+
+
+  <h2>Writing</h2>
+  <p class="section-explanation">These are some places where I contribute blog posts or content.</p>
+
+  <div class="writing">
+    {% for writing in site.writings reversed %}
+      <article>
+        <h4><a href="{{ writing.site_url }}">{{ writing.title }}</a></h4>
+        {{ writing.content }}
+      </article>
+    {% endfor %}
+  </div> <!-- writing -->
 
 </div> <!-- portfolio-index -->
