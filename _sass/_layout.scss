@@ -194,6 +194,10 @@ img.about-pic {
       font-size: 18px;
     }
   }
+  .post-image {
+    width: 600px;
+  }
+
 }
 .post-meta {
   font-size: $small-font-size;
@@ -204,6 +208,7 @@ img.about-pic {
   display: block;
   font-size: 42px;
 }
+
 
 /****** Index page ******/
 .home-links {

@@ -1,12 +1,15 @@
 ---
 layout: post
 title:  Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down
-date:   2018-02-26 03:53
+date:   2018-02-26
 ---
 
+> UPDATE: Holy smokes! I've just refactored the code in this post to be even better :) See it in [this new post]({% post_url 2018-08-11-card-factory-refactor %}).
+
+## Building the Original App
 A couple of years ago, I build a Rails app that could do tarot card readings for me. (Here are the [live app](http://modernmystic.herokuapp.com/) and [repo](https://github.com/lortza/tarot).) A tarot reading, though it takes years of experience for professional readers to deeply understand cards, contexts, and people, can also be done with a `card`s table and Ruby's `sample` method. Obviously, you'll miss out on the insight of a professional reader, but it's still pretty fun.
 
-I built this app initially as a bootcamp final project, and have since used it as an opportunity to refactor and add new features as my skills grow. Recently, I added the exciting new feature of having cards appear both right-side up and upside down. This feature makes the app experience much closer to the actual tarot reading experience, and is the centerpoint of this post.
+I built this app initially as a bootcamp final project, and have since used it as an opportunity to refactor and add new features as my skills grow. Recently, I added the exciting new feature of having cards appear both right-side up and upside down. This feature makes the app experience much closer to the actual tarot reading experience, and is the centerpiece of this post.
 
 ## The Anatomy of Tarot Reading App
 From the perspective of an app, a deck of tarot cards can be distilled down to a set of data with each card having a name and meaning. Likewise, a "reading" has a set number of positions in which to place a card, and each position in the reading has a context.
@@ -196,4 +199,3 @@ Now with access to reversed meanings, our readings are more realistic. If I hop 
 ```
 
 Ha ha ha ha! Though I'm pretty pleased with the outcome of the app, it looks like I've got a little work to do on a relationship in my life. brb...
-

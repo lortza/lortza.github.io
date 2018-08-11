@@ -328,6 +328,8 @@ img.about-pic {
   @media screen and (max-width: 800px) {
     .post-content h4 {
       font-size: 18px; } }
+.post-content .post-image {
+  width: 600px; }
 
 .post-meta {
   font-size: 14px;
