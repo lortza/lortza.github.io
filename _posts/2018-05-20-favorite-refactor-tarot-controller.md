@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  My Favorite Refactor - A Look Back at Growth
+title:  'My Favorite Refactor: A Look Back at Growth'
 date:   2018-05-20
 ---
 
@@ -193,4 +193,3 @@ I have to be honest. Though this refactor happened months ago, as I was writing 
 Which brings me to my point that this codebase will keep changing as the scope of the project changes and as my skillset changes. And I think that's pretty neat.
 
 In this look back, it's been interesting for me to see what I understood at any given time and then how I used all of the knowledge accessible to me to build the best thing I could. Learning software engineering can feel daunting! There is an infinite amount of things to learn and directions to go -- plus a lot of conflicting opinions about which direction is the best direction to go. It is easy to feel like I'll never "get there." It is good to take a moment to reflect on how much I've grown in the past couple of years and it is so exciting to imagine how much more I'll be able to accomplish in the future.
-
