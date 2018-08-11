@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Refactor: Solving that Pesky Naming Problem'
+title:  'Refactor: Solving a Pesky Naming Problem'
 date:   2018-08-11
 ---
 
@@ -81,13 +81,13 @@ describe '.build_cards' do
 ```
 And that's what pretty much sealed the deal. So, according to my husband, I spent some time doing this:
 
-<a href="https://twitter.com/JenMsft/status/1027018324037623810"><img src="https://pbs.twimg.com/media/DkCzXJ2U4AE1sWk.jpg" alt="When you try to choose a meaningful variable name" class="post-image"></a>
+<a href="https://twitter.com/JenMsft/status/1027018324037623810"><img src="https://pbs.twimg.com/media/DkCzXJ2U4AE1sWk.jpg" title="When you try to choose a meaningful variable name by twitter.com/JenMsft" alt="Narcos' Pablo Escobar, thinking in various locations" class="post-image"></a>
 
 And then I set out to refactor this thing.
 
 ## The Refactor
 
-The `CardFactory` name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. It needed to be two different things with their own names. So the `CardFactory` model ended up diverging into a `ReadingCard` model and a `ReadingCardSet` model.
+The `CardFactory` name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. During a conversation with my [mentor](https://www.linkedin.com/in/scott-maslar-b1650b36/), we realized that it needed to be two different models. So the `CardFactory` model ended up diverging into a `ReadingCard` model and a `ReadingCardSet` model, each with a more job-specific name.
 
 A `ReadingCard` will generate that card-like object I've been wanting and that's all it does.
 

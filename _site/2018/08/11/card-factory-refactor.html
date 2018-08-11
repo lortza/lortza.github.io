@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Anne Richardson | Refactor: Solving that Pesky Naming Problem</title>
+    <title>Anne Richardson | Refactor: Solving a Pesky Naming Problem</title>
     <meta name="description" content="Anne Richardson Rails Developer
  blog and portfolio">
 
@@ -58,7 +58,7 @@
         <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Refactor: Solving that Pesky Naming Problem</h1>
+    <h1 class="post-title">Refactor: Solving a Pesky Naming Problem</h1>
     <p class="post-meta">August 11, 2018</p>
   </header>
 
@@ -136,13 +136,13 @@
 </code></pre></div></div>
 <p>And that’s what pretty much sealed the deal. So, according to my husband, I spent some time doing this:</p>
 
-<p><a href="https://twitter.com/JenMsft/status/1027018324037623810"><img src="https://pbs.twimg.com/media/DkCzXJ2U4AE1sWk.jpg" alt="When you try to choose a meaningful variable name" class="post-image" /></a></p>
+<p><a href="https://twitter.com/JenMsft/status/1027018324037623810"><img src="https://pbs.twimg.com/media/DkCzXJ2U4AE1sWk.jpg" title="When you try to choose a meaningful variable name by twitter.com/JenMsft" alt="Narcos' Pablo Escobar, thinking in various locations" class="post-image" /></a></p>
 
 <p>And then I set out to refactor this thing.</p>
 
 <h2 id="the-refactor">The Refactor</h2>
 
-<p>The <code class="highlighter-rouge">CardFactory</code> name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. It needed to be two different things with their own names. So the <code class="highlighter-rouge">CardFactory</code> model ended up diverging into a <code class="highlighter-rouge">ReadingCard</code> model and a <code class="highlighter-rouge">ReadingCardSet</code> model.</p>
+<p>The <code class="highlighter-rouge">CardFactory</code> name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. During a conversation with my <a href="https://www.linkedin.com/in/scott-maslar-b1650b36/">mentor</a>, we realized that it needed to be two different models. So the <code class="highlighter-rouge">CardFactory</code> model ended up diverging into a <code class="highlighter-rouge">ReadingCard</code> model and a <code class="highlighter-rouge">ReadingCardSet</code> model, each with a more job-specific name.</p>
 
 <p>A <code class="highlighter-rouge">ReadingCard</code> will generate that card-like object I’ve been wanting and that’s all it does.</p>
 
