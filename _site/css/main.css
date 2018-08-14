@@ -554,36 +554,40 @@ img.about-pic {
 /**
  * Syntax highlighting styles
  */
+code, pre {
+  color: #2D2E3B;
+  background-color: #EEEEFF; }
+
 .highlight {
-  background: #ddd; }
+  background: #EEEEFF;
+  border-radius: 3px; }
   .highlight .c {
-    color: #998;
+    color: #B7B9D1;
     font-style: italic; }
   .highlight .err {
-    color: #a61717;
-    background-color: #e3d2d2; }
+    color: #000080; }
   .highlight .k {
     font-weight: bold; }
   .highlight .o {
     font-weight: bold; }
   .highlight .cm {
-    color: #998;
+    color: #B7B9D1;
     font-style: italic; }
   .highlight .cp {
-    color: #999;
+    color: #B7B9D1;
     font-weight: bold; }
   .highlight .c1 {
-    color: #998;
+    color: #B7B9D1;
     font-style: italic; }
   .highlight .cs {
-    color: #999;
+    color: #B7B9D1;
     font-weight: bold;
     font-style: italic; }
   .highlight .gd {
-    color: #000;
+    color: #2D2E3B;
     background-color: #fdd; }
   .highlight .gd .x {
-    color: #000;
+    color: #2D2E3B;
     background-color: #faa; }
   .highlight .ge {
     font-style: italic; }
@@ -592,10 +596,10 @@ img.about-pic {
   .highlight .gh {
     color: #999; }
   .highlight .gi {
-    color: #000;
+    color: #2D2E3B;
     background-color: #dfd; }
   .highlight .gi .x {
-    color: #000;
+    color: #2D2E3B;
     background-color: #afa; }
   .highlight .go {
     color: #888; }
