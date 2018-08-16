@@ -90,7 +90,6 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/card_factory.rb</span>
 
 <span class="k">class</span> <span class="nc">CardFactory</span>
-
    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="n">theme</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="n">orientation</span><span class="p">)</span>
     <span class="vi">@card</span> <span class="o">=</span> <span class="n">card</span>
     <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
@@ -148,19 +147,20 @@
 
 <span class="k">class</span> <span class="nc">ReadingCard</span>
 
-  <span class="c1"># Now I can logically validate these objects</span>
+  <span class="c1"># Now I can logically validate these objects and test for validation</span>
   <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Validations</span>
 
   <span class="nb">attr_reader</span> <span class="ss">:card</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:theme</span><span class="p">,</span> <span class="ss">:keywords</span><span class="p">,</span> <span class="ss">:orientation</span>
 
   <span class="c1"># Bonus refactor: the copious arguments required are now  </span>
-  <span class="c1"># delivered via a hash for accuracy instead of an array</span>
-  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="vi">@card</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="ss">:card</span><span class="p">]</span>
-    <span class="vi">@name</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span>
-    <span class="vi">@theme</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="ss">:theme</span><span class="p">]</span>
-    <span class="vi">@keywords</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="ss">:keywords</span><span class="p">]</span>
-    <span class="vi">@orientation</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="ss">:orientation</span><span class="p">]</span>
+  <span class="c1"># delivered via keywords for accuracy instead of as</span>
+  <span class="c1"># fixed-position arguments</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">card</span><span class="p">:,</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">theme</span><span class="p">:,</span> <span class="n">keywords</span><span class="p">:,</span> <span class="n">orientation</span><span class="p">:)</span>
+    <span class="vi">@card</span> <span class="o">=</span> <span class="n">card</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+    <span class="vi">@theme</span> <span class="o">=</span> <span class="n">theme</span>
+    <span class="vi">@keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+    <span class="vi">@orientation</span> <span class="o">=</span> <span class="n">orientation</span>
   <span class="k">end</span>
 
   <span class="n">delegate</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:image_file</span><span class="p">,</span> <span class="ss">:arcana_id</span><span class="p">,</span> <span class="ss">:suit_id</span><span class="p">,</span> <span class="ss">to: :card</span>
@@ -203,13 +203,13 @@
       <span class="n">built_keywords</span> <span class="o">=</span> <span class="n">card</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">orientation</span><span class="si">}</span><span class="s2">_keywords"</span><span class="p">)</span>
       <span class="n">built_name</span> <span class="o">=</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s1">'upright'</span> <span class="p">?</span> <span class="n">card</span><span class="p">.</span><span class="nf">name</span> <span class="p">:</span> <span class="s2">"Reversed </span><span class="si">#{</span><span class="n">card</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">"</span>
 
-      <span class="n">built_card</span> <span class="o">=</span> <span class="no">ReadingCard</span><span class="p">.</span><span class="nf">new</span><span class="p">({</span>
+      <span class="n">built_card</span> <span class="o">=</span> <span class="no">ReadingCard</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
                     <span class="ss">card: </span><span class="n">card</span><span class="p">,</span>
                     <span class="ss">name: </span><span class="n">built_name</span><span class="p">,</span>
                     <span class="ss">theme: </span><span class="n">built_theme</span><span class="p">,</span>
                     <span class="ss">keywords: </span><span class="n">built_keywords</span><span class="p">,</span>
                     <span class="ss">orientation: </span><span class="n">orientation</span>
-                  <span class="p">})</span>
+                  <span class="p">)</span>
       <span class="n">reading_cards</span> <span class="o">&lt;&lt;</span> <span class="n">built_card</span> <span class="k">if</span> <span class="n">built_card</span><span class="p">.</span><span class="nf">valid?</span>
     <span class="k">end</span>
     <span class="n">reading_cards</span>

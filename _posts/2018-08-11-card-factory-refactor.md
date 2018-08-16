@@ -33,7 +33,6 @@ The model that produces a modified, view-ready `Card` object is called a `CardFa
 # app/models/card_factory.rb
 
 class CardFactory
-
    def initialize(card, name, theme, keywords, orientation)
     @card = card
     @name = name
@@ -94,19 +93,20 @@ A `ReadingCard` will generate that card-like object I've been wanting and that's
 
 class ReadingCard
 
-  # Now I can logically validate these objects
+  # Now I can logically validate these objects and test for validation
   include ActiveModel::Validations
 
   attr_reader :card, :name, :theme, :keywords, :orientation
 
   # Bonus refactor: the copious arguments required are now  
-  # delivered via a hash for accuracy instead of an array
-  def initialize(args)
-    @card = args[:card]
-    @name = args[:name]
-    @theme = args[:theme]
-    @keywords = args[:keywords]
-    @orientation = args[:orientation]
+  # delivered via keywords for accuracy instead of as
+  # fixed-position arguments
+  def initialize(card:, name:, theme:, keywords:, orientation:)
+    @card = card
+    @name = name
+    @theme = theme
+    @keywords = keywords
+    @orientation = orientation
   end
 
   delegate :id, :image_file, :arcana_id, :suit_id, to: :card
@@ -150,13 +150,13 @@ class ReadingCardSet
       built_keywords = card.send("#{orientation}_keywords")
       built_name = orientation == 'upright' ? card.name : "Reversed #{card.name}"
 
-      built_card = ReadingCard.new({
+      built_card = ReadingCard.new(
                     card: card,
                     name: built_name,
                     theme: built_theme,
                     keywords: built_keywords,
                     orientation: orientation
-                  })
+                  )
       reading_cards << built_card if built_card.valid?
     end
     reading_cards
