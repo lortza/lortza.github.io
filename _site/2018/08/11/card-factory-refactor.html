@@ -63,9 +63,7 @@
   </header>
 
   <article class="post-content">
-    <p>Back in February, I wrote <a href="/2018/02/26/card-factory.html">a post about a refactor</a> to <a href="http://modernmystic.herokuapp.com/">this app</a> that made use of a factory-style class to enable custom data to make it to the view.</p>
-
-<p>Recently, I’ve found myself being bothered by a couple of things and thought I’d take a crack and making this code better.</p>
+    <p>Back in February, I wrote <a href="/2018/02/26/card-factory.html">a post about a refactor</a> to <a href="http://modernmystic.herokuapp.com/">this app</a> that made use of a factory-style class for some nifty data construction. Recently, I’ve found myself being bothered by a couple of things in that refactor, so thought I’d take a crack at making it better.</p>
 
 <h2 id="my-list-of-things-to-address">My List of Things to Address</h2>
 
@@ -182,9 +180,11 @@
 
 <span class="k">class</span> <span class="nc">ReadingCardSet</span>
 
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">positioned_cards</span><span class="p">(</span><span class="n">reading</span><span class="p">)</span>
-    <span class="c1"># All of this stuff used to live in the 'ReadingsController#show'</span>
-    <span class="n">positions</span> <span class="o">=</span> <span class="n">reading</span><span class="p">.</span><span class="nf">positions</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="ss">:position_number</span><span class="p">).</span><span class="nf">to_a</span>
+  <span class="c1"># All of this logic used to live in the 'ReadingsController#show'</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">build_set</span><span class="p">(</span><span class="n">reading</span><span class="p">)</span>
+    <span class="c1"># The responsibility of knowing how to `order` positions is now</span>
+    <span class="c1"># in the ReadingPositions model</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">reading</span><span class="p">.</span><span class="nf">positions</span><span class="p">.</span><span class="nf">ordered</span><span class="p">.</span><span class="nf">to_a</span>
     <span class="n">reading_cards</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
     <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">reading_cards</span><span class="p">)</span>
   <span class="k">end</span>
@@ -225,7 +225,7 @@
 <span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="o">...</span>
   <span class="k">def</span> <span class="nf">show</span>
-    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="no">ReadingCardSet</span><span class="p">.</span><span class="nf">positioned_cards</span><span class="p">(</span><span class="vi">@reading</span><span class="p">)</span>
+    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="no">ReadingCardSet</span><span class="p">.</span><span class="nf">build_set</span><span class="p">(</span><span class="vi">@reading</span><span class="p">)</span>
   <span class="k">end</span>
   <span class="o">...</span>
 <span class="k">end</span>
@@ -235,11 +235,7 @@
 
 <h2 id="future-improvements">Future Improvements</h2>
 
-<p>I really like how this refactor has gone. However, this line in the controller:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="no">ReadingCardSet</span><span class="p">.</span><span class="nf">positioned_cards</span><span class="p">(</span><span class="vi">@reading</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>still seems clunky to me. And I don’t love that the view still has to know the anatomy of the <code class="highlighter-rouge">@positioned_cards</code> array in order to display data correctly.</p>
+<p>I really like how this refactor has gone. However, I don’t love that the view still has to know the anatomy of the <code class="highlighter-rouge">@positioned_cards</code> array in order to display data correctly.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/readings/show.html.erb --&gt;</span>
 
@@ -250,7 +246,7 @@
 <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
 </code></pre></div></div>
 
-<p>I’ll address those items in my next refactor session.</p>
+<p>I’ll address that in my next refactor session.</p>
 
   </article>
 

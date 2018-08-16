@@ -4,9 +4,7 @@ title:  'Refactor: Solving a Pesky Naming Problem'
 date:   2018-08-11
 ---
 
-Back in February, I wrote [a post about a refactor]({% post_url 2018-02-26-card-factory %}) to [this app](http://modernmystic.herokuapp.com/) that made use of a factory-style class to enable custom data to make it to the view.
-
-Recently, I've found myself being bothered by a couple of things and thought I'd take a crack and making this code better.
+Back in February, I wrote [a post about a refactor]({% post_url 2018-02-26-card-factory %}) to [this app](http://modernmystic.herokuapp.com/) that made use of a factory-style class for some nifty data construction. Recently, I've found myself being bothered by a couple of things in that refactor, so thought I'd take a crack at making it better.
 
 ## My List of Things to Address
 
@@ -129,9 +127,11 @@ A `ReadingCardSet` decides how many `ReadingCard`s are needed for a `Reading` an
 
 class ReadingCardSet
 
-  def self.positioned_cards(reading)
-    # All of this stuff used to live in the 'ReadingsController#show'
-    positions = reading.positions.order(:position_number).to_a
+  # All of this logic used to live in the 'ReadingsController#show'
+  def self.build_set(reading)
+    # The responsibility of knowing how to `order` positions is now
+    # in the ReadingPositions model
+    positions = reading.positions.ordered.to_a
     reading_cards = self.build_cards(positions.count)
     positions.zip(reading_cards)
   end
@@ -173,7 +173,7 @@ The `ReadingsController` is relieved of its duty to build that set and now simpl
 class ReadingsController < ApplicationController
   ...
   def show
-    @positioned_cards = ReadingCardSet.positioned_cards(@reading)
+    @positioned_cards = ReadingCardSet.build_set(@reading)
   end
   ...
 end
@@ -183,12 +183,7 @@ And my tests finally make sense since these two new models now have clarity of p
 
 ## Future Improvements
 
-I really like how this refactor has gone. However, this line in the controller:
-```ruby
-@positioned_cards = ReadingCardSet.positioned_cards(@reading)
-```
-
-still seems clunky to me. And I don't love that the view still has to know the anatomy of the `@positioned_cards` array in order to display data correctly.
+I really like how this refactor has gone. However, I don't love that the view still has to know the anatomy of the `@positioned_cards` array in order to display data correctly.
 
 ```erb
 <!-- app/views/readings/show.html.erb -->
@@ -200,4 +195,4 @@ still seems clunky to me. And I don't love that the view still has to know the a
 <% end %>
 ```
 
-I'll address those items in my next refactor session.
+I'll address that in my next refactor session.
