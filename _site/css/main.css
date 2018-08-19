@@ -497,6 +497,10 @@ img.about-pic {
   .portfolio-show img {
     width: 400px;
     border: 1px solid #ddd; }
+  .portfolio-show .badge img {
+    width: 144px;
+    border: transparent;
+    margin-bottom: 10px; }
   .portfolio-show .link-buttons {
     /* a */ }
     .portfolio-show .link-buttons a {

@@ -381,6 +381,11 @@ img.about-pic {
     width: 400px;
     border: 1px solid $grey-color-light;
   }
+  .badge img {
+    width: 144px;
+    border: transparent;
+    margin-bottom: 10px;
+  }
   .link-buttons {
     a {
       color: $theme-color;

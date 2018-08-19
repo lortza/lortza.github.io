@@ -10,6 +10,12 @@ layout: default
 
   <p>{{ page.description }}</p>
 
+  {% unless page.codeclimate == nil %}
+    <div class="badge">
+      {{ page.codeclimate }}
+    </div>
+  {% endunless %}
+
   {% if page.readme == true %}
   <p>Check out the <a href="{{ page.repo }}" target="_blank" alt="{{ page.name }} repo">repo README</a> for code snippets<br>and screenshots of the most interesting parts.</p>
   {% endif %}

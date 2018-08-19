@@ -90,6 +90,7 @@ permalink: /portfolio/
       <li>Blogging</li>
       <li>Tutorials when needed for depth</li>
       <li>Annual tech conferences (Rails Conf, Ruby Conf, etc.)</li>
+      <li>Incorporation of CodeClimate automated code reviews for feedback</li>
     </ul>
   </div>
 
