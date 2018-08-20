@@ -7,10 +7,12 @@ permalink: /about/
 <img class="col one left about-pic" src="{{site.header_image}}">
 
 # Hi, I'm Anne.
-I am a Rails Developer and a maker of many things.
+<br>
+I've been building Rails apps since 2015 and recently have been dabbling in frontend frameworks like React and node.js. I revel in building tools or systems that make life easier, more efficient, or that display useful information in a compelling way.
 
-By day, I'm discussing the ways in which we can move data around to make a better user experience. By night, well, I'm doing that at night too -- unless I'm engrossed in another project, which is pretty likely. Right now, I'm tickled to have just published a coloring book. Life is good when I'm making something and even better when I get to see people engage with that thing I just made.
+Software Engineer is not a title I've held for the bulk of my professional career, though it is the mindset with which I've built a legacy of workplace tools and systems. Having changed into this career, I love my work. It's challenging and satisfying, and I get to spend time with talented and inspiring people.
 
+Life is good when I'm making something and even better when I get to see people engage with that thing I made.
 
 <hr/>
 <br/>
@@ -26,4 +28,3 @@ By day, I'm discussing the ways in which we can move data around to make a bette
 <div class="col three caption">
 	Email is the best place to reach me.
 </div>
-
