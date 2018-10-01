@@ -11,7 +11,8 @@ github_username:  lortza
 linkedin_username: localflavor
 stackoverflow_cv_name: anne
 other_portfolio_url: http://localflavormarketing.com/
-resume: /docs/richardson_resume.pdf
+resume: https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing
+# resume: /docs/richardson_resume.pdf
 
 # Build settings
 markdown: kramdown
