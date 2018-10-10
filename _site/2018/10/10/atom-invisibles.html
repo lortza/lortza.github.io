@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Toggle the Visibility of Whitespaces in Atom</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/10/10/atom-invisibles.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Toggle the Visibility of Whitespaces in Atom</h1>
+    <p class="post-meta">October 10, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently started working in <code class="highlighter-rouge">html.slim</code>, which is whitespace sensitive. In order to edit my <code class="highlighter-rouge">slim</code> files successfully, I wanted to be able to see whitespaces. I did this in Atom like this:</p>
+
+<ol>
+  <li>Enable “Show Invisibles”</li>
+  <li>Make Invisibles Actually Visible</li>
+  <li>Enable the Toggling of Invisibles</li>
+  <li>BONUS: Turn off Whitespace Trimming for <code class="highlighter-rouge">html.slim</code> Files Only</li>
+</ol>
+
+<h2 id="1-enable-show-invisibles">1. Enable “Show Invisibles”</h2>
+<p>Atom calls these whitespaces “invisibles.” Go to <code class="highlighter-rouge">Atom &gt; Preferences &gt; Editor</code>.</p>
+
+<p>Scroll <em>past</em> the section on Invisibles. You’ll find a checkbox that says “Show Invisibles”. Check that box.</p>
+
+<h2 id="2-make-invisibles-actually-visible--optional">2. Make Invisibles Actually Visible – optional</h2>
+<p>This part is optional and it depends on the theme you have. If when you turn on Invisibles, you still can’t see them, you may need to adjust the color or opacity of those characters in the Atom <code class="highlighter-rouge">style.less</code> stylesheet file.</p>
+
+<p>Go to <code class="highlighter-rouge">Atom &gt; Stylesheet</code></p>
+
+<p>Add your preferred CSS to a class called <code class="highlighter-rouge">.invisible-character</code> inside the <code class="highlighter-rouge">atom-text-editor</code> code block:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>atom-text-editor {
+  .invisible-character {
+    opacity: 1;
+  }
+}
+</code></pre></div></div>
+
+<h2 id="3-enable-the-toggling-of-invisibles">3. Enable the Toggling of Invisibles</h2>
+<p>Since I don’t work in <code class="highlighter-rouge">slim</code> all of the time, I don’t want to see invisibles all of the time. You can create a keyboard shortcut to toggle invisibles by adding this to your <code class="highlighter-rouge">keymap.cson</code> file.</p>
+
+<p>Go to <code class="highlighter-rouge">Atom &gt; Keymap</code></p>
+
+<p>Add your preferred shortcut to the <code class="highlighter-rouge">atom-text-editor</code> namespace. Here, I’m using <code class="highlighter-rouge">ctrl i</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'atom-text-editor':
+   'ctrl-i': 'window:toggle-invisibles'
+</code></pre></div></div>
+
+<h2 id="4-bonus-turn-off-whitespace-trimming-for-slim-files-only">4. BONUS: Turn off Whitespace Trimming for slim Files Only</h2>
+<p>All of that showing of whitespaces is very useful, but in my case, I still had one more hurdle in my workflow for <code class="highlighter-rouge">slim</code> files. I have the <code class="highlighter-rouge">whitespaces</code> package installed, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how I was able to <a href="/2018/10/09/whitespaces-slim.html">turn off whitespace trimming in for only slim files</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

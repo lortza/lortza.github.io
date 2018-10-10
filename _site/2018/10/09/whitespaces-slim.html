@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Enable the Trimming of Whitespaces by Language in Atom</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/10/09/whitespaces-slim.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Enable the Trimming of Whitespaces by Language in Atom</h1>
+    <p class="post-meta">October 9, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I have the <a href="https://github.com/atom/whitespace"><code class="highlighter-rouge">whitespaces</code> package</a> installed in Atom, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how to disable whitespace trimming for <code class="highlighter-rouge">slim</code> files:</p>
+
+<p>Open <code class="highlighter-rouge">config.cson</code> via the Atom menu: <code class="highlighter-rouge">Atom &gt; Config</code></p>
+
+<p>You’ll see a bunch of stuff like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
+  autosave:
+    enabled: true
+  core:
+    excludeVcsIgnoredPaths: false
+    ignoredNames: [
+      ".git"
+      "log"
+      "tmp"
+    ]
+    telemetryConsent: "limited"
+</code></pre></div></div>
+
+<p>At the bottom of the file, outside of the <code class="highlighter-rouge">"*"</code> namespace, create a scope of <code class="highlighter-rouge">.slim.text</code> and turn off <code class="highlighter-rouge">removeTrailingWhitespace</code> inside of it, like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
+  autosave:
+    enabled: true
+    ...
+
+".slim.text":
+  whitespace:
+    removeTrailingWhitespace: false
+</code></pre></div></div>
+
+<p>This is super handy, but it doesn’t solve <em>all</em> of the whitespace problems. I may still have to contend with those spaces that happen in empty-lines. To help with that, I set up the ability to <a href="/2018/10/10/atom-invisibles.html">toggle the visibility of whitespaces</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
