@@ -8,7 +8,7 @@ permalink: /about/
 
 # Hi, I'm Anne.
 <br>
-I've been building Rails apps since 2015 and recently have been dabbling in frontend frameworks like React and node.js. I revel in building tools or systems that make life easier, more efficient, or that display useful information in a compelling way.
+I've been building Rails apps since 2015 and recently have been dabbling in node.js and frontend frameworks like React. I revel in building tools or systems that make life easier, more efficient, or that display useful information in a compelling way.
 
 Software Engineer is not a title I've held for the bulk of my professional career, though it is the mindset with which I've built a legacy of workplace tools and systems. Having changed into this career, I love my work. It's challenging and satisfying, and I get to spend time with talented and inspiring people.
 
