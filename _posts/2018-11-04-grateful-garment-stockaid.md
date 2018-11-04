@@ -90,7 +90,9 @@ email: "site_admin@fake.com"
 password: "Password1"
 ```
 
-## WIP Selecting an Issue to Work On
+## WIP: Selecting an Issue to Work On
+_This section is a Work in Progress (WIP) and is subject to change. I am in the process of getting more definite information from the project owners._
+
 The project's features and bugs are being managed with a Waffle Board: [https://waffle.io/GratefulGarmentProject/StockAid](https://waffle.io/GratefulGarmentProject/StockAid)
 
 1) Look in the `Backlog` column to find an issue you'd like to work on.
@@ -117,12 +119,22 @@ git checkout -b 612-reports-downloaded-into-csv
 5) Be sure to write tests for any work you contribute. The project uses [rspec](http://rspec.info/).
 
 ## WIP: Communicating Status
+_This section is a Work in Progress (WIP) and is subject to change. I am in the process of getting more definite information from the project owners._
+
 Since this is a volunteer-run project, people are often popping in to work on tickets in their spare time. It is important for all of us to communicate clearly, so anyone can understand what is going on with any feature or bug at any given time.
 
-If you have blocker questions, ask them in the github issue?
+#### If you have blocker questions:
+- Ask them in the related GitHub
+- Mention @tekhudson or @smellsblue
+
+#### If you find that you can't actually do this work in a reasonable amount of time:
+- Unassign yourself from the Waffle ticket
+- Move it back to the `Backlog` column
 
 
-## Submitting Your Contribution
+## WIP: Submitting Your Contribution
+_This section is a Work in Progress (WIP) and is subject to change. I am in the process of getting more definite information from the project owners._
+
 Once you've completed your work on your local machine, run the test suite (`rspec`) and RuboCop (`rubocop`) to make sure all of the test are passing and your code matches their style guide.
 
 Push your feature branch to GitHub and click "Submit a pull request". Set up a request from your repo's feature branch to the main repo's master branch. In the body of your pull request, be sure to include details about what the problem was and how you solved it. Screenshots are very helpful.
