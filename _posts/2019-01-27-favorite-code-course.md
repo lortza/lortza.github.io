@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Favorite Code Courses & Books"
-date:   2018-12-15
+date:   2019-01-27
 ---
 I've taken a lot of courses over the past few years as I've worked my way into the software engineering world. Some learning materials are a lot better than others. Though most importantly, I've found that the best material is the material that I need _right now_. For example, there may be a brilliant course on Node.js, but if I haven't grasped the basics of Javascript, that's not a good course _for me_, _right now_.
 
@@ -49,13 +49,13 @@ Lots of great stuff here, complete with explanations and access to a database to
 More SQL exercises
 
 ## Ruby
-All of the books are better for people who have moved out of the "total beginner" phase and into deeper understanding of Ruby.
+All of these books are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
 
 ### _[Practical Object Oriented Design in Ruby]()_ -- a book by Sandi Metz
 I read this book after working in Ruby for a year. It was challenging at points, but overall I felt like it boosted my understanding of Ruby and object composition 100-fold. The content was very accessible to me and I recommend it to anyone who wants to get a better idea of how to write Ruby in an intentional way.
 
 ### _[Design Patterns in Ruby]()_ -- a book by Russ Olsen
-I came to this books after about 3 years of working in Ruby. I just started (and haven't finished) it yet, but yowza, so far so good. I've already picked up some new ideas on how to build cleaner apps.
+I came to this books after about 3 years of working in Ruby. I just started (and haven't finished) it yet, but yowza, so far so good. I've already picked up some new ideas on how to build cleaner apps. _(Shout out to Ariel V and Erica L for the recommendation)_
 
 ### _[Confident Ruby]()_ -- a book by Avdi Grimm
-Similar to the one above, I came to this books after about 3 years of working in Ruby, and I just started (haven't finished) reading it yet, but so far the ideas are really inspiring. 
+Similar to the one above, I came to this books after about 3 years of working in Ruby, and I just started (haven't finished) reading it yet, but so far the ideas are really inspiring. _(Shout out to Leslie K for the recommendation)_
