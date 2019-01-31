@@ -24,4 +24,4 @@ In order to get a HEX code that you can use for CSS or other styles, you'll want
 
 ![My helpful screenshot](/img/posts/digitalcolormeter4.png)
 
-You'll end up with `#84534E` because `R: 0x84` + `G: 0x53` + `B: 0x4E`  == `#84534E`.
+You'll end up with `#8A534E` because `R: 0x8A` + `G: 0x53` + `B: 0x4E`  == `#84534E`.
