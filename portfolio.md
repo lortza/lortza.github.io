@@ -92,6 +92,7 @@ permalink: /portfolio/
       <li>Daily Slack community engagement</li>
       <li>Weekly tech Meetups</li>
       <li>Occasional open source contributions</li>
+      <li>Ongoing side projects</li>
       <li>Blogging</li>
       <li>Tutorials when needed for depth</li>
       <li>Annual tech conferences (Rails Conf, Ruby Conf, etc.)</li>
