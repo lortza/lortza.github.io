@@ -123,10 +123,12 @@ permalink: /portfolio/
 
   <div class="writing">
     {% for writing in site.writings reversed %}
-      <article>
-        <h4><a href="{{ writing.site_url }}">{{ writing.title }}</a></h4>
-        {{ writing.content }}
-      </article>
+      {% if writing.published %}
+        <article>
+          <h4><a href="{{ writing.site_url }}">{{ writing.title }}</a></h4>
+          {{ writing.content }}
+        </article>
+      {% endif %}
     {% endfor %}
   </div> <!-- writing -->
 
