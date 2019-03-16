@@ -2,6 +2,7 @@
 layout: post
 title:  'Personal Challenge: Action Cable Responses from both the DOM and the Console'
 date:   2018-07-31
+published: true
 ---
 Google's [Firebase](https://firebase.google.com/) is a database tool that (among many other things) pushes updated data to all instances of a browser. I think that is pretty nifty. I also think that it's a bit unreasonable to restructure an existing Rails app's entire Postgres situation just for this one feature. For this reason, I started to explore Rails' [Action Cable](https://guides.rubyonrails.org/action_cable_overview.html).
 

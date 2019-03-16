@@ -2,6 +2,7 @@
 layout: post
 title:  'How to Enable the Trimming of Whitespaces by Language in Atom'
 date:   2018-10-09
+published: true
 ---
 
 I have the [`whitespaces` package](https://github.com/atom/whitespace) installed in Atom, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for _most_ file types I encounter. However, it causes problems in `slim` because sometimes you actually need a trailing whitespace. This is how to disable whitespace trimming for `slim` files:

@@ -2,6 +2,7 @@
 layout: post
 title:  "How to Get Hex Codes from Any Part of Your Mac Screen"
 date:   2019-01-30
+published: true
 ---
 Need to get some HEX codes for an image you have locally on your computer? As it turns out, if you have OS X 10.10 Yosemite or higher, you already have an application on your Mac that can do this for you. [Digital Color Meter](https://support.apple.com/guide/digital-color-meter/welcome/mac) measures and displays the color values of pixels displayed on your screen -- which lets you extract HEX codes.
 

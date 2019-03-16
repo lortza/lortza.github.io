@@ -2,6 +2,7 @@
 layout: post
 title:  How to Store API Keys and ENV Vars in a create-react-app Project
 date:   2018-05-22
+published: true
 ---
 
 Conveniently, [create-react-app](https://github.com/facebook/create-react-app) has some built-in functionality to make storing and accessing your API keys and ENV variables easier. There's no need to install any other packages. Thank you [George Karametas](https://geodoo.work/hide-secure-api-keys-created-app-create-react-app/) for this insight. To access that functionality, you need to:
@@ -75,4 +76,3 @@ class App extends Component {
 ```
 
 I've posted this as [an answer on StackOverflow](https://stackoverflow.com/a/50457996/5009528). If you found it helpful, [please upvote](https://stackoverflow.com/a/50457996/5009528).
-

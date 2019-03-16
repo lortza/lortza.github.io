@@ -2,6 +2,7 @@
 layout: post
 title:  'How to Toggle the Visibility of Whitespaces in Atom'
 date:   2018-10-10
+published: true
 ---
 
 I recently started working in `html.slim`, which is whitespace sensitive. In order to edit my `slim` files successfully, I wanted to be able to see whitespaces. I did this in Atom like this:

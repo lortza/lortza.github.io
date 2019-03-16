@@ -2,6 +2,7 @@
 layout: post
 title:  How to Get Ruby Data into a Javascript File in Rails
 date:   2018-08-04
+published: true
 ---
 The key here is to figure out where and when the Javascript is being called and then pass the Ruby data to it as an argument. In my case, I have a form field that displays a remaining character count. The count is updated on every `keyup` by javascript. I wanted to use the number value stored in my model's `CHARACTER_MAX` constant instead of manually entering it in both the model validations and the javascript.
 

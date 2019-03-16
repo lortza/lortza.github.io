@@ -2,6 +2,7 @@
 layout: post
 title:  How to make ruby shortcuts (snippets) in Sublime Text
 date:   2017-07-13
+published: true
 ---
 
 Typing Ruby erb tags is a past time pursued intentionally by... no one? Well, certainly not me! The characters `<%= %>` don't exactly flow off of my fingertips. So how do people get around typing these irritating-but-crucial characters?

@@ -2,6 +2,7 @@
 layout: post
 title:  Using a Factory to Randomize Whether a Card is Drawn Right-side Up or Upside Down
 date:   2018-02-26
+published: true
 ---
 
 > UPDATE: Holy smokes! I've just refactored the code in this post to be even better :) See it in [this new post]({% post_url 2018-08-11-card-factory-refactor %}).

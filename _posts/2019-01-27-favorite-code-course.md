@@ -2,7 +2,10 @@
 layout: post
 title:  "Favorite Code Courses & Books"
 date:   2019-01-27
+published: true
 ---
+Updated: 03-16-2019
+
 I've taken a lot of courses over the past few years as I've worked my way into the software engineering world. Some learning materials are a lot better than others. Though most importantly, I've found that the best material is the material that I need _right now_. For example, there may be a brilliant course on Node.js, but if I haven't grasped the basics of Javascript, that's not a good course _for me_, _right now_.
 
 All of that said, this is a list of some of my favorite materials and why I loved them. And while the languages/frameworks appear in no particular order, the items within those languages/frameworks are in order from least-to-most complex.

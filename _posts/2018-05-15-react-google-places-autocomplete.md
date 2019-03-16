@@ -2,6 +2,7 @@
 layout: post
 title:  Implementing a Cities Autocomplete with the Google Places API in React
 date:   2018-05-15
+published: true
 ---
 
 I recently built a [City Data React app](https://github.com/lortza/react_rails_api_city_data) which consumes a [separate Rails API](https://github.com/lortza/rails_api_integrator). The user inputs a US city, and in return gets local weather, events, new articles, and Flickr photos.

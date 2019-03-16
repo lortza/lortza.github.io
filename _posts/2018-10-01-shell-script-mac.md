@@ -2,6 +2,7 @@
 layout: post
 title:  'Set up a Shell Script on Mac for Postgres Backups'
 date:   2018-10-01
+published: true
 ---
 
 I was recently setting up a new computer and I needed to back up and restore several PostgreSQL databases in the process. It occurred to me that typing `pg_dump db_name > /really-long-path-to-dropbox-folder/db_name_again-today's_date.sql` followed by

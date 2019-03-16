@@ -2,6 +2,7 @@
 layout: post
 title:  Favorite/Unfavorite Toggle on Single Rails Model
 date:   2018-04-19
+published: true
 ---
 
 If you're looking to add a system of favoriting / unfavoriting to a single Rails 5 model, you're in the right place.

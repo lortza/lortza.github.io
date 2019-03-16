@@ -2,6 +2,7 @@
 layout: post
 title:  Using Variables in CSS
 date:   2017-07-12 03:02
+published: true
 ---
 
 If you find yourself working in CSS and missing the ability to use SASS variables, oh boy do I have a treat for you. You _can_ use variables in CSS. They just look a little bit different than they do in SASS.

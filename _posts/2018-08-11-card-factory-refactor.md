@@ -2,6 +2,7 @@
 layout: post
 title:  'Refactor: Solving a Pesky Naming Problem'
 date:   2018-08-11
+published: true
 ---
 
 Back in February, I wrote [a post about a refactor]({% post_url 2018-02-26-card-factory %}) to [this app](http://modernmystic.herokuapp.com/) that made use of a factory-style class for some nifty data construction. Recently, I've found myself being bothered by a couple of things in that refactor, so thought I'd take a crack at making it better.

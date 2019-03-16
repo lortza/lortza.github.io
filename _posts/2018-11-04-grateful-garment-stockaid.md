@@ -2,6 +2,7 @@
 layout: post
 title:  "Grateful Garment StockAid Project Setup"
 date:   2018-11-04
+published: true
 ---
 
 ## What is StockAid?
