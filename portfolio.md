@@ -105,13 +105,15 @@ permalink: /portfolio/
 
   <div class="products">
     {% for product in site.products reversed %}
-      <article>
-        <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><img src="{{product.img}}"></a>
-        <div class="explanation">
-          <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><h3>{{product.name}}</h3></a>
-          <p>{{product.description}} <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}">See it on {{product.store_name}}</a></p>
-        </div>
-      </article>
+      {% if product.published %}
+        <article>
+          <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><img src="{{product.img}}"></a>
+          <div class="explanation">
+            <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}"><h3>{{product.name}}</h3></a>
+            <p>{{product.description}} <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}">See it on {{product.store_name}}</a></p>
+          </div>
+        </article>
+      {% endif %}  
     {% endfor %}
   </div><!-- products -->
 
