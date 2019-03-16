@@ -63,9 +63,14 @@ Lots of great stuff here, complete with explanations and access to a database to
 More SQL exercises
 
 ## Ruby
-All of these books are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
+All of these resources are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
 
-### _[Practical Object Oriented Design in Ruby]()_ -- a book by Sandi Metz
+### [Nothing is Something](https://www.youtube.com/watch?v=29MAL8pJImQ) -- by Sandi Metz
+Format: tech talk <br>
+I watched this talk after about 2 years of working in Ruby. At the time, I had been going back to my old apps and refactoring them with Rubocop suggestions. I bumped into a problem where Rubocop was complaining about some syntax which ultimately illuminated a design problem. This talk was my first foray into design patterns and I revisit it frequently to remind myself about seeing problems in a different way.
+
+### _[Practical Object Oriented Design in Ruby]()_ -- by Sandi Metz
+Format: book <br>
 I read this book after working in Ruby for a year. It was challenging at points, but overall I felt like it boosted my understanding of Ruby and object composition 100-fold. The content was very accessible to me and I recommend it to anyone who wants to get a better idea of how to write Ruby in an intentional way.
 
 ### _[Design Patterns in Ruby]()_ -- by Russ Olsen
@@ -75,3 +80,9 @@ I came to this books after about 3 years of working in Ruby. I just started (and
 ### _[Confident Ruby]()_ -- by Avdi Grimm
 Format: book <br>
 Similar to the one above, I came to this books after about 3 years of working in Ruby, and I just started (haven't finished) reading it yet, but so far the ideas are really inspiring. _(Shout out to Leslie K for the recommendation)_
+
+
+## Testing
+### [Intro to Rails Testing](https://www.twitch.tv/videos/395392522) -- by Scott Maslar
+Format: tech talk <br>
+When I first started learning about testing, I didn't really get it. It seemed redundant and weird. I wish I had heard this talk back then. I really like how Scott gives examples of each type of test and explains what the goal of the test is and what tools we can use to accomplish it.
