@@ -73,13 +73,15 @@ permalink: /portfolio/
 
   <div class="open-source">
     {% for contribution in site.opensource_contributions reversed %}
-      <article>
-        <h3>
-          <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
-          <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
-        </h3>
-        {{contribution.content}}
-      </article>
+      {% if contribution.published %}
+        <article>
+          <h3>
+            <a href="{{contribution.site_url}}" target="_blank" alt="{{contribution.name}}">{{contribution.name}}</a>
+            <span class="post-meta"> - {{ contribution.date | date: '%B %-d, %Y' }}</span>
+          </h3>
+          {{contribution.content}}
+        </article>
+      {% endif %}
     {% endfor %}
   </div><!-- open-source -->
 
