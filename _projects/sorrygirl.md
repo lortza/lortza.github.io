@@ -11,4 +11,6 @@ description: Write an apology to someone and send it via social media with the v
 role: solo project, full stack
 tech_used: Rails 5.2, Ruby 2.5, Javascript, PostgreSQL, RSpec, Heroku
 codeclimate: <a href="https://codeclimate.com/github/lortza/sorrygirl/maintainability"><img src="https://api.codeclimate.com/v1/badges/73d94f9055777a075fcf/maintainability" /></a>
+published: true
+featured: false
 ---

@@ -14,23 +14,26 @@ permalink: /portfolio/
     <div class="projects-subhead">
       <h1>Featured Project</h1>
     </div> <!-- projects-subhead -->
-  {% for project in site.featured_projects %}
-    <div class="featured">
-      <div class="thumbnail">
-        <a href="{{ project.url }}">
-          {% if project.img %}
-          <img class="thumbnail" src="{{ project.img }}"/>
-          {% else %}
-          <div class="thumbnail blankbox"></div>
-          {% endif %}
-          <span>
-            <h1>{{ project.name }}</h1>
-            <br/>
-            <p>{{ project.tagline }}</p>
-          </span>
-        </a>
+  {% for project in site.projects %}
+    {% if project.published and project.featured %}
+
+      <div class="featured">
+        <div class="thumbnail">
+          <a href="{{ project.url }}">
+            {% if project.img %}
+            <img class="thumbnail" src="{{ project.img }}"/>
+            {% else %}
+            <div class="thumbnail blankbox"></div>
+            {% endif %}
+            <span>
+              <h1>{{ project.name }}</h1>
+              <br/>
+              <p>{{ project.tagline }}</p>
+            </span>
+          </a>
+        </div>
       </div>
-    </div>
+    {% endif %}
   {% endfor %}
   </div>
 
@@ -41,22 +44,24 @@ permalink: /portfolio/
 
 
   {% for project in site.projects %}
-    <div class="project">
-      <div class="thumbnail">
-        <a href="{{ project.url }}">
-          {% if project.img %}
-          <img class="thumbnail" src="{{ project.img }}"/>
-          {% else %}
-          <div class="thumbnail blankbox"></div>
-          {% endif %}
-          <span>
-            <h1>{{ project.name }}</h1>
-            <br/>
-            <p>{{ project.tagline }}</p>
-          </span>
-        </a>
+    {% if project.published and project.featured == false %}
+      <div class="project">
+        <div class="thumbnail">
+          <a href="{{ project.url }}">
+            {% if project.img %}
+            <img class="thumbnail" src="{{ project.img }}"/>
+            {% else %}
+            <div class="thumbnail blankbox"></div>
+            {% endif %}
+            <span>
+              <h1>{{ project.name }}</h1>
+              <br/>
+              <p>{{ project.tagline }}</p>
+            </span>
+          </a>
+        </div>
       </div>
-    </div>
+    {% endif %}
   {% endfor %}
   </div>
 
