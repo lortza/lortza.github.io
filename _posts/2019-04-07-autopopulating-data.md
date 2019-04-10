@@ -138,7 +138,6 @@ const apiUrl = `${baseUrl}/exercises/${initialExerciseId}.json`
 ```
 
 
-
 #### Step 4: Configure the on-change event listener
 Create an on-change event listener on the dropdown menu. This will trigger any of your subsequent javascript any time the dropdown menu selected value has changed.
 
@@ -163,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const exerciseDropdown = document.getElementById('exercise_log_exercise_id');
 
   // Create JS variables for the fields in the form where you want your new
-  // JSON data to populate. Remember to assign these in the HTML too.
+  // JSON data to populate. You can use the default Rails ids here.
   const sets = document.getElementById('exercise_log_sets');
   const reps = document.getElementById('exercise_log_reps');
   const repLength = document.getElementById('exercise_log_rep_length');
