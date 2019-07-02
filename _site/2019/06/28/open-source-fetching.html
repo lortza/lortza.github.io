@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Fetch open source contributor branches easily with this Ruby script</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/06/28/open-source-fetching.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Fetch open source contributor branches easily with this Ruby script</h1>
+    <p class="post-meta">June 28, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve recently gotten a bunch of pull requests to one of my projects on GitHub. I wanted to review the work and run tests on branches created by these contributors locally on my computer but without actually cloning and setting up push abilities.</p>
+
+<h2 id="the-manual-way">The Manual Way</h2>
+<p>Thankfully, git has a way to do this for you. It’s pretty simple, but it requires a lot of copying and pasting of arguments.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch git@github.com:theirusername/reponame.git theirbranch:ournameforbranch
+</code></pre></div></div>
+
+<p>After doing this two times, I decided that I wanted to write a script to make it easier. I started writing a script in bash, but then decided that I wanted something a little fancier, so I hopped into Ruby and made it happen.</p>
+
+<h2 id="the-script-way">The Script Way</h2>
+<p>I created a file called <code class="highlighter-rouge">fetch_open_source.rb</code> and stored it in a directory I called <code class="highlighter-rouge">~/ruby_scripts/</code>. I also make sure to comment in the script so that I remember how to use it and what it outputs.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Runs the command to pull an open source contribution</span>
+<span class="c1"># git fetch git@github.com:theirusername/reponame.git theirbranch:ournameforbranch</span>
+
+<span class="c1"># envoke with: `fetch_open_source` then follow prompts</span>
+
+<span class="nb">puts</span> <span class="s1">'Enter their username:branchname'</span>
+<span class="n">input</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
+<span class="n">input</span> <span class="o">=</span> <span class="n">input</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
+<span class="n">theirusername</span> <span class="o">=</span> <span class="n">input</span><span class="p">.</span><span class="nf">first</span>
+<span class="n">theirbranch</span> <span class="o">=</span> <span class="n">input</span><span class="p">.</span><span class="nf">last</span>
+
+<span class="nb">puts</span> <span class="s1">'Enter their repo name for this project (skip if same as yours):'</span>
+<span class="n">input</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
+<span class="n">reponame</span> <span class="o">=</span> <span class="n">input</span> <span class="o">==</span> <span class="s1">''</span> <span class="p">?</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">pwd</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">).</span><span class="nf">last</span> <span class="p">:</span> <span class="n">input</span>
+
+<span class="nb">puts</span> <span class="s1">'Enter the issue number'</span>
+<span class="n">issuenumber</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
+
+<span class="nb">puts</span> <span class="s1">'Enter that you want to call this branch:'</span>
+<span class="n">ournameforbranch</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span>
+<span class="n">ournameforbranch</span> <span class="o">=</span> <span class="n">theirbranch</span> <span class="k">if</span> <span class="n">ournameforbranch</span> <span class="o">==</span> <span class="s1">''</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="sb">`git fetch git@github.com:</span><span class="si">#{</span><span class="n">theirusername</span><span class="si">}</span><span class="sb">/</span><span class="si">#{</span><span class="n">reponame</span><span class="si">}</span><span class="sb">.git </span><span class="si">#{</span><span class="n">theirbranch</span><span class="si">}</span><span class="sb">:</span><span class="si">#{</span><span class="n">issuenumber</span><span class="si">}</span><span class="sb">_</span><span class="si">#{</span><span class="n">theirusername</span><span class="si">}</span><span class="sb">_</span><span class="si">#{</span><span class="n">ournameforbranch</span><span class="si">}</span><span class="sb">`</span>
+
+<span class="nb">system</span><span class="p">(</span><span class="s1">'echo'</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="step-2-make-an-alias">Step 2: Make an Alias</h3>
+<p>I then call this file by running <code class="highlighter-rouge">ruby</code> and the filename via an alias that I saved in my <code class="highlighter-rouge">.bash_profile</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ~/.bash_profile</span>
+
+<span class="nb">alias </span><span class="nv">fetch_open_source</span><span class="o">=</span><span class="s2">"ruby ~/ruby_scripts/fetch_open_source.rb"</span>
+</code></pre></div></div>
+
+<h3 id="run-it">Run it</h3>
+<p>Now I go to the pull request on github and simply copy their <code class="highlighter-rouge">username:branchname</code> info and then run the script:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fetch_open_source
+</code></pre></div></div>
+
+<p>I follow the prompts and then I can check out the new local branch:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout ournameforbranch
+</code></pre></div></div>
+
+<p>Tada! Writing this script was a game changer for me in terms of frustration when trying to review others’ work. Now I can knock out branches like a champ and get down to the business getting open source work done.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2019</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
