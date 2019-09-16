@@ -4,7 +4,7 @@ title:  "Favorite Code Courses & Learning Resources"
 date:   2019-01-27
 published: true
 ---
-Updated: 03-16-2019
+Updated: 09-16-2019
 
 I've taken a lot of courses over the past few years as I've worked my way into the software engineering world. Some learning materials are a lot better than others. Though most importantly, I've found that the best material is the material that I need _right now_. For example, there may be a brilliant course on Node.js, but if I haven't grasped the basics of Javascript, that's not a good course _for me_, _right now_.
 
@@ -63,26 +63,32 @@ Lots of great stuff here, complete with explanations and access to a database to
 More SQL exercises
 
 ## Ruby
-All of these resources are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
+### [CodeQuizzes](https://www.codequizzes.com/ruby) -- by [Matthew Powers](https://github.com/MrPowers/code_quizzer)
+Format: online worksheets<br>
+This is, hands-down, my favorite resource for beginner Ruby. It takes you step-by-step through the basics you need to understand Ruby and gives you a lot of reps as you practice. If you need to get strong in arrays, hashes, and basic OOP, this site just may be your best friend.
 
-### [Nothing is Something](https://www.youtube.com/watch?v=29MAL8pJImQ) -- by Sandi Metz
+----------
+
+The rest of the resources in this section are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
+
+### [Nothing is Something](https://www.youtube.com/watch?v=29MAL8pJImQ) -- by [Sandi Metz](https://github.com/skmetz)
 Format: tech talk <br>
 I watched this talk after about 2 years of working in Ruby. At the time, I had been going back to my old apps and refactoring them with Rubocop suggestions. I bumped into a problem where Rubocop was complaining about some syntax which ultimately illuminated a design problem. This talk was my first foray into design patterns and I revisit it frequently to remind myself about seeing problems in a different way.
 
-### _[Practical Object Oriented Design in Ruby]()_ -- by Sandi Metz
+### _[Practical Object Oriented Design in Ruby](https://www.indiebound.org/book/9780321721334)_ -- by [Sandi Metz](https://github.com/skmetz)
 Format: book <br>
 I read this book after working in Ruby for a year. It was challenging at points, but overall I felt like it boosted my understanding of Ruby and object composition 100-fold. The content was very accessible to me and I recommend it to anyone who wants to get a better idea of how to write Ruby in an intentional way.
 
-### _[Design Patterns in Ruby]()_ -- by Russ Olsen
+### _[Design Patterns in Ruby](https://www.indiebound.org/book/9780321490452)_ -- by Russ Olsen
 Format: book <br>
 I came to this books after about 3 years of working in Ruby. I just started (and haven't finished) it yet, but yowza, so far so good. I've already picked up some new ideas on how to build cleaner apps. _(Shout out to Ariel V and Erica L for the recommendation)_
 
-### _[Confident Ruby]()_ -- by Avdi Grimm
+### _[Confident Ruby](https://www.confidentruby.com/)_ -- by [Avdi Grimm](https://github.com/avdi)
 Format: book <br>
-Similar to the one above, I came to this books after about 3 years of working in Ruby, and I just started (haven't finished) reading it yet, but so far the ideas are really inspiring. _(Shout out to Leslie K for the recommendation)_
+Similar to the one above, I came to this books after about 3 years of working in Ruby, and I just started (haven't finished) reading it yet, but so far the ideas are really inspiring. _(Shout out to [Leslie K](https://github.com/LeslieKornes) for the recommendation)_
 
 
 ## Testing
-### [Intro to Rails Testing](https://www.twitch.tv/videos/395392522) -- by Scott Maslar
+### [Intro to Rails Testing](https://www.twitch.tv/videos/395392522) -- by [Scott Maslar](https://github.com/mascott)
 Format: tech talk <br>
 When I first started learning about testing, I didn't really get it. It seemed redundant and weird. I wish I had heard this talk back then. I really like how Scott gives examples of each type of test and explains what the goal of the test is and what tools we can use to accomplish it.
