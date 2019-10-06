@@ -10,6 +10,6 @@ description: This app tracks the status of vehicles on a car lot. It pushes upda
 role: solo project, full stack
 tech_used: Rails 5.0.1, Action Cable, Redis, Ruby 2.5.0, PostgreSQL, Coffee Script, jQuery
 codeclimate: <a href="https://codeclimate.com/github/lortza/action_cable_car_status/maintainability"><img src="https://api.codeclimate.com/v1/badges/550dbb37f7e19d0060b6/maintainability" /></a>
-published: true
+published: false
 featured: false
 ---

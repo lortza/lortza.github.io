@@ -8,7 +8,7 @@ permalink: /portfolio/
 
   <h2>Web Applications</h2>
 
-  <p class="section-explanation">Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
+  <p class="section-explanation">I am almost always engrossed in building a tool that solves a problem for myself. These projects are some of those tools that I have built. Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">
@@ -67,7 +67,7 @@ permalink: /portfolio/
 
   <h2>Current Skills</h2>
 
-  <p class="section-explanation">Ruby, Rails, Rails API, Action Cable, Sinatra, Sass, CSS3, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, GitHub, BitBucket, Heroku production apps, Firebase, AWS S3, Jekyll, XML, Database Design, and <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a></p>
+  <p class="section-explanation">Ruby, Rails, Rails API, Action Cable, Sinatra, Sass, CSS3, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, GitHub, BitBucket, Heroku production apps, Firebase, Docker, Elixir, AWS S3, Jekyll, XML, Database Design, Product Design and Launch, and <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a></p>
 
   <h2>Open Source Contributions</h2>
 
@@ -92,13 +92,15 @@ permalink: /portfolio/
       <li>Weekly mentor sessions for code reviews</li>
       <li>Daily podcasts (currently loving <em>Syntax</em> by WesBos)</li>
       <li>Daily Slack community engagement</li>
-      <li>Weekly tech Meetups</li>
+      <li>Weekly tech Meetups where I learn new things or help others to solve problems</li>
+      <li>Teaching others</li>
       <li>Occasional open source contributions</li>
+      <li>Collaborating with others on side projects</li>
       <li>Ongoing side projects</li>
       <li>Blogging</li>
       <li>Tutorials when needed for depth</li>
       <li>Annual tech conferences (Rails Conf, Ruby Conf, etc.)</li>
-      <li>Incorporation of CodeClimate automated code reviews for feedback</li>
+      <li>Incorporation of CodeClimate, Reek, and Rubocop automated code reviews for feedback</li>
     </ul>
   </div>
 

@@ -1,7 +1,7 @@
 ---
 layout: project
 name: Social Media App
-date: 2017-01-03
+date: 2017-01-06
 site: https://lortzadanebook.herokuapp.com
 repo: https://github.com/lortza/project_danebook
 readme: true

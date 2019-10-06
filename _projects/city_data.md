@@ -1,7 +1,7 @@
 ---
 layout: project
 name: React Data Aggregator
-date: 2017-01-01
+date: 2017-01-07
 repo: https://github.com/lortza/react_rails_api_city_data
 readme: true
 img: /img/project_react_city_info_api.jpg

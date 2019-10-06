@@ -11,6 +11,6 @@ description: As I was comparing pricing and profit options across different manu
 tech_used: Rails 5.0.6, Ruby 2.4.2, PostgreSQL
 role: solo project, full stack
 codeclimate: <a href="https://codeclimate.com/github/lortza/product_pricing/maintainability"><img src="https://api.codeclimate.com/v1/badges/ab588baa024de343777e/maintainability" /></a>
-published: true
+published: false
 featured: false
 ---

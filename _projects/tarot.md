@@ -11,5 +11,5 @@ description: Get an instant tarot reading -- no psychic required! It's complete 
 role: solo project, full stack
 tech_used: Ruby 2.4, Rails 5.1, PostgreSQL, jQuery, Bootstrap, RSpec, Heroku, Devise, Bullet
 published: true
-featured: true
+featured: false
 ---

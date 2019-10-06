@@ -1,7 +1,7 @@
 ---
 layout: project
 name: Progress Tracker
-date: 2017-01-02
+date: 2017-01-05
 <!-- site: http://vcs-progress-tracker.herokuapp.com -->
 repo: https://github.com/lortza/vcs_progress_tracker
 readme: true
