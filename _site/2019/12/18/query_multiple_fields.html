@@ -81,7 +81,7 @@
 <p>And to be honest, I really wasn’t into the idea of passing that same <code class="highlighter-rouge">%#{search_term}%"</code> argument three times in a row. It made the line long and hard to read.</p>
 
 <h2 id="the-solution">The Solution</h2>
-<p>The solution came in the form of postgres concatenation. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.</p>
+<p>The solution came in the form of postgres concatenation and some lessons I learned in <a href="http://millo.me/search-by-multiple-columns-in-active-record" target="_blank">this post</a>. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># the postgres concat_ws function</span>
 <span class="n">concat_ws</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">you</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">)</span>

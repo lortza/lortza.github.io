@@ -22,7 +22,7 @@ But it wasn't giving me everything I wanted. I wanted to get good results if a u
 And to be honest, I really wasn't into the idea of passing that same `%#{search_term}%"` argument three times in a row. It made the line long and hard to read.
 
 ## The Solution
-The solution came in the form of postgres concatenation. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.
+The solution came in the form of postgres concatenation and some lessons I learned in [this post](http://millo.me/search-by-multiple-columns-in-active-record){:target="_blank"}. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.
 
 ```ruby
 # the postgres concat_ws function
