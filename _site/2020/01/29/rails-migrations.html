@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | The Rails migration 'change' method is more magic than I thought</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/01/29/rails-migrations.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">The Rails migration 'change' method is more magic than I thought</h1>
+    <p class="post-meta">January 29, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>Here’s a big fat TIL. The Rails <code class="highlighter-rouge">change</code> method can add a column back, <em>including it’s original data type</em>, if you tell it to.  <img src="https://emojis.slackmojis.com/emojis/images/1450319447/26/mindblown.gif?1450319447" title="mindblown" class="emoji" /> I know this works in Rails 6. I’m not sure about other versions.</p>
+
+<h2 id="tldr">TL;DR</h2>
+<p>Do this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration RemoveIsCoolFromUsers, is_cool
+</code></pre></div></div>
+<p>Get this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RemoveIsCoolFromUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="c1"># on up: removes the column</span>
+  <span class="c1"># on down: adds the column back as the boolean data type</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">remove_column</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:is_cool</span><span class="p">,</span> <span class="ss">:boolean</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="the-longer-version">The Longer Version</h2>
+<p>Here’s the scenario. We have a <code class="highlighter-rouge">users</code> table and we don’t need the <code class="highlighter-rouge">is_cool</code> column anymore, so we plan to drop it.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># users table
+
+users
+-----
+is_cool: boolean &lt;-- don't need this anymore
+email: string
+full_name: string
+</code></pre></div></div>
+
+<p>Normally, I’d generate a migration like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration RemoveIsCoolFromUsers
+</code></pre></div></div>
+
+<p>I’d get a migration file that looks like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RemoveIsCoolFromUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">change</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>and then I’d fill it in like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RemoveIsCoolFromUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">remove_column</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:is_cool</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Since I’m doing a destructive migration by removing a column, I want to ensure a successful rollback (adding the column back in again) by being explicit about this column being a <code class="highlighter-rouge">boolean</code> data type as it was before. To do that, I normally break that <code class="highlighter-rouge">change</code> method up into the 2 older syntax methods: <code class="highlighter-rouge">up</code> and <code class="highlighter-rouge">down</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RemoveIsCoolFromUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="c1"># runs when we call rake db:migrate</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="n">remove_column</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:is_cool</span>
+  <span class="k">end</span>
+
+  <span class="c1"># runs when we call rake db:rollback</span>
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="n">add_column</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:is_cool</span><span class="p">,</span> <span class="ss">:boolean</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>As it turns out, I’ve been doing it the long way this whole time. Jeeze Louise. Now here’s the magic: <code class="highlighter-rouge">change</code> knows how to do all of this for you if you pass it the column name and data type like this:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration RemoveIsCoolFromUsers, is_cool:boolean
+</code></pre></div></div>
+<p>which gives you this in the migration file:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RemoveIsCoolFromUsers</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="c1"># on up: removes the column</span>
+  <span class="c1"># on down: adds the column back as the boolean data type</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="n">remove_column</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">:is_cool</span><span class="p">,</span> <span class="ss">:boolean</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now <code class="highlighter-rouge">change</code> will know to add this column back as a boolean data type! <img src="https://emojis.slackmojis.com/emojis/images/1490980812/1982/awesome.png?1490980812" title="awesome" class="emoji" /> That is pretty neato. Now, if my migrations are any more complicated than simply removing a single column, I still see myself wanting to have the explicit <code class="highlighter-rouge">up</code> and <code class="highlighter-rouge">down</code> actions lined out. That decision isn’t so much about being an old dog as it is about not quite understanding the limitations of this new trick just yet.</p>
+
+<h3 id="fyi-deleting-columns-will-cause-data-loss">FYI: Deleting columns will cause data loss</h3>
+<p>Also, please note, if you delete a column and add it back, you will lose your data. So ya know, always be <em>sure</em> you want to delete a column before you do so. In fact, if you use the <code class="highlighter-rouge">strong_migrations</code> gem, you will be prompted to <code class="highlighter-rouge">ignore</code> a column before you can remove it. You can read more about that on the <a href="https://github.com/ankane/strong_migrations">strong_migrations github page</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
