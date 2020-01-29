@@ -301,6 +301,9 @@ img.about-pic {
 /**
  * Posts  **********************************************************
  */
+.emoji {
+  width: 20px; }
+
 .post-header {
   margin-bottom: 40px; }
 
