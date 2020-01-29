@@ -301,9 +301,6 @@ img.about-pic {
 /**
  * Posts  **********************************************************
  */
-.emoji {
-  width: 20px; }
-
 .post-header {
   margin-bottom: 40px; }
 
@@ -560,6 +557,12 @@ img.about-pic {
   text-align: center;
   vertical-align: middle;
   font-size: 12px; }
+
+/**
+ * MISC **********************************************************
+ */
+.emoji {
+  width: 20px; }
 
 /**
  * Syntax highlighting styles

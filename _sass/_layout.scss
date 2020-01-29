@@ -160,7 +160,6 @@ img.about-pic {
 /**
  * Posts  **********************************************************
  */
- .emoji { width: 20px; }
  .post-header {
   margin-bottom: $vertical-spacing-unit;
 }
@@ -442,3 +441,8 @@ img.about-pic {
   vertical-align: middle;
   font-size: $caption_font_size;
 }
+
+/**
+ * MISC **********************************************************
+ */
+.emoji { width: 20px; }
