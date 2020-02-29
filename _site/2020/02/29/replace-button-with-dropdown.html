@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Refactor from a hardcoded button to a dropdown form in Rails 6</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/02/29/replace-button-with-dropdown.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Refactor from a hardcoded button to a dropdown form in Rails 6</h1>
+    <p class="post-meta">February 29, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <h3 id="the-problem">The Problem</h3>
+<p>I have a food planning app where I make a list of recipes that we will prepare for the week. Each week has its own list of recipes. Before heading out to the grocery store, I click button to dump all of the ingredients from all of the recipes into my grocery list. This feature does a little arithmetic and organizes ingredients by my grocery store’s aisles. It’s pretty swell. Though my app has many shopping lists, the button was hard-coded to dump onto my “Grocery” list because it is my main list.</p>
+
+<p>The hard-coded button:</p>
+
+<p><img src="/img/posts/2020_02_29_button.png" alt="The hardcoded button" /></p>
+
+<p>The hard-coded button code:</p>
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'+ Add All Ingredients to Grocery List'</span><span class="p">,</span>
+            <span class="n">shopping_list_item_builders_path</span><span class="p">(</span>
+              <span class="ss">shopping_list_id: </span><span class="n">current_user</span><span class="p">.</span><span class="nf">shopping_lists</span><span class="p">.</span><span class="nf">default</span><span class="p">.</span><span class="nf">id</span><span class="p">,</span>
+              <span class="ss">ingredient_ids: </span><span class="n">ingredient_ids</span>
+            <span class="p">),</span>
+            <span class="ss">method: </span><span class="s1">'POST'</span><span class="p">,</span>
+            <span class="ss">class: </span><span class="n">button_classes</span><span class="p">(</span><span class="s1">'info'</span><span class="p">)</span>
+<span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<p>Recently I was visiting my parents out-of-state and doing some cooking at their house. I wanted to dump a few recipes’ ingredients to a shopping list, but <strong>not</strong> my usual “Grocery” list. Now my hard-coded button felt a little too, well, hardcoded. And this is the cool thing about building your own tools. When you bump up against a feature you’d like to change, <em>you can just change it</em>. <a href="https://images.app.goo.gl/JdVQEjGq2wzrsYED9">#winning</a> <a href="https://images.app.goo.gl/Zu4fES7jKKyfPTk29">#makeitso</a></p>
+
+<h3 id="my-solution">My Solution</h3>
+<p>I thought it would be nice to have a dropdown where I could choose the list – and of course, to save myself clicks, I’d make the default value my preferred “Grocery” list. No need to give myself more clicks than the original button feature.</p>
+
+<p>The new dropdown:</p>
+
+<p><img src="/img/posts/2020_02_29_dropdown.png" alt="The new dropdown" /></p>
+
+<p>The dropdown code:</p>
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;%=</span> <span class="n">form_tag</span><span class="p">(</span><span class="n">shopping_list_item_builders_path</span><span class="p">,</span> <span class="ss">method: </span><span class="s1">'post'</span><span class="p">,</span> <span class="ss">id: </span><span class="s1">'add-to-list-form'</span> <span class="p">)</span> <span class="k">do</span> <span class="cp">%&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">hidden_field_tag</span> <span class="ss">:ingredient_ids</span><span class="p">,</span> <span class="n">ingredient_ids</span> <span class="cp">%&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">select_tag</span> <span class="ss">:shopping_list_id</span><span class="p">,</span>
+                 <span class="n">options_from_collection_for_select</span><span class="p">(</span><span class="n">current_user</span><span class="p">.</span><span class="nf">shopping_lists</span><span class="p">.</span><span class="nf">by_favorite</span><span class="p">,</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:name</span><span class="p">),</span>
+                 <span class="ss">class: </span><span class="s1">'form-control'</span>
+  <span class="cp">%&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">submit_tag</span> <span class="s1">'Add'</span><span class="p">,</span> <span class="ss">class: </span><span class="s1">'btn btn-outline-info'</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<p>Since this data is not interacting directly with an ActiveRecord model, I’m using a <code class="highlighter-rouge">form_tag</code> instead of a <code class="highlighter-rouge">form_for</code> and am feeling on-edge because <code class="highlighter-rouge">form_tag</code> always makes me doubt everything I know. “But this time, everything will be fine,” I told myself.</p>
+
+<p>The <code class="highlighter-rouge">hidden_field_tag</code> is passing in the <code class="highlighter-rouge">ingredient_ids</code> just like it was in the button link. And the <code class="highlighter-rouge">select_tag</code> is the dropdown with all of the <code class="highlighter-rouge">current_user</code>’s shopping lists. That little <code class="highlighter-rouge">by_favorite</code> scope on the <code class="highlighter-rouge">current_user.shopping_lists</code> is what is putting my “Grocery” list at the top of the dropdown for my convenience. So far so good. Everything is fine.</p>
+
+<h4 id="now-this-is-where-it-gets-weird">Now, this is where it gets weird</h4>
+<p>The <code class="highlighter-rouge">hidden_field_tag</code> encodes the <code class="highlighter-rouge">ingredient_ids</code> array as a space-separated string (<code class="highlighter-rouge">"1 2 3"</code>), not an array of stringfied ids (<code class="highlighter-rouge">["1", "2", "3"]</code>) like the button link was doing. This means my controller was cranky. The <code class="highlighter-rouge">permitted_params</code> was expecting an <strong>array</strong> of ids, so it could generate <code class="highlighter-rouge">shopping_list_item</code>s based on them:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">permitted_params</span>
+  <span class="c1"># see this pretty little default array?</span>
+  <span class="n">params</span><span class="p">.</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:shopping_list_id</span><span class="p">,</span> <span class="ss">ingredient_ids: </span><span class="p">[])</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Well a <code class="highlighter-rouge">String</code> type is not the same as an <code class="highlighter-rouge">Array</code> type so my controller kept telling me that the naughty <code class="highlighter-rouge">ingredient_ids</code> param key that was harboring an illegal string of data was not a permitted param. So after reading the entire internet on the topic of passing arrays into <code class="highlighter-rouge">hidden_field_tag</code>s, I discovered that no one had a good solution. Everything is not as fine as it was an hour ago. Sigh. It was time to take this feature implementation down to Jankytown.</p>
+
+<h4 id="and-this-is-where-it-gets-jankytm">And this is where it gets janky<sup>TM</sup></h4>
+<p>Well fine. Have it your way <code class="highlighter-rouge">hidden_field_tag</code>. Like any good rubiest who has logged her hours doing <a href="https://www.codequizzes.com/ruby">CodeQuizzes</a>, I converted that string of <code class="highlighter-rouge">id</code>s into the array I needed right there in the controller. :grimace:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># hello janky string-to-array conversion</span>
+<span class="n">actual_array_of_ids</span> <span class="o">=</span> <span class="n">permitted_params</span><span class="p">[</span><span class="ss">:ingredient_ids</span><span class="p">].</span><span class="nf">split</span><span class="p">(</span><span class="s1">' '</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_i</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>And then passed that into the method where I needed it:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">method_that_wanted_those_ids</span><span class="p">(</span><span class="n">actual_array_of_ids</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Huzzah! And now I can add all ingredients from a recipe to any shopping list I choose. Did I get to write the beautiful code I wanted to for this feature? Nope. Do I have the feature I want? Youbetcha. Next time I need to populate another shopping list, it will be easy peasy and that feels pretty good.</p>
+
+<p>Here’s the <a href="https://github.com/lortza/food_planner/pull/211">GitHub pull request with my code</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
