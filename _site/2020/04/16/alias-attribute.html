@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Use Rails' alias_attribute</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/04/16/alias-attribute.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Use Rails' alias_attribute</h1>
+    <p class="post-meta">April 16, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <h3 id="what-its-for">What it’s For…</h3>
+<p>Renaming an attribute. Ever have an attribute on your Rails model that you wish you had named something else? And actually renaming the table column is not feasible? A solution I have used in this case is <code class="highlighter-rouge">alias_attribute</code> to rename the attribute associated with that table column. It looks like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># in your model file</span>
+
+<span class="n">alias_attribute</span> <span class="ss">:old_attribute_name</span><span class="p">,</span> <span class="ss">:new_aliased_name</span>
+</code></pre></div></div>
+
+<p>For example, let’s say we have a model called <code class="highlighter-rouge">Article</code> that has a <code class="highlighter-rouge">header</code> attribute and we’d like to change it to <code class="highlighter-rouge">title</code>. Using <code class="highlighter-rouge">alias_attribute</code> in the <code class="highlighter-rouge">app/models/article.rb</code> file will write the new getter and setter for us.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># renaming from `header` to `title`</span>
+
+<span class="c1"># this one-liner</span>
+<span class="n">alias_attribute</span> <span class="ss">:header</span><span class="p">,</span> <span class="ss">:title</span>
+
+<span class="c1"># is the same as</span>
+<span class="k">def</span> <span class="nf">title</span>
+  <span class="n">header</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">title</span><span class="o">=</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+  <span class="nb">self</span><span class="p">.</span><span class="nf">header</span> <span class="o">=</span> <span class="n">title</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Now when we refer to <code class="highlighter-rouge">article.title</code> anywhere in the codebase, we’ll be returning the value for <code class="highlighter-rouge">header</code>.</p>
+
+<h3 id="what-its-not-for">What it’s Not For…</h3>
+<p>As per <a href="https://stackoverflow.com/a/39836732">this stack overflow post</a>, I discovered that I had been using this incorrectly to make handy aliases for relationships between models. Yikes. This meant:</p>
+<ul>
+  <li>I was not setting myself up to get all of the Rails magic<sup>TM</sup></li>
+  <li>I was calling items publicly 2 different ways which is confusing and makes future refactors harder</li>
+  <li>I was not able to test these relationship associations in model specs &lt;– Double yikes. Big red flag there.</li>
+</ul>
+
+<p>In this example, we want to rename our <code class="highlighter-rouge">User</code> model’s relationship with <code class="highlighter-rouge">posts</code> to <code class="highlighter-rouge">articles</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span>
+  <span class="c1"># Wrong way</span>
+  <span class="n">has_many</span> <span class="ss">:posts</span>
+  <span class="n">alias_attribute</span> <span class="ss">:articles</span><span class="p">,</span> <span class="ss">:posts</span>
+
+  <span class="c1"># Right way</span>
+  <span class="n">has_many</span> <span class="ss">:articles</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s1">'Post'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And in the specs</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span>
+  <span class="c1"># Wrong way</span>
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_many</span><span class="p">(</span><span class="ss">:posts</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="c1"># Right way</span>
+  <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_many</span><span class="p">(</span><span class="ss">:articles</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
