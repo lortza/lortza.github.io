@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Migrate Data More Safely in Rails by Raising an Exception</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/04/27/2020-raise-exception-data-migration.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Migrate Data More Safely in Rails by Raising an Exception</h1>
+    <p class="post-meta">April 27, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>A data migration can fail but still end up in an “up” state. This is a problem because you’ll probably try to roll back that unsuccessful migration, but will fail because the logic in your <code class="highlighter-rouge">down</code> method most likely depends on the logic in your <code class="highlighter-rouge">up</code> method executing correctly.</p>
+
+<p>Let’s say your <code class="highlighter-rouge">up</code> method is supposed to create a record and your <code class="highlighter-rouge">down</code> is supposed to undo that by deleting that record. In this case, your <code class="highlighter-rouge">down</code> would fail because it wouldn’t be able to find this record to be able to delete it – because it was not created succesfully in the first place.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="c1"># this could fail silently and your up method would still complete successfully</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">first_or_create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="c1"># if "mittens" the cat were never created, this down method will fail</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>A safer approach is to do a data check in the migration which throws an exception if your expectations are not met. This will cause the <code class="highlighter-rouge">up</code> method to fail and the migration transaction to rollback, thus not trapping you in a broken state.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+
+    <span class="k">unless</span> <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">present?</span>
+      <span class="k">raise</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Exception</span>
+      <span class="c1"># OR something like</span>
+      <span class="k">raise</span> <span class="s1">'*** DATA CHECK FAILED ***'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>If you need more space to do an elaborate query, break your data check out into a different method:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+
+    <span class="n">data_check</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">data_check</span>
+    <span class="c1"># You can make your checking logic as complicated as you</span>
+    <span class="c1"># need it to be to feel comfortable that it worked correctly.</span>
+    <span class="n">expected_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">complicated</span> <span class="n">query</span> <span class="n">logic</span><span class="p">]</span>
+
+    <span class="k">unless</span> <span class="n">expected_result</span>
+      <span class="k">raise</span> <span class="s1">'*** DATA CHECK FAILED ***'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
