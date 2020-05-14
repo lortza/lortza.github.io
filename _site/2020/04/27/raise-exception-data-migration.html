@@ -11,7 +11,7 @@
  blog and portfolio">
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="canonical" href="http://localhost:4000/2020/04/27/2020-raise-exception-data-migration.html">
+    <link rel="canonical" href="http://localhost:4000/2020/04/27/raise-exception-data-migration.html">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 </head>
@@ -69,24 +69,31 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
   <span class="k">def</span> <span class="nf">up</span>
-    <span class="c1"># this could fail silently and your up method would still complete successfully</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">first_or_create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+    <span class="c1"># This could fail silently, for example, the name "Mittens" may be</span>
+    <span class="c1"># taken already. However the migration `up` would have completed running</span>
+    <span class="c1"># successfully. Now we're in a pinch.</span>
+
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">down</span>
-    <span class="c1"># if "mittens" the cat were never created, this down method will fail</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+    <span class="c1"># If "Mittens" the cat were never actually created in the "up" method,</span>
+    <span class="c1"># this line will fail, saying "can't call delete on NilClass". So you</span>
+    <span class="c1"># won't be able to roll back and you'll be stuck in an "up" state for</span>
+    <span class="c1"># your migration. Yikes.</span>
+
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">).</span><span class="nf">delete</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>A safer approach is to do a data check in the migration which throws an exception if your expectations are not met. This will cause the <code class="highlighter-rouge">up</code> method to fail and the migration transaction to rollback, thus not trapping you in a broken state.</p>
+<p>A safer approach is to do a data check in the <code class="highlighter-rouge">up</code> migration that throws an exception if your expectations are not met. This will cause the <code class="highlighter-rouge">up</code> method to fail and the migration transaction to rollback, thus not trapping you in a broken state. For example:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
   <span class="k">def</span> <span class="nf">up</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">)</span>
 
-    <span class="k">unless</span> <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">present?</span>
+    <span class="k">unless</span> <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">).</span><span class="nf">present?</span>
       <span class="k">raise</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Exception</span>
       <span class="c1"># OR something like</span>
       <span class="k">raise</span> <span class="s1">'*** DATA CHECK FAILED ***'</span>
@@ -94,35 +101,39 @@
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">down</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">).</span><span class="nf">delete</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>If you need more space to do an elaborate query, break your data check out into a different method:</p>
+<p>If you need more space to do an elaborate query for your data check, break it out into a different method:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
   <span class="k">def</span> <span class="nf">up</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">)</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">create!</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">)</span>
 
     <span class="n">data_check</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">down</span>
-    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'mittens'</span><span class="p">).</span><span class="nf">delete</span>
+    <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">).</span><span class="nf">delete</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">data_check</span>
     <span class="c1"># You can make your checking logic as complicated as you</span>
     <span class="c1"># need it to be to feel comfortable that it worked correctly.</span>
-    <span class="n">expected_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">complicated</span> <span class="n">query</span> <span class="n">logic</span><span class="p">]</span>
 
-    <span class="k">unless</span> <span class="n">expected_result</span>
-      <span class="k">raise</span> <span class="s1">'*** DATA CHECK FAILED ***'</span>
-    <span class="k">end</span>
+    <span class="n">expected_result</span> <span class="o">=</span> <span class="no">Cat</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: </span><span class="s1">'Mittens'</span><span class="p">).</span><span class="nf">present?</span>
+    <span class="k">raise</span> <span class="s1">'*** DATA CHECK FAILED ***'</span> <span class="k">unless</span> <span class="n">expected_result</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
+
+<p>Now when you run your migrate command, if the data in your <code class="highlighter-rouge">up</code> didn’t execute properly, your command line will tell you:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*** DATA CHECK FAILED ***
+This and following migrations have been rolled back
+</code></pre></div></div>
+<p>And you just saved yourself a big headache.</p>
 
   </article>
 

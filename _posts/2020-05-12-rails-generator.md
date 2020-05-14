@@ -37,6 +37,8 @@ class AddMovieTitles < ActiveRecord::Migration[6.0]
   end
 end
 ```
+_(Side note: see my post on [why using a data check for data migrations is a good idea]({% post_url 2020-04-27-raise-exception-data-migration %}))_
+
 
 ### How to Do It
 Start by using the Rails "generator" generator (yes, the generator that creates generators) by running this in your command line:
