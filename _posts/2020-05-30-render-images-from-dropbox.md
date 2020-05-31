@@ -73,6 +73,30 @@ class Post < ApplicationRecord
 end
 ```
 
+Add tests for this method:
+```ruby
+# spec/models/post_spec.rb
+
+describe 'self.format_image_url' do
+  # NOTE: method runs before_save
+
+  it 'safely handles nils' do
+    post = build(:post, image_url: nil)
+    post.save
+
+    expect(post.image_url).to eq('')
+  end
+
+  it 'formats the url' do
+    post = build(:post, image_url: 'some_url')
+    allow(DropboxService).to receive(:format_url).and_return('fixed_url')
+    post.save
+
+    expect(post.image_url).to eq('fixed_url')
+  end
+end
+```
+
 Create the `DropboxService` object that does the formatting.
 ```ruby
 # app/services/dropbox_service.rb
