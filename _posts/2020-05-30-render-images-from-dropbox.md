@@ -9,7 +9,8 @@ I take this approach when I am spinning up a Rails app quickly and want to get a
 1. I am the only user of the app
 2. The app is not image-centric or hugely dependent on images
 
-If you app is not for either of those two situations, I don't recommend this approach.
+If you app is not for either of those two situations, I don't recommend this approach. Look into
+[storing images with Rails ActiveStorage and Dropbox]({% post_url 2020-05-31-activestorage-dropbox %}) instead.
 
 ## Add a url string to your model
 ```bash

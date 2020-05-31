@@ -69,7 +69,8 @@
   <li>The app is not image-centric or hugely dependent on images</li>
 </ol>
 
-<p>If you app is not for either of those two situations, I don’t recommend this approach.</p>
+<p>If you app is not for either of those two situations, I don’t recommend this approach. Look into
+<a href="/2020/05/31/activestorage-dropbox.html">storing images with Rails ActiveStorage and Dropbox</a> instead.</p>
 
 <h2 id="add-a-url-string-to-your-model">Add a url string to your model</h2>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration add_image_url_to_posts image_url:string
