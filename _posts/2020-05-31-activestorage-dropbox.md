@@ -135,7 +135,7 @@ Never try to open this file or your master key file directly. I've done this in 
 
 Here is what you'll need to add to your Rails credentials file. Replace all of this text with your own values.
 ```yml
-config/credentials.yml.enc
+# config/credentials.yml.enc
 
 dropbox:
   app_key: 111222333444
