@@ -4,11 +4,29 @@ title:  "Favorite Code Courses & Learning Resources"
 date:   2019-01-27
 published: true
 ---
-Updated: 09-16-2019
+
+#### Originally Posted: 01-27-2019 | Updated: 06-02-2020
 
 I've taken a lot of courses over the past few years as I've worked my way into the software engineering world. Some learning materials are a lot better than others. Though most importantly, I've found that the best material is the material that I need _right now_. For example, there may be a brilliant course on Node.js, but if I haven't grasped the basics of Javascript, that's not a good course _for me_, _right now_.
 
 All of that said, this is a list of some of my favorite materials and why I loved them. And while the languages/frameworks appear in no particular order, the items within those languages/frameworks are in order from least-to-most complex.
+
+## If You're Starting From Scratch
+Yay! How exciting! There are so many ways to start. I recommend starting with the one thing that excites you the most and staying focused on that until you understand it well enough to move on. These are some of my favorite resources for beginners. I started with Ruby, so you'll see most of my resources are Ruby-centric.
+
+### [HTML, CSS, and Ruby](http://curriculum.railsbridge.org/docs/) -- by RailsBridge
+Format: tutorial documents<br>
+RailsBridge is an organization that pushes for all kinds of diversity in tech: gender, race, sexual orientation, ability, and class. They've built a nice curriculum and hold workshops to help you get started. I'm directing you to these two parts of their curriculum just to get you pointed in a direction. Follow the links on the left side of these pages to get through all of the content.
+* If making webpages look good excites you, [start with HTML and CSS](http://curriculum.railsbridge.org/frontend/).
+* If you're excited about building the code that powers the site, [start with ruby](http://curriculum.railsbridge.org/learn-to-code/learn-to-code).
+
+### [Learn Ruby](https://www.codecademy.com/learn/learn-ruby#) -- on CodeAcademy
+Format: course<br>
+CodeAcademy steps you through the basics of programming in Ruby. This course focuses on data types (like `string` vs `array`) and how those pieces interact with each other to make meaningful code.
+
+### [Get Connected](https://www.womenwhocode.com/networks) -- with and for Women Who Code
+Format: organization<br>
+Women Who Code's mission is to inspire women to excel in technology careers. If you identify as female, connect to [your local chapter](https://www.womenwhocode.com/networks) and get yourself a group of peers. I've enjoyed a lot of support and camaraderie from my time spent with this group. Also, look for [a local meetup](https://www.meetup.com/) about coding. You'll find that lots of folks would love to help you. I love my people at my local Austin [Ruby](https://www.meetup.com/austinrb/) and [Rails](https://www.meetup.com/Austin-on-Rails) meetups.
 
 ## Rails
 ### [Rails I](https://pragmaticstudio.com/courses/rails) & [Rails II](https://pragmaticstudio.com/courses/rails-ii) -- by Mike & Nicole of Pragmatic Studio
