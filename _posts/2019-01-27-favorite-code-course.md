@@ -26,7 +26,7 @@ CodeAcademy steps you through the basics of programming in Ruby. This course foc
 
 ### [Get Connected](https://www.womenwhocode.com/networks) -- with and for Women Who Code
 Format: organization<br>
-Women Who Code's mission is to inspire women to excel in technology careers. If you identify as female, connect to [your local chapter](https://www.womenwhocode.com/networks) and get yourself a group of peers. I've enjoyed a lot of support and camaraderie from my time spent with this group. Also, look for [a local meetup](https://www.meetup.com/) about coding. You'll find that lots of folks would love to help you. I love my people at my local Austin [Ruby](https://www.meetup.com/austinrb/) and [Rails](https://www.meetup.com/Austin-on-Rails) meetups.
+Women Who Code's mission is to inspire women to excel in technology careers. If you identify as female, connect to [your local chapter](https://www.womenwhocode.com/networks) and get yourself a group of peers. I've enjoyed a lot of support and camaraderie from my time spent with this group. Also, look for [a local meetup](https://www.meetup.com/) about coding. You'll find that lots of folks would love to help you. I love my people at my local Austin [Ruby](https://www.meetup.com/austinrb/),  [Rails](https://www.meetup.com/Austin-on-Rails), and [Ruby Tuesday](https://www.meetup.com/Women-Who-Code-Austin/events/ntdlsrybcjbvb/) meetups.
 
 ## Rails
 ### [Rails I](https://pragmaticstudio.com/courses/rails) & [Rails II](https://pragmaticstudio.com/courses/rails-ii) -- by Mike & Nicole of Pragmatic Studio
