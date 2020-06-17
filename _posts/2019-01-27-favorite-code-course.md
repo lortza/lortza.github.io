@@ -20,6 +20,10 @@ RailsBridge is an organization that pushes for all kinds of diversity in tech: g
 * If making webpages look good excites you, [start with HTML and CSS](http://curriculum.railsbridge.org/frontend/).
 * If you're excited about building the code that powers the site, [start with ruby](http://curriculum.railsbridge.org/learn-to-code/learn-to-code).
 
+### [Try Ruby](https://try.ruby-lang.org/)
+Format: short course<br>
+Start tinkering with Ruby right away in the browser. No need to set up your computer to do anything fancy for you. Just start to get a feel of how to do some basic exercises in Ruby.
+
 ### [Learn Ruby](https://www.codecademy.com/learn/learn-ruby#) -- on CodeAcademy
 Format: course<br>
 CodeAcademy steps you through the basics of programming in Ruby. This course focuses on data types (like `string` vs `array`) and how those pieces interact with each other to make meaningful code.
