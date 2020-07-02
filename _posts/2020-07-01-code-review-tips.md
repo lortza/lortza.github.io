@@ -5,13 +5,13 @@ date:   2020-07-01
 published: true
 ---
 
-The first time I needed to do a code review, I felt nervous and I was sure that I had nothing to offer. Compared to my coworkers, I was the newest at programming and certainly newest to the codebase. I wasn't sure what value I could bring to a code review. Since then, I've gotten quite a few code reviews under my belt, so today when an intern asked for input on how to do a good code review, I realized that I had quite a bit to share. These are some lessons I've learned over time on how to do a code review when you feel like you've got nothing to offer.
+The first time I needed to do a code review, I felt nervous and I was sure that I had nothing to offer. Compared to my coworkers, I was the newest at programming and certainly newest to the codebase. I wasn't sure what value I could bring to a code review. Since then, I've gotten plenty of reviews under my belt, so today when our newest junior team member asked for input on how to do a code review, I realized that I had quite a bit to share. You may feel like you don't know where to start or have anything to offer, but fear not. Your input is valuable. These are some lessons I've learned over time on how to extract the value you bring into a code review.
 
 ## How do I know what the code in this Pull Request supposed to be achieving?
 And in my experience so far, most of the time I haven't had any context for the code I've been asked to review. So I look to the pull request summary as my top source of context for the work being done. It should explain what the pull request hopes to achieve and any context around that. Often times it will link to a related GitHub issue. If this summary is lacking, leave a comment asking for context or clarification on the context given.
 
 ## I'm encountering this code (and concept for this feature/project) for the first time. How do I know if it works?
-This is hard. There isn't one single answer to this question. For me, I like to look at every line of code and ask myself these questions:
+This is hard. There isn't one single answer to this question. And knowing if "it" works is a huge topic. For me, I like to break it down by looking at every line of code and asking myself these questions:
 
 ### Do I understand what this line of code does (in its smallest form)?
 For example, do I understand that it's sorting an array or returning a hash? If not, leave a comment on the pull request asking for clarification.
@@ -41,7 +41,7 @@ Educate yourself with even just a few [ADA-compliance](https://www.w3.org/standa
 When we're dealing with any sort of code that takes form input from an external user, expect chaos to ensue. If we're using any of this user-input data to do any matching in the database, have we written code to ensure it is formatted properly or that our queries can handle variation in input?
 
 ## Even after doing a code review, I still don't feel comfortable officially approving it. When should I approve?
-You never have to approve anything. Also, you should never approve anything you're not comfortable approving. You can review and comment on pull requests without doing an official GitHub "review". Personally, I do that one heck of a lot more than any approvals. If your Spidey Sense is tingling and you don't know why, ask someone to help you figure out why. If a pull request is so big that it is intimidating to you, it's probably intimidating to other people too. I've paired on a lot of code reviews to help me build my reviewing skills and to help get big pull requests out the door.
+You never have to approve anything. Also, you should never approve anything you're not comfortable approving. You can review and comment on pull requests without doing an official GitHub "review". Personally, I do that one heck of a lot more than any approvals. The questions above help to figure out if the tiny pieces are working. You'll probably have to go over it several times to make sure you understand the bigger picture. But if you still don't feel comfortable with understanding the big picture, or if your Spidey Sense is tingling and you don't know why, ask someone to help you figure out why. If a pull request is so big that it is intimidating to you, it's probably intimidating to other people too. I've paired on a lot of code reviews to help me build my reviewing skills and to help get big pull requests out the door.
 
 ## As it turns out...
 All of these little things are incredibly valuable for the person asking for a review. You may be imagining that a person has spent hours polishing every last line before asking for a review. This may not be the case. You're probably reading a first or second draft, not someone's Magnum Opus. Assume everyone is open to feedback -- that's why they're asking, right? And everyone can use the help of a proofreader. The more code you review, the more comfortable you'll get with the discomfort of doing it. :)
