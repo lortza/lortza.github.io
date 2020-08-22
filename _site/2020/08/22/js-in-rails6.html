@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Putting Some Plain Old Vanilla Javascript in Rails 6</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/08/22/js-in-rails6.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Putting Some Plain Old Vanilla Javascript in Rails 6</h1>
+    <p class="post-meta">August 22, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve built a few projects in Rails 6 that don’t have a front end framework and aren’t using webpack. In these projects, I’ve wanted to include a couple of small Javascript features. In one case, it was just a little bit of plain DOM manipulation in Javascript. In another case though, I needed my Javascript to take an argument in Ruby, process that data, and output it in the DOM. I couldn’t figure out why the Javascript in my pack files wasn’t rendering.</p>
+
+<p>As it turns out, the pack files and webpack weren’t want I needed. I needed to use Sprockets to access that Javascript. The post <a href="https://blog.capsens.eu/how-to-write-javascript-in-rails-6-webpacker-yarn-and-sprockets-cdf990387463">How to write Javascript in Rails 6 | Webpacker, Yarn and Sprockets
+</a> by Younes SERRAJ helped me to get there. Here is how I did it.</p>
+
+<p>Create a <code class="highlighter-rouge">/javascripts</code> directory where Sprockets (not webpack) can find it:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app
+| assets
+  | stylesheets
+  | javascripts   &lt;-- here
+</code></pre></div></div>
+
+<p>Save your javascript file with all of your code in it there</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/users.js</span>
+
+<span class="kd">function</span> <span class="nx">sayHelloToUser</span><span class="p">(</span><span class="nx">userName</span><span class="p">){</span>
+  <span class="nx">alert</span><span class="p">(</span><span class="s2">`Hello, </span><span class="p">${</span><span class="nx">userName</span><span class="p">}</span><span class="s2">!`</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>Load the contents of your Javascript file into the bottom of your <code class="highlighter-rouge">erb</code> file by using the <code class="highlighter-rouge">javascript_include_tag</code> (not the Webpacker <code class="highlighter-rouge">javascript_pack_tag</code>). Include a <code class="highlighter-rouge">&lt;script&gt;</code> tag below that. Call the Javascript function from inside that script block, passing in the Ruby data as an argument:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/users/show.html.erb --&gt;</span>
+
+<span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">user</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;</span>'s Page<span class="nt">&lt;/h1&gt;</span>
+
+...
+
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">javascript_include_tag</span> <span class="err">'</span><span class="na">users</span><span class="err">'%</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="nx">sayHelloToUser</span><span class="p">(</span><span class="o">&lt;%=</span> <span class="p">@</span><span class="nd">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">%&gt;</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>And voila! That did the trick for me. Now that I have my Javascript working and deployed, I can go back to refactor for use with webpack later. In the meantime, my features are deployed and my app is working as expected.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
