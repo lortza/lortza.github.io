@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Nested Layouts in Rails</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/08/22/nested-layouts.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Nested Layouts in Rails</h1>
+    <p class="post-meta">August 22, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>Nested layouts in rails are pretty neato. You can get a lot of styles and consistency across your site without writing a whole lot of code. I wanted to take advantage of all of the styles I have in place in my <code class="highlighter-rouge">app/views/layouts/application.html.erb</code> file, but also wanted to render another custom layout with a sidebar and content area <em>inside</em> the application layout for the static pages on my site.
+<img src="/img/posts/2020_08_22_arrow_illustration.png" alt="nested layouts" /></p>
+
+<p>My static pages are all rendered by the <code class="highlighter-rouge">PagesController</code>, so I created a file called <code class="highlighter-rouge">app/views/layouts/pages.html.erb</code> to hold the HTML for the sidebar and main content of those pages.</p>
+
+<p>To nest the pages layout HTML inside the application layout HTML, I used a <code class="highlighter-rouge">content_for</code> tag. In the <code class="highlighter-rouge">app/views/layouts/application.html.erb</code> I accounted for yielding a block named <code class="highlighter-rouge">:pages_layout</code>. Now, when rendering a page, if a block called <code class="highlighter-rouge">content_for :pages_layout</code> appears in the HTML, we’ll use the special <code class="highlighter-rouge">pages</code> layout.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/layouts/application.html.erb --&gt;</span>
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>...<span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">'</span><span class="na">shared</span><span class="err">/</span><span class="na">navbar</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">content_for</span><span class="err">?(</span><span class="na">:pages_layout</span><span class="err">)</span> <span class="err">?</span> <span class="na">yield</span><span class="err">(</span><span class="na">:pages_layout</span><span class="err">)</span> <span class="na">:</span> <span class="na">yield</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">'</span><span class="na">shared</span><span class="err">/</span><span class="na">footer</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>Then in <code class="highlighter-rouge">app/views/layouts/pages.html.erb</code>, I wrapped the HTML in a <code class="highlighter-rouge">content_for?</code> block <em>and</em> provided a <code class="highlighter-rouge">yield</code> for the HTML that comes from the static pages themselves (ex: <code class="highlighter-rouge">app/views/pages/about.html.erb</code>). By the way, there is no Rails Magic<sup>TM</sup> in the naming of <code class="highlighter-rouge">:pages_layout</code>. You can call it whatever you want as long as you call it the same thing in both places.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/layouts/pages.html.erb --&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">content_for</span> <span class="na">:pages_layout</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"sidebar"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h3&gt;</span>This is my sidebar<span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Yay sidebar stuff.<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"main-content"</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- Content from the static pages, ex: app/views/pages/about.html.erb
+         will be rendered by this yield. --&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">yield</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+<span class="c">&lt;!-- be sure to include this render tag for the application layout --&gt;</span>
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="na">template:</span> <span class="err">'</span><span class="na">layouts</span><span class="err">/</span><span class="na">application</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>So the app knows to use this <code class="highlighter-rouge">pages</code> layout for all of the static pages, I set the default layout in the <code class="highlighter-rouge">PagesController</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/pages_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">PagesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">layout</span> <span class="s1">'pages'</span>
+
+  <span class="k">def</span> <span class="nf">about</span><span class="p">;</span> <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">contact</span><span class="p">;</span> <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">store</span><span class="p">;</span> <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now whatever I put in the <code class="highlighter-rouge">app/views/pages/about.html.erb</code> (as well as Contact and Store pages) will appear with a navbar, background image, sidebar, main content, and footer. And all I have to include in that file is the HTML for the main content area:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;/h1&gt;</span>About<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>Hello, my name is Anne. Sometimes I write code.<span class="nt">&lt;/p&gt;</span>
+</code></pre></div></div>
+
+<p>This is <em>so much less code</em> and much easier to maintain than building out a sidebar and main content area for each of these static pages. #winning</p>
+
+<p>If you want to, you can nest <em>endlessly</em> by following that same pattern. See the <a href="https://guides.rubyonrails.org/layouts_and_rendering.html#using-nested-layouts">Rails Docs</a> for more help.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
