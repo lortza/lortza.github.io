@@ -75,6 +75,14 @@
   | javascripts   &lt;-- here
 </code></pre></div></div>
 
+<p>Add this new directory to the <code class="highlighter-rouge">app/assets/config/manifest.js</code> file so it will be compiled:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* app/assets/config/manifest.js */</span>
+
+<span class="c1">//= link_tree ../images</span>
+<span class="c1">//= link_directory ../stylesheets .css</span>
+<span class="c1">//= link_directory ../javascripts .js  &lt;-- here</span>
+</code></pre></div></div>
+
 <p>Save your javascript file with all of your code in it there</p>
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/users.js</span>
 
