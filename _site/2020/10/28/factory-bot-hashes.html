@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Using FactoryBot for hashes</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/10/28/factory-bot-hashes.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Using FactoryBot for hashes</h1>
+    <p class="post-meta">October 28, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>Sometimes in your test suite you have some big ol’ hashes that you need to build frequently. Having big ol’ hashes being passed all around RSpec is a red flag for me – why are we using a hash and not a proper Ruby class? But sometimes it is what it is and sometimes you have to sling a little dirty code. The good news is, if you’re already using the <a href="https://github.com/thoughtbot/factory_bot">FactoryBot gem</a>, you can enlist it to help you with these hashes.</p>
+
+<p>This is what your factory would look like if you were writing awesome specs about kittens:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
+  <span class="c1"># Notice the "class: Hash" at the end of this line</span>
+  <span class="n">factory</span> <span class="ss">:default_kitten_attributes</span><span class="p">,</span> <span class="ss">class: </span><span class="no">Hash</span> <span class="k">do</span>
+    <span class="n">breeds</span> <span class="k">do</span>
+      <span class="p">[</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'Aegean'</span><span class="p">,</span> <span class="ss">origin: </span><span class="s1">'Greece'</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Natural'</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'California Spangled'</span><span class="p">,</span> <span class="ss">origin: </span><span class="s1">'The United States'</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Crossbreed'</span> <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="k">end</span>
+    <span class="n">colors</span> <span class="k">do</span>
+      <span class="p">[</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'orange'</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'white'</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'black'</span> <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="k">end</span>
+    <span class="n">skills</span> <span class="k">do</span>
+      <span class="p">[</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'mousing'</span><span class="p">,</span> <span class="ss">level: </span><span class="mi">1</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'balance beam'</span><span class="p">,</span> <span class="ss">level: </span><span class="mi">3</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'jumping through hoops'</span><span class="p">,</span> <span class="ss">level: </span><span class="mi">8</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'drums'</span><span class="p">,</span> <span class="ss">level: </span><span class="mi">6</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="ss">name: </span><span class="s1">'saxophone'</span><span class="p">,</span> <span class="ss">level: </span><span class="mi">5</span> <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="k">end</span>
+    <span class="c1"># Since this factory is for a hash and not an ActiveRecord model, you cannot</span>
+    <span class="c1"># ever "create" it. You'll need this line to tell FactoryLint not to try to create it.</span>
+    <span class="n">skip_create</span>
+
+    <span class="c1"># Tell the factory how to initialize this non-standard set of data</span>
+    <span class="n">initialize_with</span> <span class="p">{</span> <span class="n">attributes</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p><em>(yes, these are all <a href="https://www.youtube.com/watch?v=c4-i7PSzAfA">real circus cat skills</a> and you can learn more about them <a href="https://rockcatsrescue.org/">here</a>, meow!)</em></p>
+
+<p>Then, just like you’d <code class="highlighter-rouge">build</code> a regular ActiveRecord-backed object in RSpec, you can <em>build</em> (but <strong>not</strong> <code class="highlighter-rouge">create</code>) this factory hash object:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let(:attrs) { build(:default_kitten_attributes) }
+</code></pre></div></div>
+
+<p>When you invoke it, you’ll get:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">attrs</span>
+<span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:breeds</span><span class="o">=&gt;</span><span class="p">[{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"Aegean"</span><span class="p">,</span> <span class="ss">:origin</span><span class="o">=&gt;</span><span class="s2">"Greece"</span><span class="p">,</span> <span class="ss">:type</span><span class="o">=&gt;</span><span class="s2">"Natural"</span><span class="p">},</span> <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"California Spangled"</span><span class="p">,</span> <span class="ss">:origin</span><span class="o">=&gt;</span><span class="s2">"The United States"</span><span class="p">,</span> <span class="ss">:type</span><span class="o">=&gt;</span><span class="s2">"Crossbreed"</span><span class="p">}],</span>
+ <span class="ss">:colors</span><span class="o">=&gt;</span><span class="p">[{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"orange"</span><span class="p">},</span> <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"white"</span><span class="p">},</span> <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"black"</span><span class="p">}],</span>
+ <span class="ss">:skills</span><span class="o">=&gt;</span>
+  <span class="p">[{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"mousing"</span><span class="p">,</span> <span class="ss">:level</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"balance beam"</span><span class="p">,</span> <span class="ss">:level</span><span class="o">=&gt;</span><span class="mi">3</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"jumping through hoops"</span><span class="p">,</span> <span class="ss">:level</span><span class="o">=&gt;</span><span class="mi">8</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"drums"</span><span class="p">,</span> <span class="ss">:level</span><span class="o">=&gt;</span><span class="mi">6</span><span class="p">},</span>
+   <span class="p">{</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s2">"saxophone"</span><span class="p">,</span> <span class="ss">:level</span><span class="o">=&gt;</span><span class="mi">5</span><span class="p">}]}</span>
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2020</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
