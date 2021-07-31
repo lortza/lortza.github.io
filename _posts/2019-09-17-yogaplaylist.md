@@ -20,11 +20,11 @@ This app has a simple, single purpose: to play a list of individual yoga audio t
 ```
 play track for pose 1
 hold for 20 seconds
-play track for pose 1
+play track for pose 2
 hold for 20 seconds
-play track for pose 1
+play track for pose 3
 hold for 20 seconds
-play ending chime
+play track for end chime
 ```
 
 As this is an app I built simply as a utility for myself, I focused on function over fancy. This is what a playlist looks like on mobile.
@@ -65,4 +65,4 @@ While building this loop, I chose to output all of the tracks to the console as 
 
 <img src="https://github.com/lortza/yogaplaylist/raw/master/public/screenshots/playlist_show_console.png" title="playlist running with console output" alt="playlist running with console output" class="post-image">
 
-That's pretty much all there is to it! I ran into some i-have-no-idea-what-i'm-doing territory with the changes to the Rails 6 asset pipeline. With Rails 6, one does not simply plop javascript into a .js file and call it a day. Webpacker is involved. For this project, I circumvented my Webpacker woes and was able to move forward with launching a beta version for myself by putting the javascript directly in the HTML pages where it was needed. My next step will be learning how to do this TheRightWay<sup>TM</sup>, using Webpacker. 
+That's pretty much all there is to it! I ran into some i-have-no-idea-what-i'm-doing territory with the changes to the Rails 6 asset pipeline. With Rails 6, one does not simply plop javascript into a .js file and call it a day. Webpacker is involved. For this project, I circumvented my Webpacker woes and was able to move forward with launching a beta version for myself by putting the javascript directly in the HTML pages where it was needed. My next step will be learning how to do this TheRightWay<sup>TM</sup>, using Webpacker.
