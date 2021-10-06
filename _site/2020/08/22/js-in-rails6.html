@@ -65,7 +65,7 @@
   <article class="post-content">
     <p>I’ve built a few projects in Rails 6 that don’t have a front end framework and aren’t using webpack. In these projects, I’ve wanted to include a couple of small Javascript features. In one case, it was just a little bit of plain DOM manipulation in Javascript. In another case though, I needed my Javascript to take an argument in Ruby, process that data, and output it in the DOM. I couldn’t figure out why the Javascript in my pack files wasn’t rendering.</p>
 
-<p>As it turns out, the pack files and webpack weren’t want I needed. I needed to use Sprockets to access that Javascript. The post <a href="https://blog.capsens.eu/how-to-write-javascript-in-rails-6-webpacker-yarn-and-sprockets-cdf990387463">How to write Javascript in Rails 6 | Webpacker, Yarn and Sprockets
+<p>As it turns out, the pack files and webpack weren’t what I needed. I needed to use Sprockets to access that Javascript. The post <a href="https://blog.capsens.eu/how-to-write-javascript-in-rails-6-webpacker-yarn-and-sprockets-cdf990387463">How to write Javascript in Rails 6 | Webpacker, Yarn and Sprockets
 </a> by Younes SERRAJ helped me to get there. Here is how I did it.</p>
 
 <p>Create a <code class="highlighter-rouge">/javascripts</code> directory where Sprockets (not webpack) can find it:</p>
