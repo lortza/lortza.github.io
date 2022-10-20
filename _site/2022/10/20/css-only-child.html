@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | TIL CSS's only-child pseudo class can easily show/hide content without additional conditional logic</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2022/10/20/css-only-child.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">TIL CSS's only-child pseudo class can easily show/hide content without additional conditional logic</h1>
+    <p class="post-meta">October 20, 2022</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve been messing around in Rails 7’s Hotwire features with <a href="https://www.hotrails.dev/turbo-rails/empty-states">this tutorial</a> and today I learned something pretty neato about CSS. Instead of building out a bunch of conditional show/hide logic in both ruby and javascript, you can use CSS to do that show/hide for you using the only-child pseudo class. :mindblown: :heart_eyes: That’s heckin neat.</p>
+
+<p>Here’s a scenario, let’s say we have an index page where we list all of the cats :meow:, but presently there are no cats :scream_cat:. On the index page, we’d like to see a prompt to add some cats.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/cats/index.html.erb --&gt;</span>
+
+<span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"cats"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">"</span><span class="na">cats</span><span class="err">/</span><span class="na">add_cats_prompt</span><span class="err">"</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre></div></div>
+
+<p>Here’s the move: we place the render statement for the <code class="highlighter-rouge">add_cats_prompt</code> partial <em>inside</em> a parent object (the <code class="highlighter-rouge">&lt;ul&gt;</code>) that will contain <em>only</em> this prompt and the cat records. In this case, we’ve got a list that will be full of cats, but now there are no cats. We expect to see the content from the prompt partial because the prompt partial is the <em>only child</em> of this parent DOM element.</p>
+
+<p>This is what the partial looks like:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/cats/_add_cats_prompt.html.erb --&gt;</span>
+
+<span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"empty-state empty-state--only-child"</span><span class="nt">&gt;</span>
+  Hey you don't have any cats! <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span> <span class="err">'</span><span class="na">Make</span> <span class="na">one</span> <span class="na">right</span> <span class="na">meow</span><span class="err">!',</span> <span class="na">new_cat_path</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/li&gt;</span>
+</code></pre></div></div>
+
+<p>The css for the <code class="highlighter-rouge">empty-state--only-child</code> class says to hide this DOM element (aka the partial) if it is not the only child and to display it if it is the only child.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* app/assets/stylesheets/components/_empty_state.scss */</span>
+
+<span class="nc">.empty-state</span> <span class="p">{</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="n">var</span><span class="p">(</span><span class="n">--space-m</span><span class="p">);</span>
+  <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+
+  <span class="c">/* using this --only-child to help show/hide the "hey make a cat"
+  prompt content on the cats#index page */</span>
+  <span class="err">&amp;--only-child</span> <span class="err">{</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+
+    <span class="err">&amp;:only-child</span> <span class="err">{</span>
+      <span class="nl">display</span><span class="p">:</span> <span class="n">revert</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="err">}</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>Wow that’s so much lighter than a bunch of ruby &amp; javascript show/hide logic everywhere! Imagine the alternative. We’re talking about some ruby stuff that would look like this on the index page:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/cats/index.html.erb --&gt;</span>
+
+<span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"cats"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">empty</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">"</span><span class="na">cats</span><span class="err">/</span><span class="na">add_cats_prompt</span><span class="err">"</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre></div></div>
+
+<p>But then what if we expect <a href="https://developer.mozilla.org/en-US/docs/Glossary/SPA">SPA</a>-like behavior on this page where new cats are added by other users and our browser updates automatically? Now we need to add in javascript or Rails Action Cable logic after <code class="highlighter-rouge">create</code>, after <code class="highlighter-rouge">destroy</code>, and probably some other scenarios that start to get complicated. No thanks. This lightweight approach has really made my day. :grinning:</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2022</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
