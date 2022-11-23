@@ -8,7 +8,7 @@ permalink: /portfolio/
 
   <h2>Web Applications</h2>
 
-  <p class="section-explanation">I am almost always engrossed in building a tool that solves a problem for myself. These projects are some of those tools that I have built. Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
+  <p class="section-explanation">I am almost always engrossed in building a tool that solves a problem for myself. This is a small sampling of the projects I have built to address those problems. Several of the repo READMEs have a tour of the app with screenshots and code snippets of the parts I find most interesting.</p>
 
   <div class="rails-sites">
     <div class="projects-subhead">
@@ -118,7 +118,7 @@ permalink: /portfolio/
             <p>{{product.description}} <a href="{{product.store_url}}" target="_blank" alt="{{product.store_name}}">See it on {{product.store_name}}</a></p>
           </div>
         </article>
-      {% endif %}  
+      {% endif %}
     {% endfor %}
   </div><!-- products -->
 

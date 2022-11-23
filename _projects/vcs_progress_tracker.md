@@ -11,6 +11,6 @@ description: Much like other apps I've built, this one was inspired by my need f
 tech_used: Ruby 2.4.2, Rails 5.0.6, PostgreSQL, Vanilla Javascript, Heroku
 role: solo project, full stack
 codeclimate: <a href="https://codeclimate.com/github/lortza/vcs_progress_tracker/maintainability"><img src="https://api.codeclimate.com/v1/badges/a40b86288d324bfa4363/maintainability" /></a>
-published: true
+published: false
 featured: false
 ---
