@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -72,15 +76,15 @@
 <p>The basic mechanics are:</p>
 
 <ol>
-  <li>A user submits <code class="highlighter-rouge">apology.body</code> data on the <code class="highlighter-rouge">apology</code> form.</li>
-  <li>The <code class="highlighter-rouge">Image</code> class is prompted to select a random image from the <code class="highlighter-rouge">app/assets/images</code> directory.</li>
-  <li>The <code class="highlighter-rouge">apology.image</code> attribute is set to that image file and the <code class="highlighter-rouge">apology</code> is saved.</li>
-  <li>After save, the <code class="highlighter-rouge">apologies#show</code> page is rendered.</li>
+  <li>A user submits <code class="language-plaintext highlighter-rouge">apology.body</code> data on the <code class="language-plaintext highlighter-rouge">apology</code> form.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">Image</code> class is prompted to select a random image from the <code class="language-plaintext highlighter-rouge">app/assets/images</code> directory.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">apology.image</code> attribute is set to that image file and the <code class="language-plaintext highlighter-rouge">apology</code> is saved.</li>
+  <li>After save, the <code class="language-plaintext highlighter-rouge">apologies#show</code> page is rendered.</li>
 </ol>
 
 <h2 id="refactoring-the-apology-model">Refactoring the ‘Apology’ model</h2>
 
-<p>First on my list to refactor was the <code class="highlighter-rouge">Apology</code> model. Two years ago, when I built this app, I didn’t know much about separation of concerns. Looking back at it today, I’ve found a great example of one model knowing too much about another one. It needed to be separated out into 2 models that each have their own responsibilities.</p>
+<p>First on my list to refactor was the <code class="language-plaintext highlighter-rouge">Apology</code> model. Two years ago, when I built this app, I didn’t know much about separation of concerns. Looking back at it today, I’ve found a great example of one model knowing too much about another one. It needed to be separated out into 2 models that each have their own responsibilities.</p>
 
 <h3 id="before-apology-model">Before: Apology Model</h3>
 
@@ -109,7 +113,7 @@
  <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Crawling back into Past Me’s brain, I’ll venture that I built that giant <code class="highlighter-rouge">IMAGES</code> array because it was a simple way to access the files. There was a finite set of images (10) stored in the <code class="highlighter-rouge">app/assets/images</code> directory and this was the easiest way I knew to grab them.</p>
+<p>Crawling back into Past Me’s brain, I’ll venture that I built that giant <code class="language-plaintext highlighter-rouge">IMAGES</code> array because it was a simple way to access the files. There was a finite set of images (10) stored in the <code class="language-plaintext highlighter-rouge">app/assets/images</code> directory and this was the easiest way I knew to grab them.</p>
 
 <h4 id="why-it-needs-refactoring">Why It Needs Refactoring</h4>
 <p>Firstly, there is a long list of hand-entered, hard-coded filenames. Low-hanging fruit? Break it up into separate lines. We are humans after all, and code should be readable:</p>
@@ -167,7 +171,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The need to extract the <code class="highlighter-rouge">CHARACTER_MAX</code> into a constant became evident when I wrote javascript form feedback for this app. As I tinkered with the hard-coded character count over and over, I had to do it in 3 places. That was irritating! When I had to do it a 4th time while writing tests, that was the last straw. Now the <code class="highlighter-rouge">CHARACTER_MAX</code> is set in 1 place and it is referenced in these other places:</p>
+<p>The need to extract the <code class="language-plaintext highlighter-rouge">CHARACTER_MAX</code> into a constant became evident when I wrote javascript form feedback for this app. As I tinkered with the hard-coded character count over and over, I had to do it in 3 places. That was irritating! When I had to do it a 4th time while writing tests, that was the last straw. Now the <code class="language-plaintext highlighter-rouge">CHARACTER_MAX</code> is set in 1 place and it is referenced in these other places:</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/views/apologies/_form.html.erb
 
@@ -208,11 +212,11 @@
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Now for the elephant in the room… well, more like, where did that giant <code class="highlighter-rouge">IMAGES</code> array elephant go? Our <code class="highlighter-rouge">Images</code> array grew up and became a class. Hooray! You go little <code class="highlighter-rouge">Images</code> array, you go!</p>
+<p>Now for the elephant in the room… well, more like, where did that giant <code class="language-plaintext highlighter-rouge">IMAGES</code> array elephant go? Our <code class="language-plaintext highlighter-rouge">Images</code> array grew up and became a class. Hooray! You go little <code class="language-plaintext highlighter-rouge">Images</code> array, you go!</p>
 
 <h2 id="refactoring-from-an-array-into-an-image-model">Refactoring from an Array into an ‘Image’ Model</h2>
 
-<p>What’s cool about this refactor is that the interface with the <code class="highlighter-rouge">Apology</code> class barely changes. The clunky array is gone, but the <code class="highlighter-rouge">Apology.assign_image</code> method is nearly identical. That makes it really easy to pluck the <code class="highlighter-rouge">Image</code> responsibilities out and make them more robust.</p>
+<p>What’s cool about this refactor is that the interface with the <code class="language-plaintext highlighter-rouge">Apology</code> class barely changes. The clunky array is gone, but the <code class="language-plaintext highlighter-rouge">Apology.assign_image</code> method is nearly identical. That makes it really easy to pluck the <code class="language-plaintext highlighter-rouge">Image</code> responsibilities out and make them more robust.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
 
@@ -237,7 +241,7 @@
 
 <p>As I previously bemoaned, there are a couple of problems with that array of image names above: 1) maintenance and 2) scalability – because guess who wants to add 20 more pictures of Ryan Gosling to the app? This girl. And guess who wasn’t going to type in a bunch of new filenames? Me again. You know who’s really good at looking in a folder of images and just telling me the files that are in them? Ruby. Let’s let Ruby do its thing.</p>
 
-<p>Ruby has a nifty <code class="highlighter-rouge">Dir</code> library that let’s us do these kinds of things. The <code class="highlighter-rouge">Dir.glob</code> method lets us search in a specific directory for specific filetypes. Perfect!</p>
+<p>Ruby has a nifty <code class="language-plaintext highlighter-rouge">Dir</code> library that let’s us do these kinds of things. The <code class="language-plaintext highlighter-rouge">Dir.glob</code> method lets us search in a specific directory for specific filetypes. Perfect!</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
 
@@ -258,9 +262,9 @@
 
 <span class="k">end</span>
 </code></pre></div></div>
-<p>Since I may change my mind about which image file types are acceptable (and because I’m going to need to access them for testing), I’ve made them available as constants. The same goes for the location of the files. With that information in place, I can use <code class="highlighter-rouge">Dir.glob</code> to provide me with an array of image filepaths. That’s <em>almost</em> the same array that we had before, but <em>I didn’t have to type a single filename</em>. :high_five:, Ruby, I love you. This is serious progress.</p>
+<p>Since I may change my mind about which image file types are acceptable (and because I’m going to need to access them for testing), I’ve made them available as constants. The same goes for the location of the files. With that information in place, I can use <code class="language-plaintext highlighter-rouge">Dir.glob</code> to provide me with an array of image filepaths. That’s <em>almost</em> the same array that we had before, but <em>I didn’t have to type a single filename</em>. :high_five:, Ruby, I love you. This is serious progress.</p>
 
-<p>To convert the array of filepaths into an array of just the filenames, I first reached for <code class="highlighter-rouge">regex</code>. I used the Ruby <code class="highlighter-rouge">match</code> method to take everything after the <code class="highlighter-rouge">IMAGES_DIRECTORY</code> text. That approach looked like this:</p>
+<p>To convert the array of filepaths into an array of just the filenames, I first reached for <code class="language-plaintext highlighter-rouge">regex</code>. I used the Ruby <code class="language-plaintext highlighter-rouge">match</code> method to take everything after the <code class="language-plaintext highlighter-rouge">IMAGES_DIRECTORY</code> text. That approach looked like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">image_file_names</span>
   <span class="c1"># Using 'match' is convenient for regex, but regex is hard to read</span>
@@ -268,7 +272,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Since I am a human, I find regex a bit cumbersome to read. Good thing Ruby has another nifty library to help with that. <code class="highlighter-rouge">File</code> has a handy method called <code class="highlighter-rouge">basename</code> that knows how to extract just the filename out of a filepath. Thanks, Ruby.</p>
+<p>Since I am a human, I find regex a bit cumbersome to read. Good thing Ruby has another nifty library to help with that. <code class="language-plaintext highlighter-rouge">File</code> has a handy method called <code class="language-plaintext highlighter-rouge">basename</code> that knows how to extract just the filename out of a filepath. Thanks, Ruby.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">image_file_names</span>
   <span class="c1"># Much easier to read or to google for more info</span>
@@ -277,7 +281,7 @@
 </code></pre></div></div>
 
 <h3 id="after-image-model">After: Image Model</h3>
-<p>The shiny new <code class="highlighter-rouge">Image</code> class looks like this:</p>
+<p>The shiny new <code class="language-plaintext highlighter-rouge">Image</code> class looks like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/image.rb</span>
 
@@ -305,13 +309,13 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>With this fancy new scalable <code class="highlighter-rouge">Image</code> structure in place, I added 20 more Ryan Gosling pics, for a total of 30 possible random images to be assigned to an apology, and that’s better for everyone… except maybe Ryan Gosling.</p>
+<p>With this fancy new scalable <code class="language-plaintext highlighter-rouge">Image</code> structure in place, I added 20 more Ryan Gosling pics, for a total of 30 possible random images to be assigned to an apology, and that’s better for everyone… except maybe Ryan Gosling.</p>
 
 <h3 id="but-why-didnt-you">But why didn’t you…?</h3>
 
-<p>But why didn’t I make the <code class="highlighter-rouge">Image</code> class a fully-instantiable, database-backed model? Good question. I considered it. I decided that it was overkill to have a whole table dedicated to a single <code class="highlighter-rouge">filename</code> field when I have no plans to allow users to upload their own photos or for an admin person to need this feature. It adds complexity to the database. It adds complexity to the relationship between <code class="highlighter-rouge">Apology</code> and <code class="highlighter-rouge">Image</code>. And for the foreseeable future, it’s not necessary.</p>
+<p>But why didn’t I make the <code class="language-plaintext highlighter-rouge">Image</code> class a fully-instantiable, database-backed model? Good question. I considered it. I decided that it was overkill to have a whole table dedicated to a single <code class="language-plaintext highlighter-rouge">filename</code> field when I have no plans to allow users to upload their own photos or for an admin person to need this feature. It adds complexity to the database. It adds complexity to the relationship between <code class="language-plaintext highlighter-rouge">Apology</code> and <code class="language-plaintext highlighter-rouge">Image</code>. And for the foreseeable future, it’s not necessary.</p>
 
-<p>But why didn’t I make a <code class="highlighter-rouge">@character_max = Apologies::CHARACTER_MAX</code> instance variable in the <code class="highlighter-rouge">apologies_controller</code> for the apologies views and javascript to access instead of adding it as an attribute on the <code class="highlighter-rouge">@apology</code> object? An instance variable in a controller is wild wild beast. It’s essentially global, which is awesome if you’re able to confirm that there won’t be collisions in other parts of the app. But I’m not app-omniscient (yet… right ;) ) and I’m not sure what technical debt it might bring. So right now, I like to try to release as few wild beasts as possible into the views.</p>
+<p>But why didn’t I make a <code class="language-plaintext highlighter-rouge">@character_max = Apologies::CHARACTER_MAX</code> instance variable in the <code class="language-plaintext highlighter-rouge">apologies_controller</code> for the apologies views and javascript to access instead of adding it as an attribute on the <code class="language-plaintext highlighter-rouge">@apology</code> object? An instance variable in a controller is wild wild beast. It’s essentially global, which is awesome if you’re able to confirm that there won’t be collisions in other parts of the app. But I’m not app-omniscient (yet… right ;) ) and I’m not sure what technical debt it might bring. So right now, I like to try to release as few wild beasts as possible into the views.</p>
 
   </article>
 

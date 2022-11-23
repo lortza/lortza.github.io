@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,7 +67,7 @@
   </header>
 
   <article class="post-content">
-    <p>The key here is to figure out where and when the Javascript is being called and then pass the Ruby data to it as an argument. In my case, I have a form field that displays a remaining character count. The count is updated on every <code class="highlighter-rouge">keyup</code> by javascript. I wanted to use the number value stored in my model’s <code class="highlighter-rouge">CHARACTER_MAX</code> constant instead of manually entering it in both the model validations and the javascript.</p>
+    <p>The key here is to figure out where and when the Javascript is being called and then pass the Ruby data to it as an argument. In my case, I have a form field that displays a remaining character count. The count is updated on every <code class="language-plaintext highlighter-rouge">keyup</code> by javascript. I wanted to use the number value stored in my model’s <code class="language-plaintext highlighter-rouge">CHARACTER_MAX</code> constant instead of manually entering it in both the model validations and the javascript.</p>
 
 <h2 id="problem">Problem</h2>
 
@@ -94,7 +98,7 @@
   <span class="kd">let</span> <span class="nx">remainingCharacters</span> <span class="o">=</span> <span class="nx">characterMax</span> <span class="o">-</span> <span class="nx">currentCount</span>
   <span class="c1">//...</span>
 <span class="p">}</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">displayRemainingCharacters</span><span class="p">)</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">displayRemainingCharacters</span><span class="p">)</span>
 </code></pre></div></div>
 <p>…so the javascript can give accurate form feedback and I don’t have to keep track of multiple places in my codebase where that number appears.</p>
 
@@ -108,21 +112,21 @@
 <span class="kd">let</span> <span class="nx">remainingCharacters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">characterMax</span><span class="p">){</span>
   <span class="c1">// (side note: in Rails you'll want to account for turbolinks load</span>
   <span class="c1">// time with an event listener as well)</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'turbolinks:load'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">turbolinks:load</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="p">...</span>
     <span class="kd">let</span> <span class="nx">displayRemainingCharacters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
       <span class="kd">let</span> <span class="nx">currentCount</span> <span class="o">=</span> <span class="nx">textBox</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span>
       <span class="c1">// 2) Use that characterMax argument in the logic</span>
       <span class="kd">let</span> <span class="nx">remainingCharacters</span> <span class="o">=</span> <span class="nx">characterMax</span> <span class="o">-</span> <span class="nx">currentCount</span>
-      <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#character-count'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">remainingCharacters</span>
+      <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#character-count</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">remainingCharacters</span>
       <span class="p">...</span>
     <span class="p">}</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'keyup'</span><span class="p">,</span> <span class="nx">displayRemainingCharacters</span><span class="p">)</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">displayRemainingCharacters</span><span class="p">)</span>
   <span class="p">});</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Call that <code class="highlighter-rouge">remainingCharacters</code> function in the Rails form view where the javascript is needed:</p>
+<p>Call that <code class="language-plaintext highlighter-rouge">remainingCharacters</code> function in the Rails form view where the javascript is needed:</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/apologies/_form.html.erb --&gt;</span>
 

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,7 +67,7 @@
   </header>
 
   <article class="post-content">
-    <p>So you’ve just gotten your feet wet with web development or programming and in the whirlwind of setting up your machine for class, you have a <a href="github.com" target="_blank" rel="noopener noreferrer">GitHub</a> account and <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer">Git</a> installed on your machine. The trouble is, though you understand that Git is version-control software, you still don’t really understand the whole staging and committing process. What’s the differences between <code class="highlighter-rouge">git add</code> and <code class="highlighter-rouge">git commit</code>?</p>
+    <p>So you’ve just gotten your feet wet with web development or programming and in the whirlwind of setting up your machine for class, you have a <a href="github.com" target="_blank" rel="noopener noreferrer">GitHub</a> account and <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer">Git</a> installed on your machine. The trouble is, though you understand that Git is version-control software, you still don’t really understand the whole staging and committing process. What’s the differences between <code class="language-plaintext highlighter-rouge">git add</code> and <code class="language-plaintext highlighter-rouge">git commit</code>?</p>
 
 <p>Git is very feature rich, so there is plenty to learn. But what helped me wrap my head around the basics was to think about the Git process of saving and sharing files like packing a box full of gifts to ship off to my mom. In the example below, we’re sending gifts to your mom. You’ve chosen some weird stuff. I hope she likes alligator figurines… :)</p>
 
@@ -95,13 +99,13 @@
 <h2 id="part-2-the-process-of-pushing-your-code-to-github">Part 2: The process of pushing your code to GitHub</h2>
 <p>Now that we’re clear on how to ship stuff to Mom, here’s the process again with git-speak:</p>
 
-<p>1) You’ve been gathering gifts for your mom – i.e. doing work on files on a branch you’re calling <code class="highlighter-rouge">gifts_for_moms_house</code></p>
+<p>1) You’ve been gathering gifts for your mom – i.e. doing work on files on a branch you’re calling <code class="language-plaintext highlighter-rouge">gifts_for_moms_house</code></p>
 
 <ul>
-  <li><code class="highlighter-rouge">cajun_jam.html</code></li>
-  <li><code class="highlighter-rouge">jambalaya_mix.html</code></li>
-  <li><code class="highlighter-rouge">alligator.html</code></li>
-  <li><code class="highlighter-rouge">ipad.html</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cajun_jam.html</code></li>
+  <li><code class="language-plaintext highlighter-rouge">jambalaya_mix.html</code></li>
+  <li><code class="language-plaintext highlighter-rouge">alligator.html</code></li>
+  <li><code class="language-plaintext highlighter-rouge">ipad.html</code></li>
 </ul>
 
 <p>2) Place each gift (or each file you’re ready to send) into the box one at a time or dump them all in at once. Now all of your files are in “staging.”</p>
@@ -117,38 +121,38 @@ git add <span class="nb">.</span>                <span class="c"># add all recen
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit <span class="nt">-m</span> <span class="s2">"Gifts for the family"</span>
 </code></pre></div></div>
 
-<p>4) Hand the package to the mail carrier who is conveniently standing on your front porch, waiting for your package. In git-speak, this is when we <code class="highlighter-rouge">push</code> to GitHub.</p>
+<p>4) Hand the package to the mail carrier who is conveniently standing on your front porch, waiting for your package. In git-speak, this is when we <code class="language-plaintext highlighter-rouge">push</code> to GitHub.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push
 </code></pre></div></div>
 
-<p>5) The mail carrier tells you your box is missing an address and suggests one based on the branch you’re on: <code class="highlighter-rouge">origin gifts_for_moms_house</code></p>
+<p>5) The mail carrier tells you your box is missing an address and suggests one based on the branch you’re on: <code class="language-plaintext highlighter-rouge">origin gifts_for_moms_house</code></p>
 
 <p>6) Affix your mom’s address (a.k.a. branch name) on it and hand the box back to the mail carrier, who then takes the package to the central post office.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push --set-upstream origin gifts_for_moms_house
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push --set-upstream origin gifts_for_moms_house
 </code></pre></div></div>
 
 <p>Your job here is done and it’s in the hands of the postal service now. So how does your mom actually get those lovely gifts?</p>
 
 <h2 id="part-3-the-process-of-pulling-codedown-from-github">Part 3: The process of pulling code down from GitHub</h2>
-<p>GitHub is like a huge digital post office in the cloud, which is organized by repositories (a.k.a. repos). When you’re working on projects with other people, you will set up a repository for that specific project and everyone on the team will have access to it. In this case, let’s say your whole family works on a project repo called <code class="highlighter-rouge">family_gifts</code> and within that repo, you have several branches. The branch you’ve seen already is called <code class="highlighter-rouge">gifts_for_moms_house</code>. You’ve told your mom that gifts are waiting for her in that branch and that she needs to request delivery of them. Okay, so we’re losing the acutal post office metaphor a bit, but now this is what your mom will do:</p>
+<p>GitHub is like a huge digital post office in the cloud, which is organized by repositories (a.k.a. repos). When you’re working on projects with other people, you will set up a repository for that specific project and everyone on the team will have access to it. In this case, let’s say your whole family works on a project repo called <code class="language-plaintext highlighter-rouge">family_gifts</code> and within that repo, you have several branches. The branch you’ve seen already is called <code class="language-plaintext highlighter-rouge">gifts_for_moms_house</code>. You’ve told your mom that gifts are waiting for her in that branch and that she needs to request delivery of them. Okay, so we’re losing the acutal post office metaphor a bit, but now this is what your mom will do:</p>
 
-<p>1) Makes sure she’s inside the <code class="highlighter-rouge">family_gifts</code> directory on her command line.</p>
+<p>1) Makes sure she’s inside the <code class="language-plaintext highlighter-rouge">family_gifts</code> directory on her command line.</p>
 
 <p>2) Gets a list of all branches that exist in the family’s GitHub repo</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
 </code></pre></div></div>
 
-<p>3) Sees that <code class="highlighter-rouge">gifts_for_moms_house</code> is there, like you said it was, and checks it out on her machine:</p>
+<p>3) Sees that <code class="language-plaintext highlighter-rouge">gifts_for_moms_house</code> is there, like you said it was, and checks it out on her machine:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout gifts_for_moms_house
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout gifts_for_moms_house
 </code></pre></div></div>
 
 <p>4) Requests delivery of those files:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull
 </code></pre></div></div>
 
 <p>And that’s it! She now has the files you sent to her. If only we could actually send gifts this way.</p>
@@ -165,17 +169,17 @@ git add <span class="nb">.</span>                <span class="c"># add all recen
 
 <p>Take the alligator file out of staging (out of the box) while leaving the others in place:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset alligator.html
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset alligator.html
 </code></pre></div></div>
 
 <p>After ensconsing it in bubble wrap, we can add it back to the box with:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add alligator.html
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add alligator.html
 </code></pre></div></div>
 
 <p>Phew! Okay, surely we’re ready to commit now, so we do:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit -m "gifts for mom"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit -m "gifts for mom"
 </code></pre></div></div>
 
 <p>Super! The box is all taped up and ready to hand to the mail carrier… but you know, it sure would be thoughtful if you spent a little time setting up and charging that iPad for your mom so all she has to do is turn it on. But the box is taped up. How do we get that iPad back out of the taped-up box?</p>
@@ -184,17 +188,17 @@ git add <span class="nb">.</span>                <span class="c"># add all recen
 
 <p>Have no fear! Git can do that. First, take the tape off and take the gifts back out of the box. Even though it looks a little scary, this will not undo any of the changes you’ve made to those files, it will only un-package them from the commit and take them out of staging:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset HEAD~
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset HEAD~
 </code></pre></div></div>
 
 <p>Spend as much time as you’d like setting up the iPad (fixing that file you want to change), then add all of the gifts (all of the files) back into the box again:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add .
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add .
 </code></pre></div></div>
 
 <p>And the great news is, we have reusable tape! To seal the commit back up with the original commit message and to leave a clean history:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit -c ORIG_HEAD
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit -c ORIG_HEAD
 </code></pre></div></div>
 
   </article>

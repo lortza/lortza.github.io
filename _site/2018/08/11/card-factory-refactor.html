@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -68,7 +72,7 @@
 <h2 id="my-list-of-things-to-address">My List of Things to Address</h2>
 
 <h3 id="1-my-controller-still-knows-too-much">1. My controller still knows too much</h3>
-<p>Here in the controller, the <code class="highlighter-rouge">show</code> action does a lot of asking around and building of data before it can get down to the business of delivering data to the <code class="highlighter-rouge">show.html.erb</code> view.</p>
+<p>Here in the controller, the <code class="language-plaintext highlighter-rouge">show</code> action does a lot of asking around and building of data before it can get down to the business of delivering data to the <code class="language-plaintext highlighter-rouge">show.html.erb</code> view.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/readings_controller.rb</span>
 
@@ -85,7 +89,7 @@
 
 <h3 id="2-the-name-of-my-factory-doesnt-seem-quite-right">2. The name of my factory doesn’t seem quite right</h3>
 
-<p>The model that produces a modified, view-ready <code class="highlighter-rouge">Card</code> object is called a <code class="highlighter-rouge">CardFactory</code>. That’s not accurate because it’s instantiating <em>card-like</em> objects, not actual <code class="highlighter-rouge">Card</code> objects and not <code class="highlighter-rouge">CardFactory</code> objects. Hmmm.</p>
+<p>The model that produces a modified, view-ready <code class="language-plaintext highlighter-rouge">Card</code> object is called a <code class="language-plaintext highlighter-rouge">CardFactory</code>. That’s not accurate because it’s instantiating <em>card-like</em> objects, not actual <code class="language-plaintext highlighter-rouge">Card</code> objects and not <code class="language-plaintext highlighter-rouge">CardFactory</code> objects. Hmmm.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/card_factory.rb</span>
 
@@ -117,7 +121,7 @@
 
 <h3 id="3-my-tests-are-hard-to-write">3. My tests are hard to write</h3>
 
-<p>As I was writing my <code class="highlighter-rouge">it</code> statements for this class, I found myself being confused about my expectations for its purpose.</p>
+<p>As I was writing my <code class="language-plaintext highlighter-rouge">it</code> statements for this class, I found myself being confused about my expectations for its purpose.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'a valid card factory'</span> <span class="k">do</span>
   <span class="n">context</span> <span class="s1">'when has valid params'</span> <span class="k">do</span>
@@ -139,9 +143,9 @@
 
 <h2 id="the-refactor">The Refactor</h2>
 
-<p>The <code class="highlighter-rouge">CardFactory</code> name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. During a conversation with my <a href="https://www.linkedin.com/in/scott-maslar-b1650b36/">mentor</a>, we realized that it needed to be two different models. So the <code class="highlighter-rouge">CardFactory</code> model ended up diverging into a <code class="highlighter-rouge">ReadingCard</code> model and a <code class="highlighter-rouge">ReadingCardSet</code> model, each with a more job-specific name.</p>
+<p>The <code class="language-plaintext highlighter-rouge">CardFactory</code> name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. During a conversation with my <a href="https://www.linkedin.com/in/scott-maslar-b1650b36/">mentor</a>, we realized that it needed to be two different models. So the <code class="language-plaintext highlighter-rouge">CardFactory</code> model ended up diverging into a <code class="language-plaintext highlighter-rouge">ReadingCard</code> model and a <code class="language-plaintext highlighter-rouge">ReadingCardSet</code> model, each with a more job-specific name.</p>
 
-<p>A <code class="highlighter-rouge">ReadingCard</code> will generate that card-like object I’ve been wanting and that’s all it does.</p>
+<p>A <code class="language-plaintext highlighter-rouge">ReadingCard</code> will generate that card-like object I’ve been wanting and that’s all it does.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/reading_card.rb</span>
 
@@ -174,7 +178,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>A <code class="highlighter-rouge">ReadingCardSet</code> decides how many <code class="highlighter-rouge">ReadingCard</code>s are needed for a <code class="highlighter-rouge">Reading</code> and it knows how to align <code class="highlighter-rouge">ReadingCard</code> data with <code class="highlighter-rouge">ReadingPosition</code> data. It puts all of this together and delivers a single set of data for the <code class="highlighter-rouge">ReadingsController</code> to consume.</p>
+<p>A <code class="language-plaintext highlighter-rouge">ReadingCardSet</code> decides how many <code class="language-plaintext highlighter-rouge">ReadingCard</code>s are needed for a <code class="language-plaintext highlighter-rouge">Reading</code> and it knows how to align <code class="language-plaintext highlighter-rouge">ReadingCard</code> data with <code class="language-plaintext highlighter-rouge">ReadingPosition</code> data. It puts all of this together and delivers a single set of data for the <code class="language-plaintext highlighter-rouge">ReadingsController</code> to consume.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/reading_card_set.rb</span>
 
@@ -218,7 +222,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">ReadingsController</code> is relieved of its duty to build that set and now simply gets to deliver the display data that’s been handed to it.</p>
+<p>The <code class="language-plaintext highlighter-rouge">ReadingsController</code> is relieved of its duty to build that set and now simply gets to deliver the display data that’s been handed to it.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/readings_controller.rb</span>
 
@@ -235,7 +239,7 @@
 
 <h2 id="future-improvements">Future Improvements</h2>
 
-<p>I really like how this refactor has gone. However, I don’t love that the view still has to know the anatomy of the <code class="highlighter-rouge">@positioned_cards</code> array in order to display data correctly.</p>
+<p>I really like how this refactor has gone. However, I don’t love that the view still has to know the anatomy of the <code class="language-plaintext highlighter-rouge">@positioned_cards</code> array in order to display data correctly.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/readings/show.html.erb --&gt;</span>
 

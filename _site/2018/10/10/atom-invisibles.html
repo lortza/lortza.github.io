@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,28 +67,28 @@
   </header>
 
   <article class="post-content">
-    <p>I recently started working in <code class="highlighter-rouge">html.slim</code>, which is whitespace sensitive. In order to edit my <code class="highlighter-rouge">slim</code> files successfully, I wanted to be able to see whitespaces. I did this in Atom like this:</p>
+    <p>I recently started working in <code class="language-plaintext highlighter-rouge">html.slim</code>, which is whitespace sensitive. In order to edit my <code class="language-plaintext highlighter-rouge">slim</code> files successfully, I wanted to be able to see whitespaces. I did this in Atom like this:</p>
 
 <ol>
   <li>Enable “Show Invisibles”</li>
   <li>Make Invisibles Actually Visible</li>
   <li>Enable the Toggling of Invisibles</li>
-  <li>BONUS: Turn off Whitespace Trimming for <code class="highlighter-rouge">html.slim</code> Files Only</li>
+  <li>BONUS: Turn off Whitespace Trimming for <code class="language-plaintext highlighter-rouge">html.slim</code> Files Only</li>
 </ol>
 
 <h2 id="1-enable-show-invisibles">1. Enable “Show Invisibles”</h2>
-<p>Atom calls these whitespaces “invisibles.” Go to <code class="highlighter-rouge">Atom &gt; Preferences &gt; Editor</code>.</p>
+<p>Atom calls these whitespaces “invisibles.” Go to <code class="language-plaintext highlighter-rouge">Atom &gt; Preferences &gt; Editor</code>.</p>
 
 <p>Scroll <em>past</em> the section on Invisibles. You’ll find a checkbox that says “Show Invisibles”. Check that box.</p>
 
 <h2 id="2-make-invisibles-actually-visible--optional">2. Make Invisibles Actually Visible – optional</h2>
-<p>This part is optional and it depends on the theme you have. If when you turn on Invisibles, you still can’t see them, you may need to adjust the color or opacity of those characters in the Atom <code class="highlighter-rouge">style.less</code> stylesheet file.</p>
+<p>This part is optional and it depends on the theme you have. If when you turn on Invisibles, you still can’t see them, you may need to adjust the color or opacity of those characters in the Atom <code class="language-plaintext highlighter-rouge">style.less</code> stylesheet file.</p>
 
-<p>Go to <code class="highlighter-rouge">Atom &gt; Stylesheet</code></p>
+<p>Go to <code class="language-plaintext highlighter-rouge">Atom &gt; Stylesheet</code></p>
 
-<p>Add your preferred CSS to a class called <code class="highlighter-rouge">.invisible-character</code> inside the <code class="highlighter-rouge">atom-text-editor</code> code block:</p>
+<p>Add your preferred CSS to a class called <code class="language-plaintext highlighter-rouge">.invisible-character</code> inside the <code class="language-plaintext highlighter-rouge">atom-text-editor</code> code block:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>atom-text-editor {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>atom-text-editor {
   .invisible-character {
     opacity: 1;
   }
@@ -92,18 +96,18 @@
 </code></pre></div></div>
 
 <h2 id="3-enable-the-toggling-of-invisibles">3. Enable the Toggling of Invisibles</h2>
-<p>Since I don’t work in <code class="highlighter-rouge">slim</code> all of the time, I don’t want to see invisibles all of the time. You can create a keyboard shortcut to toggle invisibles by adding this to your <code class="highlighter-rouge">keymap.cson</code> file.</p>
+<p>Since I don’t work in <code class="language-plaintext highlighter-rouge">slim</code> all of the time, I don’t want to see invisibles all of the time. You can create a keyboard shortcut to toggle invisibles by adding this to your <code class="language-plaintext highlighter-rouge">keymap.cson</code> file.</p>
 
-<p>Go to <code class="highlighter-rouge">Atom &gt; Keymap</code></p>
+<p>Go to <code class="language-plaintext highlighter-rouge">Atom &gt; Keymap</code></p>
 
-<p>Add your preferred shortcut to the <code class="highlighter-rouge">atom-text-editor</code> namespace. Here, I’m using <code class="highlighter-rouge">ctrl i</code>:</p>
+<p>Add your preferred shortcut to the <code class="language-plaintext highlighter-rouge">atom-text-editor</code> namespace. Here, I’m using <code class="language-plaintext highlighter-rouge">ctrl i</code>:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'atom-text-editor':
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'atom-text-editor':
    'ctrl-i': 'window:toggle-invisibles'
 </code></pre></div></div>
 
 <h2 id="4-bonus-turn-off-whitespace-trimming-for-slim-files-only">4. BONUS: Turn off Whitespace Trimming for slim Files Only</h2>
-<p>All of that showing of whitespaces is very useful, but in my case, I still had one more hurdle in my workflow for <code class="highlighter-rouge">slim</code> files. I have the <code class="highlighter-rouge">whitespaces</code> package installed, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how I was able to <a href="/2018/10/09/whitespaces-slim.html">turn off whitespace trimming in for only slim files</a>.</p>
+<p>All of that showing of whitespaces is very useful, but in my case, I still had one more hurdle in my workflow for <code class="language-plaintext highlighter-rouge">slim</code> files. I have the <code class="language-plaintext highlighter-rouge">whitespaces</code> package installed, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="language-plaintext highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how I was able to <a href="/2018/10/09/whitespaces-slim.html">turn off whitespace trimming in for only slim files</a>.</p>
 
   </article>
 

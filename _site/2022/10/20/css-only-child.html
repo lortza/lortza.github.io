@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -71,13 +75,13 @@
 
 <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"cats"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">"</span><span class="na">cats</span><span class="err">/</span><span class="na">add_cats_prompt</span><span class="err">"</span> <span class="err">%</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat.name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
   <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-<p>Here’s the move: we place the render statement for the <code class="highlighter-rouge">add_cats_prompt</code> partial <em>inside</em> a parent object (the <code class="highlighter-rouge">&lt;ul&gt;</code>) that will contain <em>only</em> this prompt and the cat records. In this case, we’ve got a list that will be full of cats, but now there are no cats. We expect to see the content from the prompt partial because the prompt partial is the <em>only child</em> of this parent DOM element.</p>
+<p>Here’s the move: we place the render statement for the <code class="language-plaintext highlighter-rouge">add_cats_prompt</code> partial <em>inside</em> a parent object (the <code class="language-plaintext highlighter-rouge">&lt;ul&gt;</code>) that will contain <em>only</em> this prompt and the cat records. In this case, we’ve got a list that will be full of cats, but now there are no cats. We expect to see the content from the prompt partial because the prompt partial is the <em>only child</em> of this parent DOM element.</p>
 
 <p>This is what the partial looks like:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/cats/_add_cats_prompt.html.erb --&gt;</span>
@@ -87,7 +91,7 @@
 <span class="nt">&lt;/li&gt;</span>
 </code></pre></div></div>
 
-<p>The css for the <code class="highlighter-rouge">empty-state--only-child</code> class says to hide this DOM element (aka the partial) if it is not the only child and to display it if it is the only child.</p>
+<p>The css for the <code class="language-plaintext highlighter-rouge">empty-state--only-child</code> class says to hide this DOM element (aka the partial) if it is not the only child and to display it if it is the only child.</p>
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* app/assets/stylesheets/components/_empty_state.scss */</span>
 
 <span class="nc">.empty-state</span> <span class="p">{</span>
@@ -110,16 +114,16 @@
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/cats/index.html.erb --&gt;</span>
 
 <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"cats"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">empty</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="err">@</span><span class="na">cats.empty</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
     <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="err">"</span><span class="na">cats</span><span class="err">/</span><span class="na">add_cats_prompt</span><span class="err">"</span> <span class="err">%</span><span class="nt">&gt;</span>
   <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats</span><span class="err">.</span><span class="na">each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">cats.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">cat</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">cat.name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
   <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-<p>But then what if we expect <a href="https://developer.mozilla.org/en-US/docs/Glossary/SPA">SPA</a>-like behavior on this page where new cats are added by other users and our browser updates automatically? Now we need to add in javascript or Rails Action Cable logic after <code class="highlighter-rouge">create</code>, after <code class="highlighter-rouge">destroy</code>, and probably some other scenarios that start to get complicated. No thanks. This lightweight approach has really made my day. :grinning:</p>
+<p>But then what if we expect <a href="https://developer.mozilla.org/en-US/docs/Glossary/SPA">SPA</a>-like behavior on this page where new cats are added by other users and our browser updates automatically? Now we need to add in javascript or Rails Action Cable logic after <code class="language-plaintext highlighter-rouge">create</code>, after <code class="language-plaintext highlighter-rouge">destroy</code>, and probably some other scenarios that start to get complicated. No thanks. This lightweight approach has really made my day. :grinning:</p>
 
   </article>
 

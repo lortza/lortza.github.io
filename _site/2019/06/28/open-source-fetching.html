@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -68,13 +72,13 @@
 <h2 id="the-manual-way">The Manual Way</h2>
 <p>Thankfully, git has a way to do this for you. It’s pretty simple, but it requires a lot of copying and pasting of arguments.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch git@github.com:theirusername/reponame.git theirbranch:ournameforbranch
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch git@github.com:theirusername/reponame.git theirbranch:ournameforbranch
 </code></pre></div></div>
 
 <p>After doing this two times, I decided that I wanted to write a script to make it easier. I started writing a script in bash, but then decided that I wanted something a little fancier, so I hopped into Ruby and made it happen.</p>
 
 <h2 id="the-script-way">The Script Way</h2>
-<p>I created a file called <code class="highlighter-rouge">fetch_open_source.rb</code> and stored it in a directory I called <code class="highlighter-rouge">~/ruby_scripts/</code>. I also make sure to comment in the script so that I remember how to use it and what it outputs.</p>
+<p>I created a file called <code class="language-plaintext highlighter-rouge">fetch_open_source.rb</code> and stored it in a directory I called <code class="language-plaintext highlighter-rouge">~/ruby_scripts/</code>. I also make sure to comment in the script so that I remember how to use it and what it outputs.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Runs the command to pull an open source contribution</span>
 <span class="c1"># git fetch git@github.com:theirusername/reponame.git theirbranch:ournameforbranch</span>
@@ -104,7 +108,7 @@
 </code></pre></div></div>
 
 <h3 id="step-2-make-an-alias">Step 2: Make an Alias</h3>
-<p>I then call this file by running <code class="highlighter-rouge">ruby</code> and the filename via an alias that I saved in my <code class="highlighter-rouge">.bash_profile</code>.</p>
+<p>I then call this file by running <code class="language-plaintext highlighter-rouge">ruby</code> and the filename via an alias that I saved in my <code class="language-plaintext highlighter-rouge">.bash_profile</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ~/.bash_profile</span>
 
@@ -112,7 +116,7 @@
 </code></pre></div></div>
 
 <h3 id="run-it">Run it</h3>
-<p>Now I go to the pull request on github and simply copy their <code class="highlighter-rouge">username:branchname</code> info and then run the script:</p>
+<p>Now I go to the pull request on github and simply copy their <code class="language-plaintext highlighter-rouge">username:branchname</code> info and then run the script:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fetch_open_source
 </code></pre></div></div>

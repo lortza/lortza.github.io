@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -67,7 +71,7 @@
 
 <p>This post uses the example of a single-user task list app that allows you to click a ☆ next to the task name to toggle that task’s “favorite” setting. The task is updated with javascript, so you stay right there on the tasks index page and there is no reloading of the page.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ex:
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ex:
 ★ Wrestle with kittens  &lt;== favorite &amp; best ever!!
 ☆ Take out the trash    &lt;== meh, not my favorite
 </code></pre></div></div>
@@ -84,12 +88,12 @@
 
 <h2 id="add-the-favorite-boolean-to-the-tasks-table">Add the Favorite Boolean to the Tasks Table</h2>
 
-<p>Generate a new migration to add the new boolean column to the existing <code class="highlighter-rouge">tasks</code> table. On the command line, type:</p>
+<p>Generate a new migration to add the new boolean column to the existing <code class="language-plaintext highlighter-rouge">tasks</code> table. On the command line, type:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rails g migration AddFavoriteToTasks favorite:boolean
 </code></pre></div></div>
 
-<p>Open the migration file (the last file in your db/migrate directory) and add <code class="highlighter-rouge">default: false</code> to the <code class="highlighter-rouge">add_column</code> method:</p>
+<p>Open the migration file (the last file in your db/migrate directory) and add <code class="language-plaintext highlighter-rouge">default: false</code> to the <code class="language-plaintext highlighter-rouge">add_column</code> method:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/migrate/20180419165453_add_favorite_to_tasks.rb</span>
 
@@ -105,7 +109,7 @@
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rake db:migrate
 </code></pre></div></div>
 
-<p>Take a look at the <code class="highlighter-rouge">schema.rb</code> file to ensure the new <code class="highlighter-rouge">favorite</code> column is there.</p>
+<p>Take a look at the <code class="language-plaintext highlighter-rouge">schema.rb</code> file to ensure the new <code class="language-plaintext highlighter-rouge">favorite</code> column is there.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/schema.rb</span>
 
@@ -141,7 +145,7 @@
 
 <h2 id="add-favoriting-methods-to-the-task-model">Add Favoriting Methods to the Task Model</h2>
 
-<p>Open the <code class="highlighter-rouge">task</code> model and add these public methods.</p>
+<p>Open the <code class="language-plaintext highlighter-rouge">task</code> model and add these public methods.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/task.rb</span>
 
@@ -186,7 +190,7 @@
 </code></pre></div></div>
 
 <h2 id="set-up-the-routes-and-controller-actions">Set up the Routes and Controller Actions</h2>
-<p>The only actions we’ll need to do with our <code class="highlighter-rouge">favorites</code> are <code class="highlighter-rouge">create</code> and <code class="highlighter-rouge">destroy</code>.</p>
+<p>The only actions we’ll need to do with our <code class="language-plaintext highlighter-rouge">favorites</code> are <code class="language-plaintext highlighter-rouge">create</code> and <code class="language-plaintext highlighter-rouge">destroy</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/routes.rb</span>
 
@@ -199,7 +203,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Create a new controller file for the favorites controller. Just like in the routes file, we only need the <code class="highlighter-rouge">create</code> and <code class="highlighter-rouge">destroy</code> actions.</p>
+<p>Create a new controller file for the favorites controller. Just like in the routes file, we only need the <code class="language-plaintext highlighter-rouge">create</code> and <code class="language-plaintext highlighter-rouge">destroy</code> actions.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
 
@@ -232,7 +236,7 @@
 
 <h2 id="add-a-view-helper-to-toggle--and-link-destination">Add a View Helper to Toggle ★|☆ and Link Destination</h2>
 
-<p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="highlighter-rouge">toggle_favorite</code> to the task in the view. Pass it the task as an argument.</p>
+<p>With the routing and controller actions in place, it’s time to write the links in the view. Add a view helper called <code class="language-plaintext highlighter-rouge">toggle_favorite</code> to the task in the view. Pass it the task as an argument.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/tasks/_task.html.erb  --&gt;</span>
 ...
@@ -254,7 +258,7 @@
   <span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
-<p>Define the <code class="highlighter-rouge">toggle_favorite</code> method in the tasks helper using the icon classes and the links to the <code class="highlighter-rouge">favorites_controller</code>’s <code class="highlighter-rouge">destroy</code> and <code class="highlighter-rouge">create</code> methods.</p>
+<p>Define the <code class="language-plaintext highlighter-rouge">toggle_favorite</code> method in the tasks helper using the icon classes and the links to the <code class="language-plaintext highlighter-rouge">favorites_controller</code>’s <code class="language-plaintext highlighter-rouge">destroy</code> and <code class="language-plaintext highlighter-rouge">create</code> methods.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
 
@@ -291,7 +295,7 @@
 
 <h2 id="wire-up-the-javascript-for-updating-without-refreshing-the-index-page">Wire up the Javascript for Updating Without Refreshing the Index Page</h2>
 
-<p>Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of <a href="https://apidock.com/rails/ActionView/RecordIdentifier/dom_id">Rails’ <code class="highlighter-rouge">dom_id</code> method</a> which will generate a unique id based on the object’s model and its id number in the table.</p>
+<p>Head back over to the task view and add a unique identifier to the parent object. Here we can take advantage of <a href="https://apidock.com/rails/ActionView/RecordIdentifier/dom_id">Rails’ <code class="language-plaintext highlighter-rouge">dom_id</code> method</a> which will generate a unique id based on the object’s model and its id number in the table.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/tasks/_task.html.erb --&gt;</span>
 
@@ -301,9 +305,9 @@
 <span class="nt">&lt;/article&gt;</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">&lt;article id="&lt;%= dom_id(task) %&gt;"&gt;</code> will output something like <code class="highlighter-rouge">&lt;article id="task_25"&gt;</code>, which is perfect for our javascript needs.</p>
+<p>The <code class="language-plaintext highlighter-rouge">&lt;article id="&lt;%= dom_id(task) %&gt;"&gt;</code> will output something like <code class="language-plaintext highlighter-rouge">&lt;article id="task_25"&gt;</code>, which is perfect for our javascript needs.</p>
 
-<p>In the task helper, update the links in the <code class="highlighter-rouge">toggle_favorite</code> method to include <code class="highlighter-rouge">remote: true</code>. This will indicate to the controller that we want to use javascript to carry out the response to this request.</p>
+<p>In the task helper, update the links in the <code class="language-plaintext highlighter-rouge">toggle_favorite</code> method to include <code class="language-plaintext highlighter-rouge">remote: true</code>. This will indicate to the controller that we want to use javascript to carry out the response to this request.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/helpers/tasks_helper.rb</span>
 
@@ -322,7 +326,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Go back to the favorites controller and remove the instruction to redirect to the index from both the <code class="highlighter-rouge">create</code> and the <code class="highlighter-rouge">destroy</code> methods:</p>
+<p>Go back to the favorites controller and remove the instruction to redirect to the index from both the <code class="language-plaintext highlighter-rouge">create</code> and the <code class="language-plaintext highlighter-rouge">destroy</code> methods:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/favorites_controller.rb</span>
 
@@ -341,9 +345,9 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Create a new folder called <code class="highlighter-rouge">favorites</code> in <code class="highlighter-rouge">app/views</code> and make <code class="highlighter-rouge">js.erb</code> files for both the <code class="highlighter-rouge">create</code> and the <code class="highlighter-rouge">destroy</code> methods inside of it.</p>
+<p>Create a new folder called <code class="language-plaintext highlighter-rouge">favorites</code> in <code class="language-plaintext highlighter-rouge">app/views</code> and make <code class="language-plaintext highlighter-rouge">js.erb</code> files for both the <code class="language-plaintext highlighter-rouge">create</code> and the <code class="language-plaintext highlighter-rouge">destroy</code> methods inside of it.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- app/views/favorites/
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- app/views/favorites/
   - destroy.js.erb
   - create.js.erb
 </code></pre></div></div>
@@ -352,11 +356,11 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Use that handy `dom_id` from before to identify the correct</span>
 <span class="c1">// &lt;article&gt; on the index page and then grab its star &lt;i&gt;</span>
-<span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#task_&lt;%= @task.id %&gt;"</span><span class="p">).</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'.fa-star'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#task_&lt;%= @task.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.fa-star</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="c1">// Reuse the logic from the `toggle_favorite` method to</span>
 <span class="c1">// update the star icon styles and the link destination</span>
-<span class="nx">starIcon</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="s2">"&lt;%= escape_javascript(toggle_favorite(@task)) %&gt;"</span>
+<span class="nx">starIcon</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(toggle_favorite(@task)) %&gt;</span><span class="dl">"</span>
 </code></pre></div></div>
 
 <p>And there you have it! Now you can toggle the stars to your heart’s delight without reloading the index page. If you’d like to see a similar example of this feature done with jQuery, check out <a href="https://www.topdan.com/ruby-on-rails/ajax-toggle-buttons.html">this post by Dan Cunning</a>.</p>

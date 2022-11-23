@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,12 +67,12 @@
   </header>
 
   <article class="post-content">
-    <p>Typing Ruby erb tags is a past time pursued intentionally by… no one? Well, certainly not me! The characters <code class="highlighter-rouge">&lt;%= %&gt;</code> don’t exactly flow off of my fingertips. So how do people get around typing these irritating-but-crucial characters?</p>
+    <p>Typing Ruby erb tags is a past time pursued intentionally by… no one? Well, certainly not me! The characters <code class="language-plaintext highlighter-rouge">&lt;%= %&gt;</code> don’t exactly flow off of my fingertips. So how do people get around typing these irritating-but-crucial characters?</p>
 
 <p>I use my beloved SublimeText snippets. <a title="SublimeText3" href="https://www.sublimetext.com/3" target="_blank" rel="noopener noreferrer">SublimeText 3</a> is a popular text editor among rubyists and it has a lot of great features. One of my favorites is snippets.</p>
 
 <h2 id="what-is-a-snippet">What is a snippet?</h2>
-<p>A snippet is a keystroke shortcut you create that will generate text for you. There are some built-in snippets in Sublime that make my life easier. For example, if you type <code class="highlighter-rouge">lorem + TAB</code> you’ll get a short paragraph of lorem ipsum placeholder text.</p>
+<p>A snippet is a keystroke shortcut you create that will generate text for you. There are some built-in snippets in Sublime that make my life easier. For example, if you type <code class="language-plaintext highlighter-rouge">lorem + TAB</code> you’ll get a short paragraph of lorem ipsum placeholder text.</p>
 
 <p>So how do we get to automate those pesky erb tags? By making our own custom snippets.</p>
 
@@ -95,7 +99,7 @@ Hello, ${1:this} is a ${2:snippet}.
 
 <h2 id="the-tldr">The TLDR</h2>
 
-<p>Assuming you want your shortcut word to be <code class="highlighter-rouge">erb</code>, delete everything in that file and replace it with this:</p>
+<p>Assuming you want your shortcut word to be <code class="language-plaintext highlighter-rouge">erb</code>, delete everything in that file and replace it with this:</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;snippet&gt;</span>
   <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[&lt;%= ${1} %&gt;]]&gt;</span><span class="nt">&lt;/content&gt;</span>
@@ -104,11 +108,11 @@ Hello, ${1:this} is a ${2:snippet}.
   <span class="nt">&lt;scope&gt;</span>text.html.ruby<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/snippet&gt;</span>
 </code></pre></div></div>
-<p>Save the file as <code class="highlighter-rouge">html-erb.sublime-snippet</code>.</p>
+<p>Save the file as <code class="language-plaintext highlighter-rouge">html-erb.sublime-snippet</code>.</p>
 
-<p>Now, when you’re inside an erb file like <code class="highlighter-rouge">index.html.erb</code>, you can simply type your new shortcut + TAB and you get your erb tags. Hooray!</p>
+<p>Now, when you’re inside an erb file like <code class="language-plaintext highlighter-rouge">index.html.erb</code>, you can simply type your new shortcut + TAB and you get your erb tags. Hooray!</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># type this:
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># type this:
 erb + TAB
 
 # get this:
@@ -116,25 +120,25 @@ erb + TAB
 </code></pre></div></div>
 <h2 id="what-its-doing-and-how-to-customize">What it’s doing and how to customize</h2>
 
-<p>The <code class="highlighter-rouge">content</code> tags house the end result of the snippet. The <code class="highlighter-rouge">${1}</code> is where your cursor will end up after you hit <code class="highlighter-rouge">TAB</code>.</p>
+<p>The <code class="language-plaintext highlighter-rouge">content</code> tags house the end result of the snippet. The <code class="language-plaintext highlighter-rouge">${1}</code> is where your cursor will end up after you hit <code class="language-plaintext highlighter-rouge">TAB</code>.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the content --&gt;</span>
 <span class="nt">&lt;content&gt;</span><span class="cp">&lt;![CDATA[&lt;%= ${1} %&gt;]]&gt;</span><span class="nt">&lt;/content&gt;</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">tabTrigger</code> tags hold the shortcut word you’ll use before triggering the shortcut with the TAB key</p>
+<p>The <code class="language-plaintext highlighter-rouge">tabTrigger</code> tags hold the shortcut word you’ll use before triggering the shortcut with the TAB key</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the tab trigger --&gt;</span>
 <span class="nt">&lt;tabTrigger&gt;</span>erb<span class="nt">&lt;/tabTrigger&gt;</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">description</code> tags are optional and display more meaning if you have several similar snippets. This one is super gnarly because it is using code to literally display the characters <code class="highlighter-rouge">&lt;%= %&gt;</code>. You could simply type “erb tag” and be done with it.</p>
+<p>The <code class="language-plaintext highlighter-rouge">description</code> tags are optional and display more meaning if you have several similar snippets. This one is super gnarly because it is using code to literally display the characters <code class="language-plaintext highlighter-rouge">&lt;%= %&gt;</code>. You could simply type “erb tag” and be done with it.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the description --&gt;</span>
 <span class="nt">&lt;description&gt;</span><span class="ni">&amp;#60;&amp;#37;&amp;#61;&amp;#37;&amp;#62;</span><span class="nt">&lt;/description&gt;</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">scope</code> tags are also optional and limit the snippet to running in only the types of files you designate here. This scope limits this snippet to work in erb files only. If you want your snippet to work in all file types, delete this line.</p>
+<p>The <code class="language-plaintext highlighter-rouge">scope</code> tags are also optional and limit the snippet to running in only the types of files you designate here. This scope limits this snippet to work in erb files only. If you want your snippet to work in all file types, delete this line.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- the scope --&gt;</span>
 <span class="nt">&lt;scope&gt;</span>text.html.ruby<span class="nt">&lt;/scope&gt;</span>
@@ -178,21 +182,21 @@ erb + TAB
  ]]&gt;</span><span class="nt">&lt;/content&gt;</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">${1}</code> is the first tab-stop placeholder. This means that after I type my trigger of <code class="highlighter-rouge">a</code> plus the <code class="highlighter-rouge">TAB</code> key, all of that html shows up and my cursor is placed in the 1st placeholder inside <code class="highlighter-rouge">href=""</code>. Now I can type or paste a URL:</p>
+<p>The <code class="language-plaintext highlighter-rouge">${1}</code> is the first tab-stop placeholder. This means that after I type my trigger of <code class="language-plaintext highlighter-rouge">a</code> plus the <code class="language-plaintext highlighter-rouge">TAB</code> key, all of that html shows up and my cursor is placed in the 1st placeholder inside <code class="language-plaintext highlighter-rouge">href=""</code>. Now I can type or paste a URL:</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 1 --&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">""</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span>
 </code></pre></div></div>
 
-<p>When I hit the <code class="highlighter-rouge">TAB</code> key <em>again</em>, it moves to the second placeholder, <code class="highlighter-rouge">${2:_blank}</code>, which is inside the <code class="highlighter-rouge">target=""</code>. This placeholder is special because I gave it a default value of <code class="highlighter-rouge">_blank</code>. If I want to replace that default value with something else, I could type that right here.</p>
+<p>When I hit the <code class="language-plaintext highlighter-rouge">TAB</code> key <em>again</em>, it moves to the second placeholder, <code class="language-plaintext highlighter-rouge">${2:_blank}</code>, which is inside the <code class="language-plaintext highlighter-rouge">target=""</code>. This placeholder is special because I gave it a default value of <code class="language-plaintext highlighter-rouge">_blank</code>. If I want to replace that default value with something else, I could type that right here.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 2 --&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"anything_i_want"</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">title=</span><span class="s">""</span><span class="nt">&gt;&lt;/a&gt;</span>
 </code></pre></div></div>
 
-<p>But I like it as <code class="highlighter-rouge">_blank</code>, so I hit the <code class="highlighter-rouge">TAB</code> key again and move on to the next placeholder.</p>
+<p>But I like it as <code class="language-plaintext highlighter-rouge">_blank</code>, so I hit the <code class="language-plaintext highlighter-rouge">TAB</code> key again and move on to the next placeholder.</p>
 
-<p>The third placeholder, <code class="highlighter-rouge">${3}</code>, is also special because there are two of them: one in the <code class="highlighter-rouge">alt=""</code> and one in the <code class="highlighter-rouge">title=""</code>. My cursor will actually be in both of those spaces at the same time, so whatever I type will show up in both of those places.</p>
+<p>The third placeholder, <code class="language-plaintext highlighter-rouge">${3}</code>, is also special because there are two of them: one in the <code class="language-plaintext highlighter-rouge">alt=""</code> and one in the <code class="language-plaintext highlighter-rouge">title=""</code>. My cursor will actually be in both of those spaces at the same time, so whatever I type will show up in both of those places.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 3 --&gt;</span>
 
@@ -204,7 +208,7 @@ erb + TAB
 </code></pre></div></div>
 <p><em>Kaboom!</em> right? This discovery opened up my world of snippet-making.</p>
 
-<p>Now, hit the <code class="highlighter-rouge">TAB</code> key again, and we’re in placeholder #4. Nothing special here. I can fill it out, hit <code class="highlighter-rouge">TAB</code> again and my cursor will move to the first space outside of the snippet.</p>
+<p>Now, hit the <code class="language-plaintext highlighter-rouge">TAB</code> key again, and we’re in placeholder #4. Nothing special here. I can fill it out, hit <code class="language-plaintext highlighter-rouge">TAB</code> again and my cursor will move to the first space outside of the snippet.</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- at placeholder 4 --&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://www.google.com"</span> <span class="na">target=</span><span class="s">"_blank"</span> <span class="na">alt=</span><span class="s">"the googles"</span> <span class="na">title=</span><span class="s">"the googles"</span><span class="nt">&gt;</span>Google<span class="nt">&lt;/a&gt;</span>
@@ -212,10 +216,10 @@ erb + TAB
 <p>So hopefully this gets you started on a path to using SublimeText more efficiently so you can spend less time typing and more time coding. Though you’ll start to discover your snippet needs pretty easily on your own. Here are some ideas:</p>
 
 <ul>
-  <li>get <code class="highlighter-rouge">binding.pry</code> with <code class="highlighter-rouge">pry</code></li>
-  <li>commenting your closing <code class="highlighter-rouge">div</code>s with the name of the class you’ve assigned them</li>
-  <li>commenting your closing ruby method <code class="highlighter-rouge">end</code>s or closing javascript <code class="highlighter-rouge">}</code> braces</li>
-  <li>building our your <code class="highlighter-rouge">initialize(args)</code> like <code class="highlighter-rouge">@name = args[:name]</code>s</li>
+  <li>get <code class="language-plaintext highlighter-rouge">binding.pry</code> with <code class="language-plaintext highlighter-rouge">pry</code></li>
+  <li>commenting your closing <code class="language-plaintext highlighter-rouge">div</code>s with the name of the class you’ve assigned them</li>
+  <li>commenting your closing ruby method <code class="language-plaintext highlighter-rouge">end</code>s or closing javascript <code class="language-plaintext highlighter-rouge">}</code> braces</li>
+  <li>building our your <code class="language-plaintext highlighter-rouge">initialize(args)</code> like <code class="language-plaintext highlighter-rouge">@name = args[:name]</code>s</li>
 </ul>
 
 <p>Also, in case you want to reference a snippet you’ve already made, check out this post I recently wrote about <a href="http://localflavormarketing.com/how-to-access-your-sublime-snippets/">how to easily access your existing snippets</a>.</p>

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,9 +67,9 @@
   </header>
 
   <article class="post-content">
-    <p>I recently had to write some RSpec specs for an importer job that pulled in <code class="highlighter-rouge">claims</code> data to a table that had 600 columns. That was fine until we found out that all of those columns had to be set to <code class="highlighter-rouge">null: false</code>. Now in order to write a spec for a single one of these objects, <em>we had to have some non-null value in all 600 attributes.</em> Yikes.</p>
+    <p>I recently had to write some RSpec specs for an importer job that pulled in <code class="language-plaintext highlighter-rouge">claims</code> data to a table that had 600 columns. That was fine until we found out that all of those columns had to be set to <code class="language-plaintext highlighter-rouge">null: false</code>. Now in order to write a spec for a single one of these objects, <em>we had to have some non-null value in all 600 attributes.</em> Yikes.</p>
 
-<p>Fortunately, <code class="highlighter-rouge">"" != nil</code>. This means we could mass assign all attributes to an empty string (<code class="highlighter-rouge">""</code>) and the null constraints were satisfied. This is how to mass-assign <code class="highlighter-rouge">""</code> to an object with the Rails gem, <a href="https://github.com/thoughtbot/factory_bot">FactoryBot</a>:</p>
+<p>Fortunately, <code class="language-plaintext highlighter-rouge">"" != nil</code>. This means we could mass assign all attributes to an empty string (<code class="language-plaintext highlighter-rouge">""</code>) and the null constraints were satisfied. This is how to mass-assign <code class="language-plaintext highlighter-rouge">""</code> to an object with the Rails gem, <a href="https://github.com/thoughtbot/factory_bot">FactoryBot</a>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">factory</span> <span class="ss">:claims</span> <span class="k">do</span>
   <span class="c1"># This table has null constrains on all (~600) columns.</span>
@@ -76,7 +80,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Now, in your spec, you can treat this factory as you normally would, overriding the default <code class="highlighter-rouge">""</code> values as needed:</p>
+<p>Now, in your spec, you can treat this factory as you normally would, overriding the default <code class="language-plaintext highlighter-rouge">""</code> values as needed:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">let</span><span class="p">(</span><span class="ss">:claims</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:claims</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'sunshine'</span><span class="p">,</span> <span class="ss">location: </span><span class="s1">'all the dark corners of the world'</span><span class="p">)</span> <span class="p">}</span>
 </code></pre></div></div>
 

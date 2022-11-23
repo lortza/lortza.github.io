@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -64,14 +68,14 @@
 
   <article class="post-content">
     <h3 id="what-its-for">What it’s For…</h3>
-<p>Renaming an attribute. Ever have an attribute on your Rails model that you wish you had named something else? And actually renaming the table column is not feasible? A solution I have used in this case is <code class="highlighter-rouge">alias_attribute</code> to rename the attribute associated with that table column. It looks like this:</p>
+<p>Renaming an attribute. Ever have an attribute on your Rails model that you wish you had named something else? And actually renaming the table column is not feasible? A solution I have used in this case is <code class="language-plaintext highlighter-rouge">alias_attribute</code> to rename the attribute associated with that table column. It looks like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># in your model file</span>
 
 <span class="n">alias_attribute</span> <span class="ss">:old_attribute_name</span><span class="p">,</span> <span class="ss">:new_aliased_name</span>
 </code></pre></div></div>
 
-<p>For example, let’s say we have a model called <code class="highlighter-rouge">Article</code> that has a <code class="highlighter-rouge">header</code> attribute and we’d like to change it to <code class="highlighter-rouge">title</code>. Using <code class="highlighter-rouge">alias_attribute</code> in the <code class="highlighter-rouge">app/models/article.rb</code> file will write the new getter and setter for us.</p>
+<p>For example, let’s say we have a model called <code class="language-plaintext highlighter-rouge">Article</code> that has a <code class="language-plaintext highlighter-rouge">header</code> attribute and we’d like to change it to <code class="language-plaintext highlighter-rouge">title</code>. Using <code class="language-plaintext highlighter-rouge">alias_attribute</code> in the <code class="language-plaintext highlighter-rouge">app/models/article.rb</code> file will write the new getter and setter for us.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># renaming from `header` to `title`</span>
 
@@ -87,7 +91,7 @@
   <span class="nb">self</span><span class="p">.</span><span class="nf">header</span> <span class="o">=</span> <span class="n">title</span>
 <span class="k">end</span>
 </code></pre></div></div>
-<p>Now when we refer to <code class="highlighter-rouge">article.title</code> anywhere in the codebase, we’ll be returning the value for <code class="highlighter-rouge">header</code>.</p>
+<p>Now when we refer to <code class="language-plaintext highlighter-rouge">article.title</code> anywhere in the codebase, we’ll be returning the value for <code class="language-plaintext highlighter-rouge">header</code>.</p>
 
 <h3 id="what-its-not-for">What it’s Not For…</h3>
 <p>As per <a href="https://stackoverflow.com/a/39836732">this stack overflow post</a>, I discovered that I had been using this incorrectly to make handy aliases for relationships between models. Yikes. This meant:</p>
@@ -97,7 +101,7 @@
   <li>I was not able to test these relationship associations in model specs &lt;– Double yikes. Big red flag there.</li>
 </ul>
 
-<p>In this example, we want to rename our <code class="highlighter-rouge">User</code> model’s relationship with <code class="highlighter-rouge">posts</code> to <code class="highlighter-rouge">articles</code>:</p>
+<p>In this example, we want to rename our <code class="language-plaintext highlighter-rouge">User</code> model’s relationship with <code class="language-plaintext highlighter-rouge">posts</code> to <code class="language-plaintext highlighter-rouge">articles</code>:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span>
   <span class="c1"># Wrong way</span>
   <span class="n">has_many</span> <span class="ss">:posts</span>

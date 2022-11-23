@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -100,7 +104,7 @@
 
 <h3 id="the-encoder">The Encoder</h3>
 
-<p>Here’s my original <code class="highlighter-rouge">encode</code> method. For the sake of simplicity in explaining procs, this encoder does not handle wrapping the alphabet for letters exceeding “z”.</p>
+<p>Here’s my original <code class="language-plaintext highlighter-rouge">encode</code> method. For the sake of simplicity in explaining procs, this encoder does not handle wrapping the alphabet for letters exceeding “z”.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">ALPHABET</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'a'</span><span class="o">..</span><span class="s1">'z'</span><span class="p">).</span><span class="nf">to_a</span>
 
@@ -124,7 +128,7 @@
 
 <h3 id="the-decoder">The Decoder</h3>
 
-<p>After writing the encoder, I realized that the only difference between the process of encoding and decoding was the use of <code class="highlighter-rouge">+</code> or <code class="highlighter-rouge">-</code>. Instead of creating a nearly identical <code class="highlighter-rouge">decode</code> method, I decided to extract the encode/decode logic out into their own methods and leave the rest of the process in a method called <code class="highlighter-rouge">processor</code>.</p>
+<p>After writing the encoder, I realized that the only difference between the process of encoding and decoding was the use of <code class="language-plaintext highlighter-rouge">+</code> or <code class="language-plaintext highlighter-rouge">-</code>. Instead of creating a nearly identical <code class="language-plaintext highlighter-rouge">decode</code> method, I decided to extract the encode/decode logic out into their own methods and leave the rest of the process in a method called <code class="language-plaintext highlighter-rouge">processor</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
   <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
@@ -152,12 +156,12 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Then I realized that in order for the encode/decode methods to work, they’ll have to access the value of the <code class="highlighter-rouge">letter</code> iterator happening in the <code class="highlighter-rouge">message.chars.each do |letter|...</code> block inside the <code class="highlighter-rouge">processor</code> method. Yikes. <em>So how do you do that?</em></p>
+<p>Then I realized that in order for the encode/decode methods to work, they’ll have to access the value of the <code class="language-plaintext highlighter-rouge">letter</code> iterator happening in the <code class="language-plaintext highlighter-rouge">message.chars.each do |letter|...</code> block inside the <code class="language-plaintext highlighter-rouge">processor</code> method. Yikes. <em>So how do you do that?</em></p>
 
 <p><em>Procs! Tada! I found my own completely non-contrived use for a proc. At last.</em> Here’s how it plays out:</p>
 
 <h3 id="incorporating-the-proc-logic">Incorporating the proc logic</h3>
-<p>I created a new proc for both the <code class="highlighter-rouge">encode</code> and <code class="highlighter-rouge">decode</code> methods:</p>
+<p>I created a new proc for both the <code class="language-plaintext highlighter-rouge">encode</code> and <code class="language-plaintext highlighter-rouge">decode</code> methods:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
   <span class="nb">proc</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="c1">#...</span>
@@ -170,20 +174,20 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>And then passed the proc into the <code class="highlighter-rouge">processor</code> method as an argument.</p>
+<p>And then passed the proc into the <code class="language-plaintext highlighter-rouge">processor</code> method as an argument.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
   <span class="c1"># ...</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>I needed the proc inside the <code class="highlighter-rouge">each</code> loop to:</p>
+<p>I needed the proc inside the <code class="language-plaintext highlighter-rouge">each</code> loop to:</p>
 <ol>
   <li>take the value of the current message input letter</li>
-  <li>get the index of where it is stored in the <code class="highlighter-rouge">ALPHABET</code> array</li>
+  <li>get the index of where it is stored in the <code class="language-plaintext highlighter-rouge">ALPHABET</code> array</li>
   <li>add the offset value (3) to that index</li>
   <li>return the new index number for the encoded letter
-So the <code class="highlighter-rouge">encode</code> and <code class="highlighter-rouge">decode</code> methods with their procs look like this:</li>
+So the <code class="language-plaintext highlighter-rouge">encode</code> and <code class="language-plaintext highlighter-rouge">decode</code> methods with their procs look like this:</li>
 </ol>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
@@ -197,7 +201,7 @@ So the <code class="highlighter-rouge">encode</code> and <code class="highlighte
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The new <code class="highlighter-rouge">processor</code> method takes the proc and <code class="highlighter-rouge">.call()</code>s it along with a <code class="highlighter-rouge">letter</code> argument for each letter of the input message inside the <code class="highlighter-rouge">each</code> loop. That new index is then used to get the value of the new letter from the <code class="highlighter-rouge">ALPHABET</code> array and then the new letter is pushed into the <code class="highlighter-rouge">output</code> array.</p>
+<p>The new <code class="language-plaintext highlighter-rouge">processor</code> method takes the proc and <code class="language-plaintext highlighter-rouge">.call()</code>s it along with a <code class="language-plaintext highlighter-rouge">letter</code> argument for each letter of the input message inside the <code class="language-plaintext highlighter-rouge">each</code> loop. That new index is then used to get the value of the new letter from the <code class="language-plaintext highlighter-rouge">ALPHABET</code> array and then the new letter is pushed into the <code class="language-plaintext highlighter-rouge">output</code> array.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">adjusted_index_proc</span><span class="p">)</span>
   <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,13 +67,13 @@
   </header>
 
   <article class="post-content">
-    <p>I have the <a href="https://github.com/atom/whitespace"><code class="highlighter-rouge">whitespaces</code> package</a> installed in Atom, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how to disable whitespace trimming for <code class="highlighter-rouge">slim</code> files:</p>
+    <p>I have the <a href="https://github.com/atom/whitespace"><code class="language-plaintext highlighter-rouge">whitespaces</code> package</a> installed in Atom, which I love because it trims unnecessary trailing whitespaces from the ends of each line. This is fantastic for <em>most</em> file types I encounter. However, it causes problems in <code class="language-plaintext highlighter-rouge">slim</code> because sometimes you actually need a trailing whitespace. This is how to disable whitespace trimming for <code class="language-plaintext highlighter-rouge">slim</code> files:</p>
 
-<p>Open <code class="highlighter-rouge">config.cson</code> via the Atom menu: <code class="highlighter-rouge">Atom &gt; Config</code></p>
+<p>Open <code class="language-plaintext highlighter-rouge">config.cson</code> via the Atom menu: <code class="language-plaintext highlighter-rouge">Atom &gt; Config</code></p>
 
 <p>You’ll see a bunch of stuff like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
   autosave:
     enabled: true
   core:
@@ -82,9 +86,9 @@
     telemetryConsent: "limited"
 </code></pre></div></div>
 
-<p>At the bottom of the file, outside of the <code class="highlighter-rouge">"*"</code> namespace, create a scope of <code class="highlighter-rouge">.slim.text</code> and turn off <code class="highlighter-rouge">removeTrailingWhitespace</code> inside of it, like this:</p>
+<p>At the bottom of the file, outside of the <code class="language-plaintext highlighter-rouge">"*"</code> namespace, create a scope of <code class="language-plaintext highlighter-rouge">.slim.text</code> and turn off <code class="language-plaintext highlighter-rouge">removeTrailingWhitespace</code> inside of it, like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"*":
   autosave:
     enabled: true
     ...

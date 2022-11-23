@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -71,15 +75,15 @@
   <p>Action Cable seamlessly integrates WebSockets with the rest of your Rails application. It allows for real-time features to be written in Ruby in the same style and form as the rest of your Rails application, while still being performant and scalable. It’s a full-stack offering that provides both a client-side JavaScript framework and a server-side Ruby framework. You have access to your full domain model written with Active Record or your ORM of choice.</p>
 </blockquote>
 
-<p>As a personal challenge, I built an app that tracks the status of vehicles on a car lot. It pushes updates to users’ browsers via Action Cable when the <code class="highlighter-rouge">status_id</code> field of a car changes. It works both for browser-initiated and console-initiated updates. Normally in an app, the browser-initiated updates would suffice, but I wanted to go the extra mile. In the case of <a href="https://en.wikipedia.org/wiki/Extract,_transform,_load">ETL</a>-style database updates, there wouldn’t be a user sending changes from the DOM to the controller. I needed my app to be able to response with Action Cable even if the database were being updated in some other way.</p>
+<p>As a personal challenge, I built an app that tracks the status of vehicles on a car lot. It pushes updates to users’ browsers via Action Cable when the <code class="language-plaintext highlighter-rouge">status_id</code> field of a car changes. It works both for browser-initiated and console-initiated updates. Normally in an app, the browser-initiated updates would suffice, but I wanted to go the extra mile. In the case of <a href="https://en.wikipedia.org/wiki/Extract,_transform,_load">ETL</a>-style database updates, there wouldn’t be a user sending changes from the DOM to the controller. I needed my app to be able to response with Action Cable even if the database were being updated in some other way.</p>
 
 <h2 id="the-rules-for-my-challenge">The Rules for My Challenge</h2>
 
 <ul>
   <li>When a DOM user updates a car’s status via the browser, they get the normal Rails notice and all other users get a jQuery alert via Action Cable.</li>
   <li>If an update happens via the console, all users get an alert via Action Cable.</li>
-  <li>Only send an alert when the <code class="highlighter-rouge">car.status_id</code> field is updated</li>
-  <li>Do <em>not</em> send an alert when a <code class="highlighter-rouge">Car</code> record is created</li>
+  <li>Only send an alert when the <code class="language-plaintext highlighter-rouge">car.status_id</code> field is updated</li>
+  <li>Do <em>not</em> send an alert when a <code class="language-plaintext highlighter-rouge">Car</code> record is created</li>
 </ul>
 
 <h3 id="the-app-stats">The App Stats</h3>
@@ -102,7 +106,7 @@
 
 <h3 id="the-action-cable-channel">The Action Cable Channel</h3>
 
-<p>Action Cable needs a channel for objects to subscribe to, so we set up a <code class="highlighter-rouge">status_notifications_channel</code> for our specific car status-related notifications.</p>
+<p>Action Cable needs a channel for objects to subscribe to, so we set up a <code class="language-plaintext highlighter-rouge">status_notifications_channel</code> for our specific car status-related notifications.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/channels/status_notifications_channel.rb</span>
 
@@ -115,7 +119,7 @@
 
 <h3 id="the-cars-controller">The Cars Controller</h3>
 
-<p>At some point, we need to initiate a broadcast and it <em>seems</em> like the <code class="highlighter-rouge">cars_controller</code> would be a good place for that. But knowing when and what to broadcast is not the <code class="highlighter-rouge">cars_controller</code>’s job. All it cares about is passing data between the car views and data source. So we give it an object that already knows the broadcasting info, which lets the controller stick to its normal duties.</p>
+<p>At some point, we need to initiate a broadcast and it <em>seems</em> like the <code class="language-plaintext highlighter-rouge">cars_controller</code> would be a good place for that. But knowing when and what to broadcast is not the <code class="language-plaintext highlighter-rouge">cars_controller</code>’s job. All it cares about is passing data between the car views and data source. So we give it an object that already knows the broadcasting info, which lets the controller stick to its normal duties.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/cars_controller.rb</span>
 
@@ -138,7 +142,7 @@
 
 <h3 id="the-broadcasting-class">The Broadcasting Class</h3>
 
-<p>The <code class="highlighter-rouge">CarWithBroadcast</code> class holds the what/when logic of broadcasting a car’s status. So we give it a <code class="highlighter-rouge">@car</code> and let it initiate a broadcast to the <code class="highlighter-rouge">status_notifications_channel</code>.</p>
+<p>The <code class="language-plaintext highlighter-rouge">CarWithBroadcast</code> class holds the what/when logic of broadcasting a car’s status. So we give it a <code class="language-plaintext highlighter-rouge">@car</code> and let it initiate a broadcast to the <code class="language-plaintext highlighter-rouge">status_notifications_channel</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/car_with_broadcast.rb</span>
 
@@ -164,7 +168,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">Car</code> class knows how it wants to talk about itself in a broadcast. Hence the <code class="highlighter-rouge">car.to_broadcast</code> above.</p>
+<p>The <code class="language-plaintext highlighter-rouge">Car</code> class knows how it wants to talk about itself in a broadcast. Hence the <code class="language-plaintext highlighter-rouge">car.to_broadcast</code> above.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/car.rb</span>
 
@@ -186,7 +190,7 @@
 
 <h3 id="the-alert-coffee-script">The Alert Coffee Script</h3>
 
-<p>When the <code class="highlighter-rouge">status_notifications_channel</code> receives the broadcast data, we use Coffee Script and jQuery to insert the HTML for the alert message.</p>
+<p>When the <code class="language-plaintext highlighter-rouge">status_notifications_channel</code> receives the broadcast data, we use Coffee Script and jQuery to insert the HTML for the alert message.</p>
 
 <div class="language-coffeescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/assets/javascripts/channels/status_notifications.coffee</span>
 
@@ -208,7 +212,7 @@
 <h4 id="from-the-dom">From the DOM</h4>
 
 <ul>
-  <li>Go to <code class="highlighter-rouge">localhost:3000</code> in 2 browser windows, the second one as an incognito window.</li>
+  <li>Go to <code class="language-plaintext highlighter-rouge">localhost:3000</code> in 2 browser windows, the second one as an incognito window.</li>
   <li>Edit &amp; Save a car via the web interface.</li>
   <li>See the normal notice in User 1’s browser and the alert message in User 2’s browser. Clear the alerts.</li>
 </ul>
@@ -226,18 +230,18 @@
 
 <h2 id="why-didnt-you">Why Didn’t You…?</h2>
 
-<p>So why not use an <code class="highlighter-rouge">after_update</code> callback in the <code class="highlighter-rouge">Car</code> model instead of creating the <code class="highlighter-rouge">CarWithBroadcast</code> class? With a model callback, we’re inextricably tied to having a broadcast happen <em>every</em> time a <code class="highlighter-rouge">car</code> object is updated. The <code class="highlighter-rouge">CarWithBroadcast</code> class gives us the flexibility to choose where and when we want to broadcast.</p>
+<p>So why not use an <code class="language-plaintext highlighter-rouge">after_update</code> callback in the <code class="language-plaintext highlighter-rouge">Car</code> model instead of creating the <code class="language-plaintext highlighter-rouge">CarWithBroadcast</code> class? With a model callback, we’re inextricably tied to having a broadcast happen <em>every</em> time a <code class="language-plaintext highlighter-rouge">car</code> object is updated. The <code class="language-plaintext highlighter-rouge">CarWithBroadcast</code> class gives us the flexibility to choose where and when we want to broadcast.</p>
 
-<p>For example, updating a <code class="highlighter-rouge">car</code> in the console like this does not produce the alert,</p>
+<p>For example, updating a <code class="language-plaintext highlighter-rouge">car</code> in the console like this does not produce the alert,</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># rails console</span>
 
 <span class="no">Car</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">update!</span><span class="p">(</span><span class="ss">status_id: </span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>and that makes for a better user experience if you need to make changes to the production database and you don’t need users to witness the whole process. If we had used <code class="highlighter-rouge">after_update</code> the broadcast would have been sent – and possibly without our realizing it.</p>
+<p>and that makes for a better user experience if you need to make changes to the production database and you don’t need users to witness the whole process. If we had used <code class="language-plaintext highlighter-rouge">after_update</code> the broadcast would have been sent – and possibly without our realizing it.</p>
 
-<p>The <code class="highlighter-rouge">CarWithBroadcast</code> class is not a <em>perfect</em> solution. It feels a little clunky and the naming seems a touch off. But it’s the solution for right now and when the code grows, a better name and purpose may reveal itself.</p>
+<p>The <code class="language-plaintext highlighter-rouge">CarWithBroadcast</code> class is not a <em>perfect</em> solution. It feels a little clunky and the naming seems a touch off. But it’s the solution for right now and when the code grows, a better name and purpose may reveal itself.</p>
 
   </article>
 

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -69,7 +73,7 @@
 
 <p>Before that command line app became <a href="http://modernmystic.herokuapp.com/">the web app it is today</a>, I had to picture how it would look on the screen. My goal with the app was to have a web page with 3 random cards on it, each card position having its own meaning. I called that a spread and it looks something like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1            Position 2              Position 3
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Position 1            Position 2              Position 3
         Me             The Other Person        The Relationship
      _________            _________              ___________
     |         |          |         |            |           |
@@ -82,7 +86,7 @@
     ambition, focus"      visionary"           practicality"
 </code></pre></div></div>
 
-<p>So I made a <code class="highlighter-rouge">SpreadController</code> controller. I wasn’t really sure what a controller <em>did</em> exactly, but I knew it made pages. I also knew I wanted my app to have 3 different types of spreads, so I made 3 different <code class="highlighter-rouge">spread</code> methods and I called them: <code class="highlighter-rouge">spread1</code>, <code class="highlighter-rouge">spread2</code>, and <code class="highlighter-rouge">spread3</code>.</p>
+<p>So I made a <code class="language-plaintext highlighter-rouge">SpreadController</code> controller. I wasn’t really sure what a controller <em>did</em> exactly, but I knew it made pages. I also knew I wanted my app to have 3 different types of spreads, so I made 3 different <code class="language-plaintext highlighter-rouge">spread</code> methods and I called them: <code class="language-plaintext highlighter-rouge">spread1</code>, <code class="language-plaintext highlighter-rouge">spread2</code>, and <code class="language-plaintext highlighter-rouge">spread3</code>.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SpreadController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
@@ -124,11 +128,11 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>I did this exact same thing for 4 cards in <code class="highlighter-rouge">spread2</code> and 8 cards in <code class="highlighter-rouge">spread3</code>. It worked and there were no bugs! In fact, it felt like I used <em>all</em> of my Ruby knowledge at once in these controller actions. This was my final project in my class and I got to share it with my classmates. I was proud of this accomplishment. Hooray for total n00b me!</p>
+<p>I did this exact same thing for 4 cards in <code class="language-plaintext highlighter-rouge">spread2</code> and 8 cards in <code class="language-plaintext highlighter-rouge">spread3</code>. It worked and there were no bugs! In fact, it felt like I used <em>all</em> of my Ruby knowledge at once in these controller actions. This was my final project in my class and I got to share it with my classmates. I was proud of this accomplishment. Hooray for total n00b me!</p>
 
 <h2 id="the-first-refactor">The First Refactor</h2>
 
-<p>About a year later, I came back to the project to see if there was anything to refactor. I decided this controller could use some work. I had a much better understanding of how controllers work and how the router and controller work together. I wanted pretty urls like <code class="highlighter-rouge">/readings/relationship</code>. So I renamed my controller to <code class="highlighter-rouge">ReadingsController</code> and renamed my methods as well. I also condensed all of that hoisting, eaching, and pushing into 1 line for each method.</p>
+<p>About a year later, I came back to the project to see if there was anything to refactor. I decided this controller could use some work. I had a much better understanding of how controllers work and how the router and controller work together. I wanted pretty urls like <code class="language-plaintext highlighter-rouge">/readings/relationship</code>. So I renamed my controller to <code class="language-plaintext highlighter-rouge">ReadingsController</code> and renamed my methods as well. I also condensed all of that hoisting, eaching, and pushing into 1 line for each method.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
@@ -152,7 +156,7 @@
 
 <p>That felt like a really tidy refactor! My controller was much skinnier and the methods made more sense to read.</p>
 
-<p>Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for <em>each card on the page</em>. And I was extracting data from the <code class="highlighter-rouge">@cards</code> array using the index number to insert it into custom text about the reading. So card 1’s name was <code class="highlighter-rouge">@cards[0].name</code>, and card 2’s name was <code class="highlighter-rouge">@cards[1].name</code>, etc. Building that 8-card reading was a lot of work, I’ll tell you!</p>
+<p>Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for <em>each card on the page</em>. And I was extracting data from the <code class="language-plaintext highlighter-rouge">@cards</code> array using the index number to insert it into custom text about the reading. So card 1’s name was <code class="language-plaintext highlighter-rouge">@cards[0].name</code>, and card 2’s name was <code class="language-plaintext highlighter-rouge">@cards[1].name</code>, etc. Building that 8-card reading was a lot of work, I’ll tell you!</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- Multiply this code by as many cards as there are on a page.
      That's a lot of hard-coded HTML. --&gt;</span>
@@ -179,8 +183,8 @@
 <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
   <span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
 
-    <span class="nx">$</span><span class="p">(</span><span class="s2">"#firstcard"</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">"click"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">$</span><span class="p">(</span><span class="s1">'.firstcard-hidden'</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">"display"</span><span class="p">,</span> <span class="s2">"block"</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="dl">"</span><span class="s2">#firstcard</span><span class="dl">"</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">click</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.firstcard-hidden</span><span class="dl">'</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="dl">"</span><span class="s2">display</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">block</span><span class="dl">"</span><span class="p">);</span>
     <span class="p">});</span>
   <span class="p">});</span>
 <span class="nt">&lt;/script&gt;</span>
@@ -192,9 +196,9 @@
 
 <p>About a year later, it was time to face that problem. I needed to make this app scalable. I wanted to be able to make a bunch of new readings on a whim AND I wanted those readings each to have as many cards as necessary in them. Remembering the labor involved in my previous 8-card reading, I wanted a 10-card reading to require as little code as a 1-card reading, and I wanted an admin section in which to build these readings.</p>
 
-<p>The current setup was no longer sustainable. It was time to restructure. I needed more models. I needed more object concepts. My schema grew from just a <code class="highlighter-rouge">cards</code> table to one that included:</p>
+<p>The current setup was no longer sustainable. It was time to restructure. I needed more models. I needed more object concepts. My schema grew from just a <code class="language-plaintext highlighter-rouge">cards</code> table to one that included:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cards
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cards
 - name
 - keywords
 - image_file
@@ -210,7 +214,7 @@ reading_positions
 - meaning
 </code></pre></div></div>
 
-<p>And now my <code class="highlighter-rouge">ReadingsController</code> finally became RESTful with proper <code class="highlighter-rouge">show</code> and <code class="highlighter-rouge">index</code> actions instead of custom actions.</p>
+<p>And now my <code class="language-plaintext highlighter-rouge">ReadingsController</code> finally became RESTful with proper <code class="language-plaintext highlighter-rouge">show</code> and <code class="language-plaintext highlighter-rouge">index</code> actions instead of custom actions.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="o">...</span>
@@ -229,7 +233,7 @@ reading_positions
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>That is a <em>much</em> skinnier controller than where I started. More importantly, it was following the principles of <a href="https://codeplanet.io/principles-good-restful-api-design/">RESTful routing</a> and <a href="http://www.poodr.com/">OOP</a>, and the <a href="http://guides.rubyonrails.org/action_controller_overview.html">conventions of Rails controllers</a>. It also enabled me to handle my HTML and jQuery iteratively from inside an <code class="highlighter-rouge">each</code> loop.</p>
+<p>That is a <em>much</em> skinnier controller than where I started. More importantly, it was following the principles of <a href="https://codeplanet.io/principles-good-restful-api-design/">RESTful routing</a> and <a href="http://www.poodr.com/">OOP</a>, and the <a href="http://guides.rubyonrails.org/action_controller_overview.html">conventions of Rails controllers</a>. It also enabled me to handle my HTML and jQuery iteratively from inside an <code class="language-plaintext highlighter-rouge">each</code> loop.</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;%</span> <span class="vi">@positioned_cards</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">position</span><span class="p">,</span> <span class="n">card</span><span class="o">|</span> <span class="cp">%&gt;</span>
   <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'positioned_card'</span><span class="p">,</span> <span class="ss">position: </span><span class="n">position</span><span class="p">,</span> <span class="ss">card: </span><span class="n">card</span> <span class="cp">%&gt;</span>
@@ -238,7 +242,7 @@ reading_positions
 
 <h2 id="and-it-will-keep-on-changing">And it will keep on changing…</h2>
 
-<p>I have to be honest. Though this refactor happened months ago, as I was writing this post, I just moved all of my <code class="highlighter-rouge">positioned_card</code> code into the partial you see mentioned above. It had been living on the show page, directly inside the <code class="highlighter-rouge">each</code> loop.</p>
+<p>I have to be honest. Though this refactor happened months ago, as I was writing this post, I just moved all of my <code class="language-plaintext highlighter-rouge">positioned_card</code> code into the partial you see mentioned above. It had been living on the show page, directly inside the <code class="language-plaintext highlighter-rouge">each</code> loop.</p>
 
 <p>Which brings me to my point that this codebase will keep changing as the scope of the project changes and as my skillset changes. And I think that’s pretty neat.</p>
 

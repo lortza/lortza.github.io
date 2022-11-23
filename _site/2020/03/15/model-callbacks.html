@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -64,9 +68,9 @@
 
   <article class="post-content">
     <h3 id="what-its-for">What it’s For…</h3>
-<p>Processing some input on the same model. Let’s say we have a <code class="highlighter-rouge">User</code> model with a <code class="highlighter-rouge">full_name</code> field. Since this is user-entered data and we can’t control what a user enters, we may end up getting a bunch of extra white spaces that will cause problems in our queries.</p>
+<p>Processing some input on the same model. Let’s say we have a <code class="language-plaintext highlighter-rouge">User</code> model with a <code class="language-plaintext highlighter-rouge">full_name</code> field. Since this is user-entered data and we can’t control what a user enters, we may end up getting a bunch of extra white spaces that will cause problems in our queries.</p>
 
-<p>In this case, we could use a <code class="highlighter-rouge">before_save</code> callback to process that data before it is saved to our database.</p>
+<p>In this case, we could use a <code class="language-plaintext highlighter-rouge">before_save</code> callback to process that data before it is saved to our database.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/user.rb</span>
 
@@ -84,7 +88,7 @@
 <h3 id="what-its-not-for">What it’s Not For…</h3>
 <p>I’m not an expert and this can be hotly debated. So I’ll offer you <em>my opinion</em>. Callbacks are sneaky. Unlike other methods, they’re not necessarily easy to spot or predict. Using them makes it easy to get blindsided by surprise behavior and side effects.</p>
 
-<p>Recently, I wanted to build out some assets when a new user set up an account. I did the quick and easy thing first – I set up an <code class="highlighter-rouge">after_create</code> callback on my <code class="highlighter-rouge">User</code> model like so:</p>
+<p>Recently, I wanted to build out some assets when a new user set up an account. I did the quick and easy thing first – I set up an <code class="language-plaintext highlighter-rouge">after_create</code> callback on my <code class="language-plaintext highlighter-rouge">User</code> model like so:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Don't do this</span>
 
@@ -99,10 +103,10 @@
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
-<p>This approach was handy to play with my proof of concept, but the moment I started testing, I ran into trouble. All of my tests were broken because <em>every time</em> I created a <code class="highlighter-rouge">user</code> in any of my specs (which is a <em>lot</em> of times), I was also building out all of these extra assets and all of my original test assumptions were now wrong (but in reality, they weren’t). It slowed down my test suite and just made unit tests clunky. My <code class="highlighter-rouge">User</code> model now had to know about these <em>other</em> models that were part of this building method. Plus, <em>SURPRISE!</em>. An unsuspecting developer (a.k.a. future me) would need to know this in advance to work in this test suite. I considered overriding callbacks for the test environment, but that was a red flag, so I chose another path forward.</p>
+<p>This approach was handy to play with my proof of concept, but the moment I started testing, I ran into trouble. All of my tests were broken because <em>every time</em> I created a <code class="language-plaintext highlighter-rouge">user</code> in any of my specs (which is a <em>lot</em> of times), I was also building out all of these extra assets and all of my original test assumptions were now wrong (but in reality, they weren’t). It slowed down my test suite and just made unit tests clunky. My <code class="language-plaintext highlighter-rouge">User</code> model now had to know about these <em>other</em> models that were part of this building method. Plus, <em>SURPRISE!</em>. An unsuspecting developer (a.k.a. future me) would need to know this in advance to work in this test suite. I considered overriding callbacks for the test environment, but that was a red flag, so I chose another path forward.</p>
 
 <h3 id="a-better-way">A Better Way</h3>
-<p>To solve my problem, I made a service object &amp; method that handled building out all of the assets. Then, I called that method from the <code class="highlighter-rouge">registrations_controller</code> so these assets would be built out only once and only when a user registered for an account. This kept my <code class="highlighter-rouge">User</code> unit tests clean and separated those asset-building concerns into their own unit-testable service object.</p>
+<p>To solve my problem, I made a service object &amp; method that handled building out all of the assets. Then, I called that method from the <code class="language-plaintext highlighter-rouge">registrations_controller</code> so these assets would be built out only once and only when a user registered for an account. This kept my <code class="language-plaintext highlighter-rouge">User</code> unit tests clean and separated those asset-building concerns into their own unit-testable service object.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/registrations_controller.rb</span>
 

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -80,7 +84,7 @@
 </code></pre></div></div>
 <p>(Yes, I use Bootstrap in my personal projects. I am aware of how dreadfully uncool I am.)</p>
 
-<p>Rubocop was telling me that it didn’t like me making a second decision about what should return a value of <code class="highlighter-rouge">'warning'</code>.</p>
+<p>Rubocop was telling me that it didn’t like me making a second decision about what should return a value of <code class="language-plaintext highlighter-rouge">'warning'</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Offenses:
 
@@ -89,7 +93,7 @@ app/helpers/application_helper.rb:18:5: W: Lint/DuplicateBranch: Duplicate branc
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 </code></pre></div></div>
 
-<p>Well aw jeeeeze Rubocop, I want more than one input to return <code class="highlighter-rouge">'warning'</code>! So I googled it and :oh-snap: you <em>can</em> include multiple options in that <code class="highlighter-rouge">when</code> block: <a href="https://stackoverflow.com/a/10197397" target="_blank">https://stackoverflow.com/a/10197397</a>. As it turns out, in a case statement, a <code class="highlighter-rouge">,</code> is the equivalent of a <code class="highlighter-rouge">||</code> in an <code class="highlighter-rouge">if</code> statement. Neat!</p>
+<p>Well aw jeeeeze Rubocop, I want more than one input to return <code class="language-plaintext highlighter-rouge">'warning'</code>! So I googled it and :oh-snap: you <em>can</em> include multiple options in that <code class="language-plaintext highlighter-rouge">when</code> block: <a href="https://stackoverflow.com/a/10197397" target="_blank">https://stackoverflow.com/a/10197397</a>. As it turns out, in a case statement, a <code class="language-plaintext highlighter-rouge">,</code> is the equivalent of a <code class="language-plaintext highlighter-rouge">||</code> in an <code class="language-plaintext highlighter-rouge">if</code> statement. Neat!</p>
 
 <p>So I tucked that little nugget of knowledge in my back pocket for later and updated my case statement:</p>
 

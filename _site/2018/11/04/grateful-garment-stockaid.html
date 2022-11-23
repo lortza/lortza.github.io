@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -75,20 +79,20 @@
 <p>Go to the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/Gemfile">Gemfile</a> to find out which version of Ruby it requires. As of November 4, 2018, it is ruby 2.4.4, so that is the example I will use in this post. It is subject to change, so please check the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/Gemfile">Gemfile</a>.</p>
 
 <p>Using <a href="https://rvm.io/">RVM</a>, check which ruby versions you have installed. (<a href="https://rvm.io/rvm/install">Installing RVM</a>)</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm list
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm list
 </code></pre></div></div>
-<p>If you don’t see <code class="highlighter-rouge">ruby-2.4.4</code> in your list, run:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm install "ruby-2.4.4"
+<p>If you don’t see <code class="language-plaintext highlighter-rouge">ruby-2.4.4</code> in your list, run:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm install "ruby-2.4.4"
 </code></pre></div></div>
 <p>Tell RVM to use Ruby 2.4.4</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm use ruby-2.4.4
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm use ruby-2.4.4
 </code></pre></div></div>
 
 <h3 id="postgres-setup">Postgres Setup</h3>
 <p>Check to see if you have PostgreSQL installed:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres -V
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres -V
 </code></pre></div></div>
-<p>You should see something like: <code class="highlighter-rouge">postgres (PostgreSQL) 10.5</code>. If you don’t, <a href="https://www.codementor.io/engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb">here’s how to install it on mac</a></p>
+<p>You should see something like: <code class="language-plaintext highlighter-rouge">postgres (PostgreSQL) 10.5</code>. If you don’t, <a href="https://www.codementor.io/engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb">here’s how to install it on mac</a></p>
 
 <h2 id="set-up-the-project">Set up the Project</h2>
 
@@ -98,47 +102,47 @@
 
 <p>3) Once forked into your own GitHub account, click the “Clone or Download” button.</p>
 
-<p>4) Copy that url and then on your command line, <code class="highlighter-rouge">git clone</code> it to you local machine:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:your-github-username/StockAid.git
+<p>4) Copy that url and then on your command line, <code class="language-plaintext highlighter-rouge">git clone</code> it to you local machine:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:your-github-username/StockAid.git
 </code></pre></div></div>
-<p>5) Set up a remote called <code class="highlighter-rouge">upstream</code> so you’ll be able to easily keep your <code class="highlighter-rouge">master</code> branch up to date with theirs</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add upstream https://github.com/GratefulGarmentProject/StockAid
+<p>5) Set up a remote called <code class="language-plaintext highlighter-rouge">upstream</code> so you’ll be able to easily keep your <code class="language-plaintext highlighter-rouge">master</code> branch up to date with theirs</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add upstream https://github.com/GratefulGarmentProject/StockAid
 </code></pre></div></div>
-<p>6) <code class="highlighter-rouge">cd</code> into the project directory and bundle all of the gems:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd StockAid
+<p>6) <code class="language-plaintext highlighter-rouge">cd</code> into the project directory and bundle all of the gems:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd StockAid
 bundle-install
 </code></pre></div></div>
 <p>7) The project has a CLI tool to help you set up your environmental variables. Run it with:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rake setup
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rake setup
 </code></pre></div></div>
 <p>You will be asked a number of questions in the command line. Here is how you can answer them:</p>
 
 <ul>
   <li>
-    <p><strong>What is your site’s name?</strong>: <code class="highlighter-rouge">stockaid</code></p>
+    <p><strong>What is your site’s name?</strong>: <code class="language-plaintext highlighter-rouge">stockaid</code></p>
   </li>
   <li>
     <p><strong>What is your postgres username?</strong>
-You will need to enter your postgres username here. If you don’t know it, it is most likely the same as your main computer username. You can check it in a separate terminal tab by running <code class="highlighter-rouge">psql</code>. This will get you into your postgres database interface. The database that you are currently connected to will appear as the prompt and it is usually also reflective of your postgres username. Make note of that as your username and then quit postgres with <code class="highlighter-rouge">\q</code>.</p>
+You will need to enter your postgres username here. If you don’t know it, it is most likely the same as your main computer username. You can check it in a separate terminal tab by running <code class="language-plaintext highlighter-rouge">psql</code>. This will get you into your postgres database interface. The database that you are currently connected to will appear as the prompt and it is usually also reflective of your postgres username. Make note of that as your username and then quit postgres with <code class="language-plaintext highlighter-rouge">\q</code>.</p>
   </li>
   <li><strong>What is your postgres password?</strong>
 I seem to get away with just entering my postgres username in here again</li>
-  <li><strong>What is your Google API key?</strong>: <code class="highlighter-rouge">12345</code></li>
+  <li><strong>What is your Google API key?</strong>: <code class="language-plaintext highlighter-rouge">12345</code></li>
 </ul>
 
-<p>8) Run <code class="highlighter-rouge">rvm .</code>
+<p>8) Run <code class="language-plaintext highlighter-rouge">rvm .</code>
 9) Set up your database:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rake db:create
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rake db:create
   rake db:migrate
   rake db:seed
 </code></pre></div></div>
 <p>10) Start the rails server</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rails s
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rails s
 </code></pre></div></div>
-<p>11) Browse to <code class="highlighter-rouge">http://localhost:3000/</code></p>
+<p>11) Browse to <code class="language-plaintext highlighter-rouge">http://localhost:3000/</code></p>
 
 <p>12) Check the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/db/seeds.rb#L32">seeds file</a> to find a sample user profile that you’d like to use to sign in. I often use:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>email: "site_admin@fake.com"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>email: "site_admin@fake.com"
 password: "Password1"
 </code></pre></div></div>
 
@@ -147,11 +151,11 @@ password: "Password1"
 
 <p>The project’s features and bugs are being managed with a Waffle Board: <a href="https://waffle.io/GratefulGarmentProject/StockAid">https://waffle.io/GratefulGarmentProject/StockAid</a></p>
 
-<p>1) Look in the <code class="highlighter-rouge">Backlog</code> column to find an issue you’d like to work on.</p>
+<p>1) Look in the <code class="language-plaintext highlighter-rouge">Backlog</code> column to find an issue you’d like to work on.</p>
 
-<p>2) Assign yourself to that ticket and move it from <code class="highlighter-rouge">Backlog</code> to <code class="highlighter-rouge">In Progress</code>.</p>
+<p>2) Assign yourself to that ticket and move it from <code class="language-plaintext highlighter-rouge">Backlog</code> to <code class="language-plaintext highlighter-rouge">In Progress</code>.</p>
 
-<p>3) Pull the latest version of the <code class="highlighter-rouge">master</code> branch to your machine.</p>
+<p>3) Pull the latest version of the <code class="language-plaintext highlighter-rouge">master</code> branch to your machine.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># get access to the branches from the upstream remote</span>
 git fetch upstream
@@ -163,8 +167,8 @@ git checkout master
 git merge upstream/master
 </code></pre></div></div>
 
-<p>4)  From your <code class="highlighter-rouge">master</code> branch, create a new feature branch for the ticket you want to work on. Name it with the issue number followed by description. Ex:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout -b 612-reports-downloaded-into-csv
+<p>4)  From your <code class="language-plaintext highlighter-rouge">master</code> branch, create a new feature branch for the ticket you want to work on. Name it with the issue number followed by description. Ex:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout -b 612-reports-downloaded-into-csv
 </code></pre></div></div>
 <p>5) Be sure to write tests for any work you contribute. The project uses <a href="http://rspec.info/">rspec</a>.</p>
 
@@ -182,11 +186,11 @@ git merge upstream/master
 <h4 id="if-you-find-that-you-cant-actually-do-this-work-in-a-reasonable-amount-of-time">If you find that you can’t actually do this work in a reasonable amount of time:</h4>
 <ul>
   <li>Unassign yourself from the Waffle ticket</li>
-  <li>Move it back to the <code class="highlighter-rouge">Backlog</code> column</li>
+  <li>Move it back to the <code class="language-plaintext highlighter-rouge">Backlog</code> column</li>
 </ul>
 
 <h2 id="submitting-your-contribution">Submitting Your Contribution</h2>
-<p>Once you’ve completed your work on your local machine, run the test suite (<code class="highlighter-rouge">rspec</code>) and RuboCop (<code class="highlighter-rouge">rubocop</code>) to make sure all of the test are passing and your code matches their style guide.</p>
+<p>Once you’ve completed your work on your local machine, run the test suite (<code class="language-plaintext highlighter-rouge">rspec</code>) and RuboCop (<code class="language-plaintext highlighter-rouge">rubocop</code>) to make sure all of the test are passing and your code matches their style guide.</p>
 
 <p>Push your feature branch to GitHub and click “Submit a pull request”. Set up a request from your repo’s feature branch to the main repo’s master branch. In the body of your pull request, be sure to include details about what the problem was and how you solved it. Screenshots are very helpful.</p>
 

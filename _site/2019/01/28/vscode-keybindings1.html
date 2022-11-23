@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,25 +67,25 @@
   </header>
 
   <article class="post-content">
-    <p>I’ve been using Atom for a while, but I figured I’d give Visual Studio Code a shot. For the past few weeks, I’ve used it here and there, chipping away at customizing it to my liking. In Atom, I love to nudge blocks of code up and down, one line at a time using <code class="highlighter-rouge">ctrl</code>+<code class="highlighter-rouge">cmd</code>+<code class="highlighter-rouge">[arrow]</code>. This is not a default behavior in VS Code, so I set up those keybindings myself. Here’s how I did it:</p>
+    <p>I’ve been using Atom for a while, but I figured I’d give Visual Studio Code a shot. For the past few weeks, I’ve used it here and there, chipping away at customizing it to my liking. In Atom, I love to nudge blocks of code up and down, one line at a time using <code class="language-plaintext highlighter-rouge">ctrl</code>+<code class="language-plaintext highlighter-rouge">cmd</code>+<code class="language-plaintext highlighter-rouge">[arrow]</code>. This is not a default behavior in VS Code, so I set up those keybindings myself. Here’s how I did it:</p>
 
 <h1 id="1-open-the-keybindings-file">1. Open the Keybindings file</h1>
-<p>Open the keybindings file via <code class="highlighter-rouge">File</code> &gt; <code class="highlighter-rouge">Preferences</code> &gt; <code class="highlighter-rouge">Keyboard Shortcuts</code>.</p>
+<p>Open the keybindings file via <code class="language-plaintext highlighter-rouge">File</code> &gt; <code class="language-plaintext highlighter-rouge">Preferences</code> &gt; <code class="language-plaintext highlighter-rouge">Keyboard Shortcuts</code>.</p>
 
 <h1 id="2-add-these-keybindings">2. Add these Keybindings</h1>
-<p>In your <code class="highlighter-rouge">keybindings.json</code>, add the following binding hashes into the array. Remember to add commas between them:</p>
+<p>In your <code class="language-plaintext highlighter-rouge">keybindings.json</code>, add the following binding hashes into the array. Remember to add commas between them:</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// keybindings.json</span>
 <span class="p">[</span>
  <span class="p">{</span>
-   <span class="s2">"key"</span><span class="p">:</span> <span class="s2">"ctrl+cmd+up"</span><span class="p">,</span>
-   <span class="s2">"command"</span><span class="p">:</span> <span class="s2">"editor.action.moveLinesUpAction"</span><span class="p">,</span>
-   <span class="s2">"when"</span><span class="p">:</span> <span class="s2">"editorTextFocus"</span>
+   <span class="dl">"</span><span class="s2">key</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">ctrl+cmd+up</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">command</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editor.action.moveLinesUpAction</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">when</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editorTextFocus</span><span class="dl">"</span>
  <span class="p">},</span>
  <span class="p">{</span>
-   <span class="s2">"key"</span><span class="p">:</span> <span class="s2">"ctrl+cmd+down"</span><span class="p">,</span>
-   <span class="s2">"command"</span><span class="p">:</span> <span class="s2">"editor.action.moveLinesDownAction"</span><span class="p">,</span>
-   <span class="s2">"when"</span><span class="p">:</span> <span class="s2">"editorTextFocus"</span>
+   <span class="dl">"</span><span class="s2">key</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">ctrl+cmd+down</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">command</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editor.action.moveLinesDownAction</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">when</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editorTextFocus</span><span class="dl">"</span>
  <span class="p">}</span>
 <span class="p">]</span>
 </code></pre></div></div>

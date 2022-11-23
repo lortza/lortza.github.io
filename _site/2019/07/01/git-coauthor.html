@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,12 +67,12 @@
   </header>
 
   <article class="post-content">
-    <p>I recently learned about git’s <a href="https://help.github.com/en/articles/creating-a-commit-with-multiple-authors"><code class="highlighter-rouge">Co-authored-by</code> feature</a> which allows you to add collaborators to your commits. I do a lot of pairing at work and I find that using this feature makes it easy to ensure my non-keyboard pairing contributors are getting the credit they deserve. Also, it can be handy to see all authors of a commit to help create context for why code changes happen.</p>
+    <p>I recently learned about git’s <a href="https://help.github.com/en/articles/creating-a-commit-with-multiple-authors"><code class="language-plaintext highlighter-rouge">Co-authored-by</code> feature</a> which allows you to add collaborators to your commits. I do a lot of pairing at work and I find that using this feature makes it easy to ensure my non-keyboard pairing contributors are getting the credit they deserve. Also, it can be handy to see all authors of a commit to help create context for why code changes happen.</p>
 
 <h2 id="the-manual-way">The Manual Way</h2>
 <p>Adding a co-author is pretty straightforward. You leave your commit message closing quote open, add 2 hard returns, then add their git credentials like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git commit -m "Refactor usability tests.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git commit -m "Refactor usability tests.
 &gt;
 &gt;
 Co-authored-by: Your Coworker &lt;y_coworker@example.com&gt;
@@ -79,7 +83,7 @@ Co-authored-by: Your Other Coworker &lt;y_o_coworker@example.com&gt;"
 
 <h2 id="the-script-way">The Script Way</h2>
 <h3 id="step-1-write-the-script">Step 1: Write the Script</h3>
-<p>I created a file called <code class="highlighter-rouge">git_coauthor.rb</code> and stored it in a directory I called <code class="highlighter-rouge">~/ruby_scripts/</code>. I also make sure to comment in the script so that I remember how to use it and what it outputs.</p>
+<p>I created a file called <code class="language-plaintext highlighter-rouge">git_coauthor.rb</code> and stored it in a directory I called <code class="language-plaintext highlighter-rouge">~/ruby_scripts/</code>. I also make sure to comment in the script so that I remember how to use it and what it outputs.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ~/ruby_scripts/git_coauthor.rb</span>
 
@@ -112,7 +116,7 @@ Co-authored-by: Your Other Coworker &lt;y_o_coworker@example.com&gt;"
 <p>It is janky? yaaaaassss. Does it work beautifully? yaaaaassss.</p>
 
 <h3 id="step-2-make-an-alias">Step 2: Make an Alias</h3>
-<p>I then call this file by running <code class="highlighter-rouge">ruby</code> and the filename via an alias that I saved in my <code class="highlighter-rouge">.bash_profile</code>.</p>
+<p>I then call this file by running <code class="language-plaintext highlighter-rouge">ruby</code> and the filename via an alias that I saved in my <code class="language-plaintext highlighter-rouge">.bash_profile</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ~/.bash_profile</span>
 
@@ -120,7 +124,7 @@ Co-authored-by: Your Other Coworker &lt;y_o_coworker@example.com&gt;"
 </code></pre></div></div>
 
 <h3 id="step-3-run-it">Step 3: Run It</h3>
-<p>Running the script is simple. After doing a <code class="highlighter-rouge">git add</code>, I run this instead of a <code class="highlighter-rouge">git commit -m ""</code>. The prompts walk me through adding a commit message and a list of collaborator names.</p>
+<p>Running the script is simple. After doing a <code class="language-plaintext highlighter-rouge">git add</code>, I run this instead of a <code class="language-plaintext highlighter-rouge">git commit -m ""</code>. The prompts walk me through adding a commit message and a list of collaborator names.</p>
 
 <p>The script writes the commit for me and when I push it to GitHub, I get to see this commit with all 3 of our faces next to it. Hooray! Sharing is caring!</p>
 

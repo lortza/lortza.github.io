@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,9 +67,9 @@
   </header>
 
   <article class="post-content">
-    <p>A data migration can fail but still end up in an “up” state. This is a problem because you’ll probably try to roll back that unsuccessful migration, but will fail because the logic in your <code class="highlighter-rouge">down</code> method most likely depends on the logic in your <code class="highlighter-rouge">up</code> method executing correctly.</p>
+    <p>A data migration can fail but still end up in an “up” state. This is a problem because you’ll probably try to roll back that unsuccessful migration, but will fail because the logic in your <code class="language-plaintext highlighter-rouge">down</code> method most likely depends on the logic in your <code class="language-plaintext highlighter-rouge">up</code> method executing correctly.</p>
 
-<p>Let’s say your <code class="highlighter-rouge">up</code> method is supposed to create a record and your <code class="highlighter-rouge">down</code> is supposed to undo that by deleting that record. In this case, your <code class="highlighter-rouge">down</code> would fail because it wouldn’t be able to find this record to be able to delete it – because it was not created succesfully in the first place.</p>
+<p>Let’s say your <code class="language-plaintext highlighter-rouge">up</code> method is supposed to create a record and your <code class="language-plaintext highlighter-rouge">down</code> is supposed to undo that by deleting that record. In this case, your <code class="language-plaintext highlighter-rouge">down</code> would fail because it wouldn’t be able to find this record to be able to delete it – because it was not created succesfully in the first place.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
   <span class="k">def</span> <span class="nf">up</span>
@@ -87,7 +91,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>A safer approach is to do a data check in the <code class="highlighter-rouge">up</code> migration that throws an exception if your expectations are not met. This will cause the <code class="highlighter-rouge">up</code> method to fail and the migration transaction to rollback, thus not trapping you in a broken state. For example:</p>
+<p>A safer approach is to do a data check in the <code class="language-plaintext highlighter-rouge">up</code> migration that throws an exception if your expectations are not met. This will cause the <code class="language-plaintext highlighter-rouge">up</code> method to fail and the migration transaction to rollback, thus not trapping you in a broken state. For example:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AddMittensToCats</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">[</span><span class="mf">6.0</span><span class="p">]</span>
   <span class="k">def</span> <span class="nf">up</span>
@@ -129,8 +133,8 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Now when you run your migrate command, if the data in your <code class="highlighter-rouge">up</code> didn’t execute properly, your command line will tell you:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*** DATA CHECK FAILED ***
+<p>Now when you run your migrate command, if the data in your <code class="language-plaintext highlighter-rouge">up</code> didn’t execute properly, your command line will tell you:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*** DATA CHECK FAILED ***
 This and following migrations have been rolled back
 </code></pre></div></div>
 <p>And you just saved yourself a big headache.</p>

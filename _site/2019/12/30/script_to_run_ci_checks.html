@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -66,28 +70,28 @@
     <p>I love having my CI service keep me in line by running a bunch of checks when I push a commit to my GitHub repo. However, sometimes I’d like to run them myself locally before pushing. Currently, I like to run RSpec and my Ruby and CSS linters. To make this easier, I created a script file in my project root directory that will run all of my CI checks for me locally. This is how I did it:</p>
 
 <h3 id="1-create-the-script-file">1. Create the script file</h3>
-<p>From inside the project root folder, create a new folder called <code class="highlighter-rouge">script</code> and a file called <code class="highlighter-rouge">run_ci_checks</code></p>
+<p>From inside the project root folder, create a new folder called <code class="language-plaintext highlighter-rouge">script</code> and a file called <code class="language-plaintext highlighter-rouge">run_ci_checks</code></p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Example:</span>
 my_project/script/run_ci_checks
 </code></pre></div></div>
 
 <p>In that file, add all of the CI checks you’d like to run. Mine looks like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/sh
 
-<span class="nb">echo</span> <span class="s1">'==== RUNNING RSPEC ====='</span>
-bundle <span class="nb">exec </span>rspec
+echo '==== RUNNING RSPEC ====='
+bundle exec rspec
 
-<span class="nb">echo</span> <span class="s1">'==== RUNNING RUBOCOP ====='</span>
-bundle <span class="nb">exec </span>rubocop
+echo '==== RUNNING RUBOCOP ====='
+bundle exec rubocop
 
-<span class="nb">echo</span> <span class="s1">'==== RUNNING CSS LINT ====='</span>
-bundle <span class="nb">exec </span>scss-lint app/assets/stylesheets/<span class="k">**</span>.scss
+echo '==== RUNNING CSS LINT ====='
+bundle exec scss-lint app/assets/stylesheets/**.scss
 
-<span class="nb">echo</span> <span class="s1">'DONE'</span>
+echo 'DONE'
 </code></pre></div></div>
 
 <h3 id="2-make-this-file-readable-from-the-command-line">2. Make this file readable from the command line</h3>
-<p>To make this file readable from the command line, from inside my new <code class="highlighter-rouge">/script</code> directory, I ran:</p>
+<p>To make this file readable from the command line, from inside my new <code class="language-plaintext highlighter-rouge">/script</code> directory, I ran:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> <span class="nt">-R</span> 777 ./
 </code></pre></div></div>
 
@@ -96,7 +100,7 @@ bundle <span class="nb">exec </span>scss-lint app/assets/stylesheets/<span class
 </code></pre></div></div>
 
 <h3 id="3-make-an-alias">3. Make an alias</h3>
-<p>Since my fingers are lazy and don’t like typing, I made an alias for this inside my <code class="highlighter-rouge">.bash_profile</code> then ran <code class="highlighter-rouge">source ~/.bash_profile</code> so my terminal was up to date:</p>
+<p>Since my fingers are lazy and don’t like typing, I made an alias for this inside my <code class="language-plaintext highlighter-rouge">.bash_profile</code> then ran <code class="language-plaintext highlighter-rouge">source ~/.bash_profile</code> so my terminal was up to date:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># open .bash_profile file from the command line with:</span>
 open ~/.bash_profile
 
@@ -107,7 +111,7 @@ open ~/.bash_profile
 <span class="nb">source</span> ~/.bash_profile
 </code></pre></div></div>
 
-<p>Now I can simply type my <code class="highlighter-rouge">lint</code> alias from inside my project root folder and this script will run all of my checks for me.</p>
+<p>Now I can simply type my <code class="language-plaintext highlighter-rouge">lint</code> alias from inside my project root folder and this script will run all of my checks for me.</p>
 
   </article>
 

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -64,7 +68,7 @@
 
   <article class="post-content">
     <h2 id="the-problem">The Problem</h2>
-<p>I recently ran into a problem where I wanted to search by a couple of different fields in my postgres database at the same time: a person’s <code class="highlighter-rouge">first_name</code> or <code class="highlighter-rouge">last_name</code> or <code class="highlighter-rouge">email</code>. The search term was coming in via a single form field that could contain data from any of those fields. The original query looked something like this:</p>
+<p>I recently ran into a problem where I wanted to search by a couple of different fields in my postgres database at the same time: a person’s <code class="language-plaintext highlighter-rouge">first_name</code> or <code class="language-plaintext highlighter-rouge">last_name</code> or <code class="language-plaintext highlighter-rouge">email</code>. The search term was coming in via a single form field that could contain data from any of those fields. The original query looked something like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Person</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="s1">'first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE'</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </code></pre></div></div>
@@ -78,7 +82,7 @@
   <li>last, first     &lt;– totally doesn’t work :(</li>
 </ul>
 
-<p>And to be honest, I really wasn’t into the idea of passing that same <code class="highlighter-rouge">%#{search_term}%"</code> argument three times in a row. It made the line long and hard to read.</p>
+<p>And to be honest, I really wasn’t into the idea of passing that same <code class="language-plaintext highlighter-rouge">%#{search_term}%"</code> argument three times in a row. It made the line long and hard to read.</p>
 
 <h2 id="the-solution">The Solution</h2>
 <p>The solution came in the form of postgres concatenation and some lessons I learned in <a href="http://millo.me/search-by-multiple-columns-in-active-record" target="_blank">this post</a>. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.</p>
@@ -88,7 +92,7 @@
 </code></pre></div></div>
 
 <p>Let’s say we have a person in our database with the following data:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>first_name: Julius
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>first_name: Julius
 last_name: Caesar
 email: jcaesar@hotmail.com
 </code></pre></div></div>
@@ -96,12 +100,12 @@ email: jcaesar@hotmail.com
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">concat_ws</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
 </code></pre></div></div>
 <p>The concatenated string would look like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Julius Caesar jcaesar@hotmail.com'
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Julius Caesar jcaesar@hotmail.com'
 </code></pre></div></div>
 <p>And now we’re comparing our search term only once to that single, concatenated string:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">where</span><span class="p">(</span><span class="s2">"concat_ws(' ', first_name, last_name, email) ILIKE ?"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_terms</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </code></pre></div></div>
-<p>Well that’s pretty swell. And it gets us a lot closer to fulfilling that last requirement of searching by <code class="highlighter-rouge">last, first</code>. To get over that last hump, I needed to strip a comma and then make a <code class="highlighter-rouge">first last first</code> sandwich in my concatenated string like this:</p>
+<p>Well that’s pretty swell. And it gets us a lot closer to fulfilling that last requirement of searching by <code class="language-plaintext highlighter-rouge">last, first</code>. To get over that last hump, I needed to strip a comma and then make a <code class="language-plaintext highlighter-rouge">first last first</code> sandwich in my concatenated string like this:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"concat_ws(' ', first_name, last_name, first_name, email)"</span>
 
 <span class="c1"># which looks like this</span>
@@ -133,7 +137,7 @@ email: jcaesar@hotmail.com
 </code></pre></div></div>
 
 <h3 id="caveat">Caveat</h3>
-<p>Concatenating like this removes the ability of the database to use any indexes that are not the primary key. So if our <code class="highlighter-rouge">last_name</code> field were indexed, we would lose those performance savings.</p>
+<p>Concatenating like this removes the ability of the database to use any indexes that are not the primary key. So if our <code class="language-plaintext highlighter-rouge">last_name</code> field were indexed, we would lose those performance savings.</p>
 
   </article>
 

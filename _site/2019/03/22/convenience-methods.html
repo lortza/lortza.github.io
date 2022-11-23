@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -67,7 +71,7 @@
 
 <p>I needed to write specs for a couple of methods that called two constants and two helper methods, and I found myself doing a bunch of brittle math inside of my specs. I don’t like finding myself doing math at all, and math that leads to brittle specs is double whammy of <em>nope</em>. The lightbulb in my head snapped on and I wrote a couple of convenience methods.</p>
 
-<p>In my <code class="highlighter-rouge">Plan</code> class, I have 2 constants. I call those constants in a couple of methods.</p>
+<p>In my <code class="language-plaintext highlighter-rouge">Plan</code> class, I have 2 constants. I call those constants in a couple of methods.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Plan</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
 
@@ -106,7 +110,7 @@
     <span class="n">expect</span><span class="p">(</span><span class="n">plan</span><span class="p">.</span><span class="nf">recommended_start_time</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span> <span class="n">a</span> <span class="n">time</span> <span class="n">that</span> <span class="n">is</span> <span class="no">Plan</span><span class="o">::</span><span class="no">EFFICIENCY_RATE</span> <span class="n">less</span> <span class="n">than</span> <span class="no">Plan</span><span class="o">::</span><span class="no">PREP_END_TIME</span> <span class="p">)</span>
   <span class="k">end</span>
 </code></pre></div></div>
-<p>This is hard to do. Currently, the <code class="highlighter-rouge">EFFICIENCY_RATE</code> value is 0.66. That makes for annoying math, plus it’s brittle to state that value explicitly in the test. So let’s make some shiny new convenience methods:</p>
+<p>This is hard to do. Currently, the <code class="language-plaintext highlighter-rouge">EFFICIENCY_RATE</code> value is 0.66. That makes for annoying math, plus it’s brittle to state that value explicitly in the test. So let’s make some shiny new convenience methods:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Plan</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
 
@@ -143,7 +147,7 @@
 <h3 id="on-to-the-specs">On to the specs!</h3>
 <p>Now we can turn to our good friend allow-to-receive-and-return (a.k.a <a href="https://relishapp.com/rspec/rspec-mocks/v/2-14/docs/method-stubs">method stubs</a>). When you have to test a method that depends on other methods, but you need those dependencies to return specific things, it can get tricky fast. Using allow-to-receive-and-return is great because you can just mock out those dependencies (or totally fake the unimportant parts) and get down to business truly isolating the method you want to test.</p>
 
-<p>Here, you’ll see that I’m setting values for the dependencies <code class="highlighter-rouge">total_time</code> and <code class="highlighter-rouge">efficiency_rate</code>, which used to be just the constant <code class="highlighter-rouge">EFFICIENCY_RATE</code>. And now I can do simple, predictable math to test my <code class="highlighter-rouge">estimated_time</code> method.</p>
+<p>Here, you’ll see that I’m setting values for the dependencies <code class="language-plaintext highlighter-rouge">total_time</code> and <code class="language-plaintext highlighter-rouge">efficiency_rate</code>, which used to be just the constant <code class="language-plaintext highlighter-rouge">EFFICIENCY_RATE</code>. And now I can do simple, predictable math to test my <code class="language-plaintext highlighter-rouge">estimated_time</code> method.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'#estimated_time'</span> <span class="k">do</span>
   <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>
@@ -168,7 +172,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>I’ve taken the same approach with this method by setting values for the dependencies <code class="highlighter-rouge">estimated_time</code> and <code class="highlighter-rouge">prep_end_time</code>, which used to be just the constant <code class="highlighter-rouge">PREP_END_TIME</code>. And now I can do simple, predictable math to test my <code class="highlighter-rouge">estimated_time</code> method.</p>
+<p>I’ve taken the same approach with this method by setting values for the dependencies <code class="language-plaintext highlighter-rouge">estimated_time</code> and <code class="language-plaintext highlighter-rouge">prep_end_time</code>, which used to be just the constant <code class="language-plaintext highlighter-rouge">PREP_END_TIME</code>. And now I can do simple, predictable math to test my <code class="language-plaintext highlighter-rouge">estimated_time</code> method.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'#recommended_start_time'</span> <span class="k">do</span>
   <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>

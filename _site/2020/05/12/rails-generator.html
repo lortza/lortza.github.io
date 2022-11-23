@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,7 +67,7 @@
   </header>
 
   <article class="post-content">
-    <p>For this example, I’m creating a generator that builds a file for Rails data migrations. It will behave very much like a Rails schema migration – which you may have run before like <code class="highlighter-rouge">rails generate migration your_migration_name</code>. I want to customize the my data migration generator template file with prompts to make data migrations easier.</p>
+    <p>For this example, I’m creating a generator that builds a file for Rails data migrations. It will behave very much like a Rails schema migration – which you may have run before like <code class="language-plaintext highlighter-rouge">rails generate migration your_migration_name</code>. I want to customize the my data migration generator template file with prompts to make data migrations easier.</p>
 
 <h3 id="what-i-want">What I Want</h3>
 <p>I’d like invoke this generator like this:</p>
@@ -71,7 +75,7 @@
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">exec </span>rails g data_migration add_movie_titles
 </code></pre></div></div>
 
-<p>This will create a new file called <code class="highlighter-rouge">db/migrate/20200512123509_add_movie_titles.rb</code>. When I open that file, I want it to look like this:</p>
+<p>This will create a new file called <code class="language-plaintext highlighter-rouge">db/migrate/20200512123509_add_movie_titles.rb</code>. When I open that file, I want it to look like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># frozen_string_literal: true</span>
 
@@ -106,9 +110,9 @@ bundle <span class="nb">exec </span>rails generate generator data_migration
 
 <p>Then,</p>
 <ol>
-  <li>delete the templates directory: <code class="highlighter-rouge">lib/generators/data_migration/templates</code></li>
-  <li>add a description to the USAGE file: <code class="highlighter-rouge">lib/generators/data_migration/USAGE</code></li>
-  <li>customize your generator file: <code class="highlighter-rouge">lib/generators/data_migration/data_migration_generator.rb</code></li>
+  <li>delete the templates directory: <code class="language-plaintext highlighter-rouge">lib/generators/data_migration/templates</code></li>
+  <li>add a description to the USAGE file: <code class="language-plaintext highlighter-rouge">lib/generators/data_migration/USAGE</code></li>
+  <li>customize your generator file: <code class="language-plaintext highlighter-rouge">lib/generators/data_migration/data_migration_generator.rb</code></li>
 </ol>
 
 <p>This is what the generated generator file looks like before customization:</p>
@@ -125,10 +129,10 @@ end
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">create_file</code> method takes 2 arguments: a <strong>destination filepath</strong> and a <strong>template</strong> in the form of a <a href="https://www.rubyguides.com/2018/11/ruby-heredoc/">HEREDOC</a> called <code class="highlighter-rouge">FILE</code>. Simplifying what we see above, it would look like this:</p>
+<p>The <code class="language-plaintext highlighter-rouge">create_file</code> method takes 2 arguments: a <strong>destination filepath</strong> and a <strong>template</strong> in the form of a <a href="https://www.rubyguides.com/2018/11/ruby-heredoc/">HEREDOC</a> called <code class="language-plaintext highlighter-rouge">FILE</code>. Simplifying what we see above, it would look like this:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">create_file</span><span class="p">(</span><span class="n">destination_filepath</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
 </code></pre></div></div>
-<p>Also, Rails gives us access to the <code class="highlighter-rouge">file_name</code> and <code class="highlighter-rouge">class_name</code> that we can use in our template.</p>
+<p>Also, Rails gives us access to the <code class="language-plaintext highlighter-rouge">file_name</code> and <code class="language-plaintext highlighter-rouge">class_name</code> that we can use in our template.</p>
 
 <p>My customized version looks like this:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/generators/data_migration/data_migration_generator.rb</span>

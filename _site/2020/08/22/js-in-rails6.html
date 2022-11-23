@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -68,14 +72,14 @@
 <p>As it turns out, the pack files and webpack weren’t what I needed. I needed to use Sprockets to access that Javascript. The post <a href="https://blog.capsens.eu/how-to-write-javascript-in-rails-6-webpacker-yarn-and-sprockets-cdf990387463">How to write Javascript in Rails 6 | Webpacker, Yarn and Sprockets
 </a> by Younes SERRAJ helped me to get there. Here is how I did it.</p>
 
-<p>Create a <code class="highlighter-rouge">/javascripts</code> directory where Sprockets (not webpack) can find it:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app
+<p>Create a <code class="language-plaintext highlighter-rouge">/javascripts</code> directory where Sprockets (not webpack) can find it:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app
 | assets
   | stylesheets
   | javascripts   &lt;-- here
 </code></pre></div></div>
 
-<p>Add this new directory to the <code class="highlighter-rouge">app/assets/config/manifest.js</code> file so it will be compiled:</p>
+<p>Add this new directory to the <code class="language-plaintext highlighter-rouge">app/assets/config/manifest.js</code> file so it will be compiled:</p>
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* app/assets/config/manifest.js */</span>
 
 <span class="c1">//= link_tree ../images</span>
@@ -91,10 +95,10 @@
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p>Load the contents of your Javascript file into the bottom of your <code class="highlighter-rouge">erb</code> file by using the <code class="highlighter-rouge">javascript_include_tag</code> (not the Webpacker <code class="highlighter-rouge">javascript_pack_tag</code>). Include a <code class="highlighter-rouge">&lt;script&gt;</code> tag below that. Call the Javascript function from inside that script block, passing in the Ruby data as an argument:</p>
+<p>Load the contents of your Javascript file into the bottom of your <code class="language-plaintext highlighter-rouge">erb</code> file by using the <code class="language-plaintext highlighter-rouge">javascript_include_tag</code> (not the Webpacker <code class="language-plaintext highlighter-rouge">javascript_pack_tag</code>). Include a <code class="language-plaintext highlighter-rouge">&lt;script&gt;</code> tag below that. Call the Javascript function from inside that script block, passing in the Ruby data as an argument:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/users/show.html.erb --&gt;</span>
 
-<span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">user</span><span class="err">.</span><span class="na">name</span> <span class="err">%</span><span class="nt">&gt;</span>'s Page<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">user.name</span> <span class="err">%</span><span class="nt">&gt;</span>'s Page<span class="nt">&lt;/h1&gt;</span>
 
 ...
 

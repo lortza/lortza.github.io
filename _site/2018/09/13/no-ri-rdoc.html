@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="https://docs.google.com/document/d/1peJT1VXwsU4kCggsM0BJ3imacaSrepRXJP0CovXOKMo/edit?usp=sharing" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -63,17 +67,17 @@
   </header>
 
   <article class="post-content">
-    <p>Every time I install Rails, I kick myself for forgetting to add the <code class="highlighter-rouge">--no-ri</code> and <code class="highlighter-rouge">--no-rdoc</code> flags like this:</p>
+    <p>Every time I install Rails, I kick myself for forgetting to add the <code class="language-plaintext highlighter-rouge">--no-ri</code> and <code class="language-plaintext highlighter-rouge">--no-rdoc</code> flags like this:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem <span class="nb">install </span>rails <span class="nt">-v</span> 5.2.0 <span class="nt">--no-ri</span> <span class="nt">--no-rdoc</span>
 </code></pre></div></div>
 <p>This results in a <em>lot</em> of documentation being installed, which takes a while. And frankly, I’m offline so rarely while working, that I really don’t need access to offline documentation.</p>
 
-<p>Today I decided to make this “no docs” setting global by adding <code class="highlighter-rouge">gem: --no-document</code> to my <code class="highlighter-rouge">.gemrc</code> file. Here’s how.</p>
+<p>Today I decided to make this “no docs” setting global by adding <code class="language-plaintext highlighter-rouge">gem: --no-document</code> to my <code class="language-plaintext highlighter-rouge">.gemrc</code> file. Here’s how.</p>
 
 <h3 id="open-the-gemrc-file">Open the .gemrc File</h3>
 
-<p>To open your <code class="highlighter-rouge">.gemrc</code> file in your default text editor, type this into the command line:</p>
+<p>To open your <code class="language-plaintext highlighter-rouge">.gemrc</code> file in your default text editor, type this into the command line:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>open ~/.gemrc
 </code></pre></div></div>
@@ -91,7 +95,7 @@
 
 <h3 id="insert-the-setting">Insert the Setting</h3>
 
-<p>Then insert <code class="highlighter-rouge">gem: --no-document</code> to the top of the file like this:</p>
+<p>Then insert <code class="language-plaintext highlighter-rouge">gem: --no-document</code> to the top of the file like this:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">---</span>
 gem: <span class="nt">--no-document</span>
