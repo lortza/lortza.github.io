@@ -67,7 +67,7 @@ permalink: /portfolio/
 
   <h2>Current Skills</h2>
 
-  <p class="section-explanation">Ruby, Rails, Rails API, Action Cable, Sinatra, Sass, CSS3, JavaScript, React.js, jQuery, Node.js, PHP, MySQL, PostgreSQL, SQLite, Git, GitHub, BitBucket, Heroku production apps, Firebase, Docker, Elixir, AWS S3, Jekyll, XML, Database Design, Product Design and Launch, and <a href="https://www.localflavormarketing.com/#portfolio" target="_blank">Graphic Design</a></p>
+  <p class="section-explanation">Ruby, Rails, Action Cable, Hotwire, RSpec & testing, CSS3, BEM & utility classes, JavaScript, React.js, Redux, jQuery, PostgreSQL, Git, GitHub, BitBucket, Heroku, Firebase, Jekyll, XML & JSON parsing, database design, product design and launch, copy editing, and graphic design</p>
 
   <h2>Open Source Contributions</h2>
 
@@ -86,7 +86,7 @@ permalink: /portfolio/
   </div><!-- open-source -->
 
 
-  <h2>How I Pursue Ongoing Learning</h2>
+  <!--<h2>How I Pursue Ongoing Learning</h2>
   <div class="center-column">
     <ul>
       <li>Weekly mentor sessions for code reviews</li>
@@ -102,7 +102,7 @@ permalink: /portfolio/
       <li>Annual tech conferences (Rails Conf, Ruby Conf, etc.)</li>
       <li>Incorporation of CodeClimate, Reek, and Rubocop automated code reviews for feedback</li>
     </ul>
-  </div>
+  </div>-->
 
   <h2>Published Works</h2>
 
