@@ -12,7 +12,7 @@ sup { font-size: 8px; }
 /* Set theme color *************************/
 /************************************************************/
 /** Basic styling */
-body { font-family: Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; font-weight: 100; color: #666; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; }
+body { font-family: Helvetica, sans-serif; font-size: 16px; line-height: 1.5em; color: #666; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; }
 
 /** Set `margin-bottom` to maintain vertical rhythm */
 p, blockquote, pre, ul, ol, dl, figure, .highlight { margin-bottom: 20px; }
@@ -35,11 +35,11 @@ li > ul, li > ol { margin-bottom: 0; }
 h1, h2, h3, h4, h5, h6 { font-weight: 100; line-height: 110%; margin-top: 0.5em; margin-bottom: 0.25em; }
 
 /** Links */
-a { color: #B7D12A; text-decoration: none; /* &:visited { color: darken($brand-color, 15%); } */ }
+a { color: #2698BA; text-decoration: none; /* &:visited { color: darken($brand-color, 15%); } */ }
 
 a:hover { color: #B509AC; text-decoration: none; }
 
-article a { color: #B7D12A; font-weight: 100; }
+article a { color: #2698BA; font-weight: 100; }
 
 article a:hover { text-decoration: none; }
 
@@ -83,7 +83,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 .header-bar { text-transform: lowercase; left: 0px; top: 0px; position: relative; font-size: 20px; display: block; opacity: 0.75; width: 100%; text-align: center; padding-top: 25px; line-height: 3em; z-index: 25; /* img */ }
 
-.header-bar h1 { color: #B7D12A; font-size: 75px; margin-top: 0px; margin-bottom: 0px; }
+.header-bar h1 { color: #2698BA; font-size: 75px; margin-top: 0px; margin-bottom: 0px; }
 
 .header-bar h2 { font-size: 25px; }
 
@@ -99,7 +99,7 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 .paginationicon { font-size: 50px; }
 
-.paginationicon a { color: #B7D12A; }
+.paginationicon a { color: #2698BA; }
 
 /** Page content   ********************************************************** */
 .page-content { padding: 100px 0; /* VERTICAL PADDING FOR TITLE ON EVERY PAGE */ }
@@ -145,7 +145,7 @@ img.about-pic { margin-right: 1.25em; }
 
 @media screen and (max-width: 800px) { .post-content h4 { font-size: 18px; } }
 
-.post-content img { min-width: 100px; max-width: 700px; }
+.post-content img { width: 100%; min-width: 100px; max-width: 700px; }
 
 .post-content .post-image { width: 700px; }
 
@@ -160,7 +160,7 @@ img.about-pic { margin-right: 1.25em; }
 
 .home-links a { margin: 0px 10px; color: #B509AC; }
 
-.home-links a:hover { color: #B7D12A; }
+.home-links a:hover { color: #2698BA; }
 
 /* .home-links */
 /** Poem formatting ********************************************/
@@ -223,7 +223,7 @@ img.about-pic { margin-right: 1.25em; }
 
 .thumbnail a { float: left; position: relative; height: 220px; overflow: hidden; }
 
-.thumbnail a span { display: none; position: absolute; z-index: 5; top: 0; left: 0; bottom: 0; right: 0; background: #B7D12A; opacity: 0.9; filter: alpha(opacity=90); color: white; padding: 40px; text-align: center; }
+.thumbnail a span { display: none; position: absolute; z-index: 5; top: 0; left: 0; bottom: 0; right: 0; background: #2698BA; opacity: 0.9; filter: alpha(opacity=90); color: white; padding: 40px; text-align: center; }
 
 .thumbnail a:hover span { display: block; }
 
@@ -236,13 +236,13 @@ img.about-pic { margin-right: 1.25em; }
 
 .portfolio-show .link-buttons { /* a */ }
 
-.portfolio-show .link-buttons a { color: #B7D12A; border: 1px solid #B7D12A; padding: 2px 10px; border-radius: 5px; margin: 0 5px; /* &:hover */ }
+.portfolio-show .link-buttons a { color: #2698BA; border: 1px solid #2698BA; padding: 2px 10px; border-radius: 5px; margin: 0 5px; /* &:hover */ }
 
-.portfolio-show .link-buttons a:hover { background-color: #B7D12A; color: white; }
+.portfolio-show .link-buttons a:hover { background-color: #2698BA; color: white; }
 
 /* portfolio-show */
 /** Portfolio pages ********************************************************** */
-.blankbox { background: #B7D12A; }
+.blankbox { background: #2698BA; }
 
 .img_row { height: 275px; width: 100%; overflow: hidden; box-sizing: border-box; padding: 5px; }
 
