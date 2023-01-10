@@ -95,7 +95,10 @@ figcaption {
     font-size: $small-font-size;
 }
 
-
+.table-caption {
+  font-size: $small-font-size;
+  color: $caption_color;
+}
 
 /**
  * Lists
@@ -117,7 +120,7 @@ li {
  * Headings
  */
  h1, h2, h3, h4, h5, h6 {
-    font-weight: 100;
+    font-weight: 400;
     line-height: 110%;
     margin-top: 0.5em;
     margin-bottom: 0.25em;

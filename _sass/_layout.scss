@@ -205,6 +205,8 @@ img.about-pic {
     width: 700px;
   }
   .post-image-small {
+    display: block;
+    margin: 0 auto;
     height: auto;
     width: $tile-size;
   }

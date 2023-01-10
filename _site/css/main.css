@@ -26,13 +26,15 @@ figure > img { display: block; }
 
 figcaption { font-size: 14px; }
 
+.table-caption { font-size: 14px; color: #aaa; }
+
 /** Lists */
 ul, ol { margin-left: 50px; }
 
 li > ul, li > ol { margin-bottom: 0; }
 
 /** Headings */
-h1, h2, h3, h4, h5, h6 { font-weight: 100; line-height: 110%; margin-top: 0.5em; margin-bottom: 0.25em; }
+h1, h2, h3, h4, h5, h6 { font-weight: 400; line-height: 110%; margin-top: 0.5em; margin-bottom: 0.25em; }
 
 /** Links */
 a { color: #2698BA; text-decoration: none; /* &:visited { color: darken($brand-color, 15%); } */ }
@@ -149,7 +151,7 @@ img.about-pic { margin-right: 1.25em; }
 
 .post-content .post-image { width: 700px; }
 
-.post-content .post-image-small { height: auto; width: 220px; }
+.post-content .post-image-small { display: block; margin: 0 auto; height: auto; width: 220px; }
 
 .post-meta { font-size: 14px; color: #828282; margin-bottom: 0px; }
 

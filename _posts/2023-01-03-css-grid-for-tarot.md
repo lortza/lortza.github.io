@@ -1,18 +1,19 @@
 ---
 layout: post
-title:  "CSS display grid put the magic back into my layout"
+title:  "CSS display grid put the magic 🪄 back into my layout"
 date:   2023-01-03
 published: true
 ---
 
 Back in 2018 I [wrote this post]({% post_url 2018-05-20-favorite-refactor-tarot-controller %}) about a refactor on my tarot-card-reading app that allowed me to scale the quantity of readings and quantity of cards per reading, but the cost was that I lost the ability to place the cards exactly where I wanted them to go on the screen.
 
-### A 4-card reading _before_ the refactor: 😊
-<img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread"/>
+| Before Scaling | After Scaling |
+|---|---|
+| <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread"/> | <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="tarot cards in a row" title="tarot cards in a row"/> |
+| <span class='table-caption'>This 4-card spread had individually hand-coded, curated, artisenal positioning HTML</span> | <span class='table-caption'> This 8-card spread just spits any number of cards out into generic non-customized columns and rows.</span> |
 
-### An 8-card reading _after_ the refactor: 😔
-<img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="tarot cards in a row" title="tarot cards in a row"/>
-
+<br>
+<br>
 I was fine with that sacrifice at the time, but as time passed and folks familiar with real tarot spreads came to play with my app, I found myself apologizing for the boring rows. Fortunately, the last person I was apologizing to is a long time friend and fellow developer who gave me mentorship years ago. He knew exactly how to give me the kick in the butt I needed to stop telling this silly tale of defeat and just fix the dang thing.
 
 I started the process by outlining my requirements for making realistic-looking tarot spreads appear on the screen:
@@ -86,7 +87,9 @@ Card 4:
 Now I can pull these attributes dynamically when the reading is rendered.
 
 ## Requirement: Shrink or grow the size of the spread area to fit any size reading
-Some readings spreads have 1 card, some have 10. Depending on the shape of a particular spread, we may need a 1x1 grid, 3x3, 10x10 etc. I wanted to render this grid size dynamically too. So just like with the card `reading_positions`, I added some columns to the `readings` table to store this data (`grid_columns` and `grid_rows`) and manually filled in this data. The data for our reading spread looks something like this for a 3x3 grid:
+Some readings spreads have 1 card, some have 10. Depending on the shape of a particular spread, we may need a 1x1 grid, 3x3, 4x4 etc. At first, I just made a big grid because why not make one big enough to hold the biggest reading spread? As it turns out, when I made the grid the static size of 100x100, there was a _lot_ of extra blank space on the page where the empty grid cells were. Ooof.
+
+In order to overcome that, I decided to render this grid size dynamically like I did with the individual card positions. I added some fields to the `readings` database table (`grid_columns` and `grid_rows`) to store this data and then I manually filled in this data for each reading. The data for our reading spread looks something like this for a 3x3 grid:
 
 ```
 grid_columns: 3
@@ -104,7 +107,7 @@ Currently our grid class is completely committed to being a 3x3 grid, always.
 }
 ```
 
-How do I shove a dynamic value into it so it can be whatever size I want? Well, I didn't. I built a library of utility classes for grids of sizes up to 5x5 that I can swap out on the fly by breaking the original `grid-container`'s properties into different classes. Here is a sample of some of the classes I wrote -- these are the classes that are relevant to our exapmle grid:
+How did I shove a dynamic value into this class so it can be whatever size I want? Well, I didn't. After reviewing the shapes of all of my reading spreads, I built a library of utility classes for grids of sizes up to the largest grid I needed. Now I can swap out classes on the fly by breaking the original `grid-container`'s properties into different classes. Here is a sample of some of the classes I wrote -- these are the classes that are relevant to our example grid:
 
 ```css
 .grid-container {
@@ -135,9 +138,18 @@ And then by applying multiple classes in the HTML, we're able to achieve the sam
 
 ```
 
-We can take that same approach for positioning the cards dynamically.
+I took that same approach for positioning the cards dynamically.
 
 ```css
+/* Instead of a single class for each possible position on the grid... */
+.card-1 {
+  grid-row-start: 1;
+  grid-row-end: 2;
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+/* I made classes for each column and row address on the grid */
 .grid-col-2 {
   grid-column-start: 2;
   grid-column-end: 3;
@@ -149,7 +161,8 @@ We can take that same approach for positioning the cards dynamically.
 }
 ```
 
-And this is the whole enchilada as it appears in the HTML:
+Again, applying multiple classes to the cards achieves the same result as having the single class with all of the properties in it. This is the whole enchilada as it appears in the HTML:
+
 ```html
 <!-- How it looks in plain HTML -->
 <div class="grid-container grid-container-3-col grid-container-3-row">
@@ -253,8 +266,12 @@ Putting it all together, we now have the classic Celtic Cross spread!
 
 ## In Summary
 
-| Before grid | After grid |
+| Before Grid | After Grid |
 |--|--|
 | <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="8-card spread in a row" title="8-card spread in a row"/> | <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_after.png" alt="8-card spread in grid" title="8-card spread in grid"/> |
+| <span class="table-caption">The cards are rendered into generic non-customized columns and rows.</span> | <span class="table-caption">The cards are positioned exactly where I want them to be.</span> |
 
+<br>
 This refactor was satisfying because it solved a problem that I had stopped thinking about solutions for a long time ago. It took some creating problem solving to figure it out and the results are so pretty! I'm glad to have gotten the inspiration I needed to finally endeavor on this long-overdue refactor.
+
+Of course, my next feature set is already in my mind: when I use the admin interface to create a new reading spread and fill in the grid size and card locations, I have to picture a grid in my mind (complete with half rows and half columns 😱) or use a whiteboard to figure it out. I would love to be able to click on a square in a grid on the form page or drag and drop a card to a grid location. Right now, that's outside of the limits of my desire to do this work 😂 and I don't see myself building a whole lot more spreads right now, so we'll see how many more years it takes for me to get around to implementing that admin feature.
