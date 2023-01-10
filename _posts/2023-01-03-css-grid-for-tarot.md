@@ -5,19 +5,17 @@ date:   2023-01-03
 published: true
 ---
 
-Back in 2018 I [wrote this post]({% post_url 2018-05-20-favorite-refactor-tarot-controller %}) about a refactor on my tarot-card-reading app that allowed me to scale the quantity of readings and cards per reading, but the cost was that I lost the ability to place the cards exactly where I wanted them to go on the screen.
+Back in 2018 I [wrote this post]({% post_url 2018-05-20-favorite-refactor-tarot-controller %}) about a refactor on my tarot-card-reading app that allowed me to scale the quantity of readings and quantity of cards per reading, but the cost was that I lost the ability to place the cards exactly where I wanted them to go on the screen.
 
 ### A 4-card reading _before_ the refactor: 😊
 <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread"/>
 
-### A 3-card reading _after_ the refactor: 😔
-<img class="post-image-small" src="{{ site.baseurl }}/img/posts/2018-05-20_tarot_cards_in_row.png" alt="tarot cards in a row" title="tarot cards in a row"/>
+### An 8-card reading _after_ the refactor: 😔
+<img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="tarot cards in a row" title="tarot cards in a row"/>
 
-I was fine with that sacrifice at the time, and yet as time passed and folks familiar with real tarot spreads came to play with my app, I found myself apologizing for the boring rows. Fortunately, the last person I was apologizing to is a long time friend and fellow developer who gave me mentorship years ago. He knew exactly how to give me the kick in the butt I needed to stop telling this silly tale of defeat and just fix the dang thing.
+I was fine with that sacrifice at the time, but as time passed and folks familiar with real tarot spreads came to play with my app, I found myself apologizing for the boring rows. Fortunately, the last person I was apologizing to is a long time friend and fellow developer who gave me mentorship years ago. He knew exactly how to give me the kick in the butt I needed to stop telling this silly tale of defeat and just fix the dang thing.
 
-The time had come: I was no longer fine with it.
-
-I outlined my goals for making realistic-looking tarot spreads appear on the screen:
+I started the process by outlining my requirements for making realistic-looking tarot spreads appear on the screen:
 1. Position a specific card to an exact location on a on the screen
 1. Store the card's exact positioning information somewhere so it can be rendered dynamically (spoiler: I put it in the database)
 1. Shrink or grow the size of the spread area to fit any size reading (a 1-card reading does not need a 10x10 grid)
@@ -26,14 +24,14 @@ I outlined my goals for making realistic-looking tarot spreads appear on the scr
 1. BONUS: Overlap certain cards' rows or columns so that the layout actually looks like a real tarot spread
 
 ## CSS Grid for the Win
-In my original implementation, I was using Twitter Bootstrap's column & row system -- which was limited in its capability. And now I know that there is some hot CSS technology that lets you put `<div>`s exactly where you want them on a screen. We're talking about `display: grid;` and it's been supported by all browsers since 2017. As I spend most of my time in the back end of Rails apps (which you probably wouldn't guess by the front-end nature of my posts), I needed a refresher before digging into `grid`. I watched (and highly recommend) Brad Traversy's [CSS Grid Layout Crash Course](https://www.youtube.com/watch?v=jV8B24rSN5o&ab_channel=TraversyMedias). You’ll see in that video that there are different ways to use grid.
+In my original implementation, I was using [Twitter Bootstrap](https://getbootstrap.com/)'s column & row system -- which was limited in its capability. And now I know that there is some hot CSS technology that lets you put `<div>`s exactly where you want them on a screen. We're talking about `display: grid;` and it's been supported by all browsers since 2017. As I spend most of my time in the back end of Rails apps (which you probably wouldn't guess by the front-end nature of my posts), I needed a refresher before digging into `grid`. I watched (and highly recommend) Brad Traversy's [CSS Grid Layout Crash Course](https://www.youtube.com/watch?v=jV8B24rSN5o&ab_channel=TraversyMedias). You’ll see in that video that there are different ways to use grid.
 <!-- <iframe width="420" height="315" src="https://www.youtube.com/embed/jV8B24rSN5o"></iframe> -->
 
 This is the spread I'll use to demonstrate how I used grid to lay out my cards:
 
 <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread"/>
 
-## Goal: Position a specific card to an exact cell on a grid
+## Requirement: Position a specific card to an exact cell on a grid
 Before I get fancy, I like to hard-code whatever I'm doing to make sure it works, so that's the approach I'll take here. First we need a grid. This tarot spread has 3 columns and 3 rows, so we need a grid with 3 columns and 3 rows.
 
 ```css
@@ -65,7 +63,7 @@ Here's how it plays out in the HTML:
 
 Repeat this process for each of the 4 cards. Once I have proof-of-concept, I can move on to making it dynamic.
 
-## Goal: Store the card's exact positioning information somewhere so it can be rendered dynamically
+## Requirement: Store the card's exact positioning information somewhere so it can be rendered dynamically
 Storing knowledge about a database object in the HTML doesn't scale, so it's better to store it in the database along with the appropriate object. To do that, I added a `grid_column` and a `grid_row` field to the `reading_positions` table in my database in order to store each card's position in a given reading. After the database table was updated, I manually added the data to each `reading_position` (aka card in the spread). The data for our example cards in this spread looks something like this:
 
 <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple_gridlines.png" alt="simple tarot spread with gridlines" title="simple tarot spread with gridlines"/>
@@ -87,7 +85,7 @@ Card 4:
 
 Now I can pull these attributes dynamically when the reading is rendered.
 
-## Goal: Shrink or grow the size of the spread area to fit any size reading
+## Requirement: Shrink or grow the size of the spread area to fit any size reading
 Some readings spreads have 1 card, some have 10. Depending on the shape of a particular spread, we may need a 1x1 grid, 3x3, 10x10 etc. I wanted to render this grid size dynamically too. So just like with the card `reading_positions`, I added some columns to the `readings` table to store this data (`grid_columns` and `grid_rows`) and manually filled in this data. The data for our reading spread looks something like this for a 3x3 grid:
 
 ```
@@ -95,7 +93,7 @@ grid_columns: 3
 grid_rows: 3
 ```
 
-## Goal: Make flexible, reusable classes for building grids and positioning cards on the fly
+## Requirement: Make flexible, reusable classes for building grids and positioning cards on the fly
 Currently our grid class is completely committed to being a 3x3 grid, always.
 
 ```css
@@ -190,31 +188,7 @@ And that's the stuff right there! 🎉 I'm still able to easily loop over the ca
 ## Bonus Round!
 The hard work is over, so now it's time to flex a little to get those final touches in place.
 
-### Cross a card (rotate 90 degrees) over another card
-Okay, now in this spread, notice how card #1 is crossing behind card #2?
-<img src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_crossed_cards.png" alt="example of crossed cards" title="example of crossed cards"/>
-
-The first part is easy. When entering the positioning data, I simply assigned cards #1 and #2 to the same place in the grid.
-
-```
-Card 1:
-  grid_column: 2, grid_row: 1
-
-Card 2:
-  grid_column: 2, grid_row: 1
-```
-
-Voila. But then I needed to add another column to my `reading_positions` table to indicate if a card in this position should be crossed. I tossed a boolean called `crossed` in there and was good to go. As for the styling, I wrote a class that rotated the card and rendered that class in the HTML if the `card.crossed?` was true.
-
-```css
-.crossed {
-  -ms-transform: rotate(90deg); // IE 9
-  -webkit-transform: rotate(90deg); // Safari 3-8
-  transform: rotate(90deg);
-}
-```
-
-### Overlap certain cards' rows or columns so that the layout actually looks like a real tarot spread
+### Bonus Requirement: Overlap certain cards' rows or columns so that the layout actually looks like a real tarot spread
 Now for the tricky part. How do you get cards to look overlapped like this if a grid is made of columns and rows that don't overlap?
 <img src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_complex.png" alt="grid with half positions" title="grid with half positions"/>
 
@@ -248,8 +222,39 @@ Card 7:
 
 And then I built out the corresponding CSS classes to match.
 
+### Bonus Requirement: Cross a card (rotate 90 degrees) over another card
+Okay, now in this spread, notice how card #1 is crossing behind card #2?
+<img src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_crossed_cards.png" alt="example of crossed cards" title="example of crossed cards"/>
+
+The first part is easy. When entering the positioning data, I simply assigned cards #1 and #2 to the same place in the grid.
+
+```
+Card 1:
+  grid_column: 2, grid_row: 1
+
+Card 2:
+  grid_column: 2, grid_row: 1
+```
+
+Voila. But then I needed to add another column to my `reading_positions` table to indicate if a card in this position should be crossed. I tossed a boolean called `crossed` in there and was good to go. As for the styling, I wrote a class that rotated the card and rendered that class in the HTML if the `card.crossed?` was true.
+
+```css
+.crossed {
+  -ms-transform: rotate(90deg); // IE 9
+  -webkit-transform: rotate(90deg); // Safari 3-8
+  transform: rotate(90deg);
+}
+```
+
 Putting it all together, we now have the classic Celtic Cross spread!
 
 <img src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_celtic_cross.png" alt="celtic cross tarot spread" title="celtic cross tarot spread"/>
+
+
+## In Summary
+
+| Before grid | After grid |
+|--|--|
+| <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="8-card spread in a row" title="8-card spread in a row"/> | <img class="post-image-small" src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_bigger_picture_after.png" alt="8-card spread in grid" title="8-card spread in grid"/> |
 
 This refactor was satisfying because it solved a problem that I had stopped thinking about solutions for a long time ago. It took some creating problem solving to figure it out and the results are so pretty! I'm glad to have gotten the inspiration I needed to finally endeavor on this long-overdue refactor.
