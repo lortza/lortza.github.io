@@ -34,8 +34,11 @@ Women Who Code's mission is to inspire women to excel in technology careers. If 
 
 ## Rails
 ### [Rails I](https://pragmaticstudio.com/courses/rails) & [Rails II](https://pragmaticstudio.com/courses/rails-ii) -- by Mike & Nicole of Pragmatic Studio
-Format: course <br>
+Format: video & written course <br>
 I came to these courses after completing a fly-by-the-seat-of-your-pants 8-week full-stack web development bootcamp. I was a n00b and quite green in my skills. These courses were excellent for me because they broke down the common processes in Rails into easy-to-understand pieces. They also brought home the learning with repetition of doing the videos, doing the homework, and doing the bonus work. Plus, they have a TDD option. They're great foundational courses and I can't recommend them enough for beginners to web development.
+
+### [Hotwire](https://www.hotrails.dev/turbo-rails) -- by [Alexandre Ruban](https://github.com/alexandreruban) of Hotrails
+Format: long-format written turorial<br>
 
 ## Javascript
 ### [Javascript and the DOM](https://www.udacity.com/course/javascript-and-the-dom--ud117) -- on Udacity
@@ -57,7 +60,7 @@ I love love love this course. To be honest, I just kind of love Wes Bos, and thi
 
 ### [The Free React on Rails 5 course](https://learnetto.com/users/hrishio/courses/the-free-react-on-rails-5-course) -- on Learnetto, by Hrishi Mittal
 Format: course <br>
-This is a great free course to get you started on React with Rails. I had a few bumps along the way with some things not working as expected, but considering that the course is _free_ and otherwise excellent in content, it doesn't concern me. I work primarily in Rails, so after taking the Wes Bos course above, I liked taking this one to put it in the context of Rails. Also, Hrishi's a really nice person. He's working hard to build useful tools for devs. Go say hello to him when you have the chance.  
+This is a great free course to get you started on React with Rails. I had a few bumps along the way with some things not working as expected, but considering that the course is _free_ and otherwise excellent in content, it doesn't concern me. I work primarily in Rails, so after taking the Wes Bos course above, I liked taking this one to put it in the context of Rails. Also, Hrishi's a really nice person. He's working hard to build useful tools for devs. Go say hello to him when you have the chance.
 
 ### [Simple Rails CRUD app with React Frontend, using ‘react-rails’ gem](https://medium.com/quick-code/simple-rails-crud-app-with-react-frontend-using-react-rails-gem-b708b89a9419) -- on Medium, by Lucya Koroleva
 Format: blog post <br>
@@ -89,8 +92,14 @@ More SQL exercises
 Format: online worksheets<br>
 This is, hands-down, my favorite resource for beginner Ruby. It takes you step-by-step through the basics you need to understand Ruby and gives you a lot of reps as you practice. If you need to get strong in arrays, hashes, and basic OOP, this site just may be your best friend.
 
-----------
+## CSS
+### [CSS Grid Layout Crash Course](https://www.youtube.com/watch?v=jV8B24rSN5o&ab_channel=TraversyMedias) -- by Brad Traversy
+Format: video<br>
+This walks you through 3 different ways to use CSS grid.
 
+
+----------
+## Deeper Learning
 The rest of the resources in this section are better for people who have moved out of the total beginner phase and are seeking a deeper understanding of Ruby.
 
 ### [Nothing is Something](https://www.youtube.com/watch?v=29MAL8pJImQ) -- by [Sandi Metz](https://github.com/skmetz)
