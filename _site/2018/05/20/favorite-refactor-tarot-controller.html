@@ -156,7 +156,10 @@
 
 <p>That felt like a really tidy refactor! My controller was much skinnier and the methods made more sense to read.</p>
 
-<p>Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for <em>each card on the page</em>. And I was extracting data from the <code class="language-plaintext highlighter-rouge">@cards</code> array using the index number to insert it into custom text about the reading. So card 1’s name was <code class="language-plaintext highlighter-rouge">@cards[0].name</code>, and card 2’s name was <code class="language-plaintext highlighter-rouge">@cards[1].name</code>, etc. Building that 8-card reading was a lot of work, I’ll tell you!</p>
+<p>Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for <em>each card on the page</em>. And I was extracting data from the <code class="language-plaintext highlighter-rouge">@cards</code> array using the index number to insert it into custom text about the reading. So card 1’s name was <code class="language-plaintext highlighter-rouge">@cards[0].name</code>, and card 2’s name was <code class="language-plaintext highlighter-rouge">@cards[1].name</code>, etc. The result was really cool because I could control exactly where each card appeared on the screen (within the limitations of the Twitter Bootstrap row &amp; column system).
+<img src="/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread" /></p>
+
+<p>But the HTML was a nightmare and this approach just was not scalable. Building an 8-card reading was a lot of work, I’ll tell you!</p>
 
 <div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- Multiply this code by as many cards as there are on a page.
      That's a lot of hard-coded HTML. --&gt;</span>
@@ -240,6 +243,9 @@ reading_positions
 <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
 </code></pre></div></div>
 
+<p>In the process, I lost my fancy card placement on the screen – now all cards are being output in a row – but that was something I was willing to sacrifice in order to scale the readings.
+<img src="/img/posts/2018-05-20_tarot_cards_in_row.png" alt="tarot cards in a row" title="tarot cards in a row" /></p>
+
 <h2 id="and-it-will-keep-on-changing">And it will keep on changing…</h2>
 
 <p>I have to be honest. Though this refactor happened months ago, as I was writing this post, I just moved all of my <code class="language-plaintext highlighter-rouge">positioned_card</code> code into the partial you see mentioned above. It had been living on the show page, directly inside the <code class="language-plaintext highlighter-rouge">each</code> loop.</p>
@@ -252,6 +258,7 @@ reading_positions
 
 <ul>
   <li><a href="/2018/08/11/card-factory-refactor.html">August 2018</a></li>
+  <li><a href="/2023/01/03/css-grid-for-tarot.html">January 2023</a></li>
 </ul>
 
   </article>
@@ -264,7 +271,7 @@ reading_positions
     <footer class="site-footer">
 
   <div class="wrapper">
-  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2022</p>
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
   </div>
 
 </footer>

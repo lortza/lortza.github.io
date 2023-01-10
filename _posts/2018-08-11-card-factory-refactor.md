@@ -69,7 +69,7 @@ describe 'a valid card factory' do
   context 'when has valid params' do
     # But why does a 'factory' object need to be valid?
     # I actually need a card-like object to be valid.
-    ...  
+    ...
 
 describe '.build_cards' do
   it 'returns an array of card factory objects' do
@@ -99,7 +99,7 @@ class ReadingCard
 
   attr_reader :card, :name, :theme, :keywords, :orientation
 
-  # Bonus refactor: the copious arguments required are now  
+  # Bonus refactor: the copious arguments required are now
   # delivered via keywords for accuracy instead of as
   # fixed-position arguments
   def initialize(card:, name:, theme:, keywords:, orientation:)
@@ -197,3 +197,6 @@ I really like how this refactor has gone. However, I don't love that the view st
 ```
 
 I'll address that in my next refactor session.
+
+#### Update: I've refactored this codebase since writing this post.
+* [January 2023]({% post_url 2023-01-03-css-grid-for-tarot %})

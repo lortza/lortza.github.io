@@ -149,6 +149,8 @@ img.about-pic { margin-right: 1.25em; }
 
 .post-content .post-image { width: 700px; }
 
+.post-content .post-image-small { height: auto; width: 220px; }
+
 .post-meta { font-size: 14px; color: #828282; margin-bottom: 0px; }
 
 .post-link { display: block; font-size: 42px; }

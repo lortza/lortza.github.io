@@ -203,8 +203,13 @@ img.about-pic {
   .post-image {
     width: 700px;
   }
-
+  .post-image-small {
+    height: auto;
+    width: $tile-size;
+  }
 }
+
+
 .post-meta {
   font-size: $small-font-size;
   color: $grey-color;

@@ -99,7 +99,10 @@ end
 
 That felt like a really tidy refactor! My controller was much skinnier and the methods made more sense to read.
 
-Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for *each card on the page*. And I was extracting data from the `@cards` array using the index number to insert it into custom text about the reading. So card 1's name was `@cards[0].name`, and card 2's name was `@cards[1].name`, etc. Building that 8-card reading was a lot of work, I'll tell you!
+Unfortunately, my views were all still hard-coded HTML with matching Bootstrap modal and jQuery for *each card on the page*. And I was extracting data from the `@cards` array using the index number to insert it into custom text about the reading. So card 1's name was `@cards[0].name`, and card 2's name was `@cards[1].name`, etc. The result was really cool because I could control exactly where each card appeared on the screen (within the limitations of the Twitter Bootstrap row & column system).
+<img src="{{ site.baseurl }}/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread"/>
+
+But the HTML was a nightmare and this approach just was not scalable. Building an 8-card reading was a lot of work, I'll tell you!
 
 ```erb
 <!-- Multiply this code by as many cards as there are on a page.
@@ -187,6 +190,9 @@ That is a *much* skinnier controller than where I started. More importantly, it 
 <% end %>
 ```
 
+In the process, I lost my fancy card placement on the screen -- now all cards are being output in a row -- but that was something I was willing to sacrifice in order to scale the readings.
+<img src="{{ site.baseurl }}/img/posts/2018-05-20_tarot_cards_in_row.png" alt="tarot cards in a row" title="tarot cards in a row"/>
+
 ## And it will keep on changing...
 
 I have to be honest. Though this refactor happened months ago, as I was writing this post, I just moved all of my `positioned_card` code into the partial you see mentioned above. It had been living on the show page, directly inside the `each` loop.
@@ -198,3 +204,4 @@ In this look back, it's been interesting for me to see what I understood at any 
 #### Update: I've refactored this codebase since writing this post.
 
 * [August 2018]({% post_url 2018-08-11-card-factory-refactor %})
+* [January 2023]({% post_url 2023-01-03-css-grid-for-tarot %})
