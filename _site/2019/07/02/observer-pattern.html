@@ -89,9 +89,13 @@
 <h2 id="a-property-doesnt-care-who-follows-it">A Property doesn’t care who follows it</h2>
 <p>Do you think Beyonce sends individual messages to every single one of her followers when she’s going to be touring in their cities? Nope. She posts that information once and the people who subscribe to those notifications get those notifications. Our <code class="language-plaintext highlighter-rouge">property</code> feels the same way (though between you and me, our property is no Beyonce).</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">property</span> <span class="o">=</span> <span class="no">Property</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">street_address: </span><span class="s1">'123 Main Street'</span><span class="p">,</span> <span class="ss">price: </span><span class="s1">'300,000'</span><span class="p">,</span> <span class="ss">sale_status: </span><span class="s1">'coming soon'</span> <span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">property</span> <span class="o">=</span> <span class="no">Property</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+  <span class="ss">street_address: </span><span class="s1">'123 Main Street'</span><span class="p">,</span>
+  <span class="ss">price: </span><span class="s1">'300,000'</span><span class="p">,</span>
+  <span class="ss">sale_status: </span><span class="s1">'coming soon'</span>
+<span class="p">)</span>
 
-<span class="n">property</span><span class="p">.</span><span class="nf">tell_everybody_everything</span>  <span class="c1"># &lt;= Um, no.</span>
+<span class="n">property</span><span class="p">.</span><span class="nf">tell_everybody_everything</span>  <span class="c1"># &lt;= Um, no. We're not doing that.</span>
 </code></pre></div></div>
 
 <p>This is not a <code class="language-plaintext highlighter-rouge">property</code>’s job. A <code class="language-plaintext highlighter-rouge">property</code>’s job to is to know about property stuff. That is all. But a <code class="language-plaintext highlighter-rouge">property</code> is willing to permit observers to “follow” it, or “subscribe” to certain state changes. We do this by initializing it with an <code class="language-plaintext highlighter-rouge">observers</code> attribute.</p>
@@ -136,7 +140,7 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Now we give the <code class="language-plaintext highlighter-rouge">property</code> an observer:</p>
+<p>Now we give the <code class="language-plaintext highlighter-rouge">property</code> an observer that is a <code class="language-plaintext highlighter-rouge">Realtor</code>:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">realtor</span> <span class="o">=</span> <span class="no">Realtor</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">property</span><span class="p">.</span><span class="nf">add_observer</span><span class="p">(</span><span class="n">realtor</span><span class="p">)</span>
@@ -147,7 +151,7 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Realtor</span>
   <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">property</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="s2">"Hello Commission! The property at </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> is now </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span><span class="si">}</span><span class="s2">."</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2"> says: Hello Commission! The property at </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> is now </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span><span class="si">}</span><span class="s2">."</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -156,27 +160,27 @@
 <p>Now when the <code class="language-plaintext highlighter-rouge">sale_status</code> changes, the observer pattern is triggered and all of the observers get notified:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span> <span class="o">=</span> <span class="s1">'sold'</span>
-<span class="c1"># =&gt; Hello Commission! The property at 123 Main Street is now sold.</span>
+<span class="c1"># =&gt; Realtor says: Hello Commission! The property at 123 Main Street is now sold.</span>
 </code></pre></div></div>
 
 <h2 id="peopleve-been-smashing-that-subscribe-button">People’ve been smashing that subscribe button…</h2>
-<p>Let’s say this property as even more observers.</p>
+<p>Let’s say this property has even more observers.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PotentialBuyerNews</span>
   <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">property</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="s2">"The listing you're following at </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> is now </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span><span class="si">}</span><span class="s2">."</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2"> says: The listing you're following at </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> is now </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span><span class="si">}</span><span class="s2">."</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
 <span class="k">class</span> <span class="nc">TaxEntity</span>
   <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">property</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="s2">"Send a sales tax bill to </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> on a value of </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">price</span><span class="si">}</span><span class="s2">."</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2"> says: Send a sales tax bill to </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2"> on a value of $</span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">price</span><span class="si">}</span><span class="s2">."</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
 <span class="k">class</span> <span class="nc">Bank</span>
   <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">property</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="s2">"Start racking up interest on </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">price</span><span class="si">}</span><span class="s2"> for </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2">."</span>
+    <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2"> says: Start racking up interest on $</span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">price</span><span class="si">}</span><span class="s2"> for </span><span class="si">#{</span><span class="n">property</span><span class="p">.</span><span class="nf">street_address</span><span class="si">}</span><span class="s2">."</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -190,13 +194,17 @@
   <span class="k">end</span>
 <span class="k">end</span>
 
-
 <span class="n">realtor</span> <span class="o">=</span> <span class="no">Realtor</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">potential_buyer_news</span> <span class="o">=</span> <span class="no">PotentialBuyerNews</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">tax_entity</span> <span class="o">=</span> <span class="no">TaxEntity</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">bank</span> <span class="o">=</span> <span class="no">Bank</span><span class="p">.</span><span class="nf">new</span>
 
-<span class="n">property</span><span class="p">.</span><span class="nf">bulk_add_observers</span><span class="p">([</span><span class="n">realtor</span><span class="p">,</span> <span class="n">potential_buyer_news</span><span class="p">,</span> <span class="n">tax_entity</span><span class="p">,</span> <span class="n">bank</span><span class="p">])</span>
+<span class="n">property</span><span class="p">.</span><span class="nf">bulk_add_observers</span><span class="p">([</span>
+  <span class="n">realtor</span><span class="p">,</span>
+  <span class="n">potential_buyer_news</span><span class="p">,</span>
+  <span class="n">tax_entity</span><span class="p">,</span>
+  <span class="n">bank</span>
+<span class="p">])</span>
 </code></pre></div></div>
 
 <p>Again, the property doesn’t need to do any more work when more observers are added, but the effects ripple outward:</p>
@@ -204,17 +212,11 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># The property updates its status once and...</span>
 <span class="n">property</span><span class="p">.</span><span class="nf">sale_status</span> <span class="o">=</span> <span class="s1">'sold'</span>
 
-<span class="c1"># The Realtor outputs:</span>
-<span class="s2">"Oh snap! The property at 123 Main Street is now sold."</span>
-
-<span class="c1"># The PotentialBuyerNews outputs:</span>
-<span class="s2">"The listing you're following at 123 Main Street is now sold."</span>
-
-<span class="c1"># The TaxEntity outputs:</span>
-<span class="s2">"Send a sales tax bill to 123 Main Street on a value of 300,000."</span>
-
-<span class="c1"># The Bank outputs:</span>
-<span class="s2">"Start racking up interest on 300,000 for 123 Main Street."</span>
+<span class="c1"># we get output from all of the observers:</span>
+<span class="s2">"Realtor says: Oh snap! The property at 123 Main Street is now sold."</span>
+<span class="s2">"PotentialBuyerNews says: The listing you're following at 123 Main Street is now sold."</span>
+<span class="s2">"TaxEntity says: Send a sales tax bill to 123 Main Street on a value of $300,000."</span>
+<span class="s2">"Bank says: Start racking up interest on $300,000 for 123 Main Street."</span>
 </code></pre></div></div>
 
 <p>That’s pretty nifty.</p>
@@ -254,6 +256,9 @@
 </code></pre></div></div>
 
 <p>Now our <code class="language-plaintext highlighter-rouge">Property</code> class stays cleaner and the observer functions all live in one logical place.</p>
+
+<h2 id="the-ruby-language-is-down-with-this-pattern">The Ruby language is down with this pattern</h2>
+<p>Ruby likes a good old fashioned observer pattern and makes it a little easier for us by providing an <a href="https://ruby-doc.org/stdlib-2.5.6/libdoc/observer/rdoc/Observable.html"><code class="language-plaintext highlighter-rouge">Observable</code> module</a> that includes some of the functionality that we built here in our <code class="language-plaintext highlighter-rouge">Notifier</code> module. <a href="https://medium.com/@nakshtra17/ruby-design-pattern-observer-method-eb7cb2a8d382">This Medium post</a> does a nice job of incorporating Ruby’s <code class="language-plaintext highlighter-rouge">Observable</code> module into an example.</p>
 
 <p>If you dig reading about patterns like this, check out <a href="https://www.goodreads.com/book/show/2278064.Design_Patterns_in_Ruby">Design Patterns in Ruby</a> by Russ Olsen. That’s where I learned about this pattern and a few others.</p>
 

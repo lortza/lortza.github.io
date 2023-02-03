@@ -30,9 +30,13 @@ end
 Do you think Beyonce sends individual messages to every single one of her followers when she's going to be touring in their cities? Nope. She posts that information once and the people who subscribe to those notifications get those notifications. Our `property` feels the same way (though between you and me, our property is no Beyonce).
 
 ```ruby
-property = Property.new(street_address: '123 Main Street', price: '300,000', sale_status: 'coming soon' )
+property = Property.new(
+  street_address: '123 Main Street',
+  price: '300,000',
+  sale_status: 'coming soon'
+)
 
-property.tell_everybody_everything  # <= Um, no.
+property.tell_everybody_everything  # <= Um, no. We're not doing that.
 ```
 
 This is not a `property`'s job. A `property`'s job to is to know about property stuff. That is all. But a `property` is willing to permit observers to "follow" it, or "subscribe" to certain state changes. We do this by initializing it with an `observers` attribute.
@@ -80,7 +84,7 @@ def sale_status=(new_status)
 end
 ```
 
-Now we give the `property` an observer:
+Now we give the `property` an observer that is a `Realtor`:
 
 ```ruby
 realtor = Realtor.new
@@ -93,7 +97,7 @@ Give the observing object something to do when it gets notified:
 ```ruby
 class Realtor
   def update(property)
-    puts "Hello Commission! The property at #{property.street_address} is now #{property.sale_status}."
+    puts "#{self.class} says: Hello Commission! The property at #{property.street_address} is now #{property.sale_status}."
   end
 end
 ```
@@ -103,28 +107,28 @@ Now when the `sale_status` changes, the observer pattern is triggered and all of
 
 ```ruby
 property.sale_status = 'sold'
-# => Hello Commission! The property at 123 Main Street is now sold.
+# => Realtor says: Hello Commission! The property at 123 Main Street is now sold.
 ```
 
 ## People've been smashing that subscribe button...
-Let's say this property as even more observers.
+Let's say this property has even more observers.
 
 ```ruby
 class PotentialBuyerNews
   def update(property)
-    puts "The listing you're following at #{property.street_address} is now #{property.sale_status}."
+    puts "#{self.class} says: The listing you're following at #{property.street_address} is now #{property.sale_status}."
   end
 end
 
 class TaxEntity
   def update(property)
-    puts "Send a sales tax bill to #{property.street_address} on a value of #{property.price}."
+    puts "#{self.class} says: Send a sales tax bill to #{property.street_address} on a value of $#{property.price}."
   end
 end
 
 class Bank
   def update(property)
-    puts "Start racking up interest on #{property.price} for #{property.street_address}."
+    puts "#{self.class} says: Start racking up interest on $#{property.price} for #{property.street_address}."
   end
 end
 ```
@@ -139,13 +143,17 @@ class Property
   end
 end
 
-
 realtor = Realtor.new
 potential_buyer_news = PotentialBuyerNews.new
 tax_entity = TaxEntity.new
 bank = Bank.new
 
-property.bulk_add_observers([realtor, potential_buyer_news, tax_entity, bank])
+property.bulk_add_observers([
+  realtor,
+  potential_buyer_news,
+  tax_entity,
+  bank
+])
 ```
 
 Again, the property doesn't need to do any more work when more observers are added, but the effects ripple outward:
@@ -154,17 +162,11 @@ Again, the property doesn't need to do any more work when more observers are add
 # The property updates its status once and...
 property.sale_status = 'sold'
 
-# The Realtor outputs:
-"Oh snap! The property at 123 Main Street is now sold."
-
-# The PotentialBuyerNews outputs:
-"The listing you're following at 123 Main Street is now sold."
-
-# The TaxEntity outputs:
-"Send a sales tax bill to 123 Main Street on a value of 300,000."
-
-# The Bank outputs:
-"Start racking up interest on 300,000 for 123 Main Street."
+# we get output from all of the observers:
+"Realtor says: Oh snap! The property at 123 Main Street is now sold."
+"PotentialBuyerNews says: The listing you're following at 123 Main Street is now sold."
+"TaxEntity says: Send a sales tax bill to 123 Main Street on a value of $300,000."
+"Bank says: Start racking up interest on $300,000 for 123 Main Street."
 ```
 
 That's pretty nifty.
@@ -206,5 +208,8 @@ class Property
 ```
 
 Now our `Property` class stays cleaner and the observer functions all live in one logical place.
+
+## The Ruby language is down with this pattern
+Ruby likes a good old fashioned observer pattern and makes it a little easier for us by providing an [`Observable` module](https://ruby-doc.org/stdlib-2.5.6/libdoc/observer/rdoc/Observable.html) that includes some of the functionality that we built here in our `Notifier` module. [This Medium post](https://medium.com/@nakshtra17/ruby-design-pattern-observer-method-eb7cb2a8d382) does a nice job of incorporating Ruby's `Observable` module into an example.
 
 If you dig reading about patterns like this, check out [Design Patterns in Ruby](https://www.goodreads.com/book/show/2278064.Design_Patterns_in_Ruby) by Russ Olsen. That's where I learned about this pattern and a few others.
