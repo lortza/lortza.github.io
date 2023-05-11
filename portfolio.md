@@ -122,7 +122,7 @@ permalink: /portfolio/
     {% endfor %}
   </div><!-- products -->
 
-
+<!--
   <h2>Writing</h2>
   <p class="section-explanation">These are some places where I contribute blog posts or content.</p>
 
@@ -135,6 +135,6 @@ permalink: /portfolio/
         </article>
       {% endif %}
     {% endfor %}
-  </div> <!-- writing -->
-
+  </div>
+-->
 </div> <!-- portfolio-index -->
