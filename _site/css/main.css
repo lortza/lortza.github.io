@@ -230,9 +230,15 @@ img.about-pic { margin-right: 1.25em; }
 .thumbnail a:hover span { display: block; }
 
 /******** Projects ********/
-.portfolio-show { text-align: center; /* links */ }
+.portfolio-show { text-align: left; /* links */ }
 
-.portfolio-show img { width: 400px; border: 1px solid #ddd; }
+.portfolio-show header { text-align: center; margin: 2em 0 2em 0; }
+
+.portfolio-show h1 { margin-bottom: .0; }
+
+.portfolio-show .tagline { margin-bottom: .5em; }
+
+.portfolio-show img { display: block; margin: 0 auto; width: 400px; border: 1px solid #ddd; }
 
 .portfolio-show .badge img { width: 144px; border: transparent; margin-bottom: 10px; }
 
@@ -241,6 +247,8 @@ img.about-pic { margin-right: 1.25em; }
 .portfolio-show .link-buttons a { color: #2698BA; border: 1px solid #2698BA; padding: 2px 10px; border-radius: 5px; margin: 0 5px; /* &:hover */ }
 
 .portfolio-show .link-buttons a:hover { background-color: #2698BA; color: white; }
+
+.portfolio-show li { text-align: left; }
 
 /* portfolio-show */
 /** Portfolio pages ********************************************************** */

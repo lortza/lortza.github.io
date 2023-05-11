@@ -390,8 +390,16 @@ img.about-pic {
 /******** Projects ********/
 
 .portfolio-show {
-  text-align: center;
+  text-align: left;
+  header {
+    text-align: center;
+    margin: 2em 0 2em 0;
+  }
+  h1 { margin-bottom: .0; }
+  .tagline { margin-bottom: .5em; }
   img {
+    display: block;
+    margin: 0 auto;
     width: 400px;
     border: 1px solid $grey-color-light;
   }
@@ -401,6 +409,8 @@ img.about-pic {
     margin-bottom: 10px;
   }
   .link-buttons {
+    // text-align: center;
+    // margin: 1em 0 2em 0;
     a {
       color: $theme-color;
       border: 1px solid $theme-color;
@@ -413,6 +423,9 @@ img.about-pic {
       } /* &:hover */
     } /* a */
   }/* links */
+  li {
+    text-align: left;
+  }
 }/* portfolio-show */
 
 /**
