@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 1 - New Records
+title:  'Single Page CRUD App in Rails: Part 1 - New Records'
 date:   2018-03-09
+published: true
 ---
 
 I've been wanting to make the UX of my Rails apps more streamlined, and in some cases, that means a little AJAX. So I built [a sample app](https://github.com/lortza/single_page_crud) (Rails 5.0.6, Ruby 2.4.2) to interact with my postgres database via AJAX and vanilla javascript. This app has a main table called `critters` where I list a bunch of pets and a helper table called `cities` where I list the cities where they live.

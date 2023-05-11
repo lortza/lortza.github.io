@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Autopopulating Rails Form Data with Vanilla Javascript</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/04/07/autopopulating-data.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Autopopulating Rails Form Data with Vanilla Javascript</h1>
+    <p class="post-meta">April 7, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p>The context for this work is an exercise tracking app. There is an <code class="language-plaintext highlighter-rouge">Exercise</code> model that has information about an exercise (ex: push-ups), including default <code class="language-plaintext highlighter-rouge">set</code> and <code class="language-plaintext highlighter-rouge">rep</code> values:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/schema.rb</span>
+
+<span class="n">create_table</span> <span class="s2">"exercises"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="s2">"name"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">text</span> <span class="s2">"description"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">integer</span> <span class="s2">"default_reps"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">integer</span> <span class="s2">"default_sets"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Every time we track having done an exercise, that is captured as an <code class="language-plaintext highlighter-rouge">ExerciseLog</code> object. An <code class="language-plaintext highlighter-rouge">ExerciseLog</code> belongs to an <code class="language-plaintext highlighter-rouge">Exercise</code> and has values for the actual <code class="language-plaintext highlighter-rouge">set</code>s and <code class="language-plaintext highlighter-rouge">rep</code>s performed.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/schema.rb</span>
+
+<span class="n">create_table</span> <span class="s2">"exercise_logs"</span><span class="p">,</span> <span class="ss">force: :cascade</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">bigint</span> <span class="s2">"exercise_id"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">datetime</span> <span class="s2">"datetime_occurred"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">integer</span> <span class="s2">"sets"</span>
+  <span class="n">t</span><span class="p">.</span><span class="nf">integer</span> <span class="s2">"reps"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>As a user, I found it tedious to enter in basically the same <code class="language-plaintext highlighter-rouge">set</code> and <code class="language-plaintext highlighter-rouge">rep</code> information each time I logged an exercise. It was especially tedious because I was doing this data entry on my phone during workouts.</p>
+
+<h3 id="the-solution">The Solution</h3>
+<p>I went with vanilla Javascript making an AJAX call to the selected exercise and updating the DOM elements with the response. This is not the only solution available, but it is the solution I chose, and it’s working well for me.</p>
+
+<h4 id="step-1-return-json-from-the-exercises-controller">Step 1: Return JSON from the exercises controller</h4>
+<p>In order to have access to the <code class="language-plaintext highlighter-rouge">exercises</code> data, we needed to tell the controller to respond with JSON when requested. Exercises controller before:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># controllers/exercise_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ExercisesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@exercise</span> <span class="o">=</span> <span class="no">Exercise</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Exercises controller after:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># controllers/exercise_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ExercisesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@exercise</span> <span class="o">=</span> <span class="no">Exercise</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">:show</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json: </span><span class="vi">@exercise</span><span class="p">,</span> <span class="ss">status: :ok</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><em>Side note:</em> <em>if you want to modify the shape of the JSON data</em> before serving it, you can remove the <code class="language-plaintext highlighter-rouge">@exercise</code> object from the controller response and instead render a <code class="language-plaintext highlighter-rouge">jbuilder</code> template.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># controllers/exercise_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ExercisesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@exercise</span> <span class="o">=</span> <span class="no">Exercise</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">:show</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">:show</span> <span class="p">}</span> <span class="c1"># &lt;-- remove exercise object and render partial</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Set up the <code class="language-plaintext highlighter-rouge">jbuilder</code> template:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views/exercises/show.json.jbuilder</span>
+<span class="n">json</span><span class="p">.</span><span class="nf">partial!</span> <span class="s2">"exercises/exercise"</span><span class="p">,</span> <span class="ss">exercise: </span><span class="vi">@exercise</span>
+
+
+
+<span class="c1"># views/exercises/_exercise.json.jbuilder</span>
+<span class="c1"># return only those 2 fields... or whatever you want to return</span>
+<span class="n">json</span><span class="p">.</span><span class="nf">extract!</span> <span class="n">exercise</span><span class="p">,</span> <span class="ss">:default_reps</span><span class="p">,</span> <span class="ss">:default_sets</span>
+<span class="n">json</span><span class="p">.</span><span class="nf">url</span> <span class="n">exercise_url</span><span class="p">(</span><span class="n">exercise</span><span class="p">,</span> <span class="ss">format: :json</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="step-2-build-the-ajax-call">Step 2: Build the AJAX call</h4>
+<p>Now that we have data available to us, we need to be able to fetch it. This is done with a javascript <code class="language-plaintext highlighter-rouge">fetch</code> call like this where the <code class="language-plaintext highlighter-rouge">url</code> is the api endpoint we just created:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// pass in the api endpoint as the url</span>
+  <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+    <span class="c1">// use the response to populate the DOM</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
+    <span class="c1">// make sure to resolve the fetch promise with an error message</span>
+    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="step-3-extract-the-exercise-id-from-the-dom">Step 3: Extract the exercise id from the DOM</h4>
+
+<p>The fetching method is just <em>a part</em> of the javascript adventure. We can’t really call that api endpoint without knowing the object’s id number. A standard rails <code class="language-plaintext highlighter-rouge">show</code> endpoint looks like <code class="language-plaintext highlighter-rouge">http://yourdomain/controller/object-id.json</code>, or:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://yourdomain/exercises/1.json
+</code></pre></div></div>
+
+<p>In order to complete that call, we need to grab the selected value from the dropdown. We’ll get that using the standard, Rails-issued form id:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Find the dropdown menu</span>
+<span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>We can then use that to build that API endpoint:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Automagically get your domain</span>
+<span class="kd">const</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">origin</span>
+<span class="c1">// Build the API url with these components.</span>
+<span class="c1">// BE SURE TO INCLUDE the .json extension or you're gonna have a bad time.</span>
+<span class="kd">const</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">baseUrl</span><span class="p">}</span><span class="s2">/exercises/</span><span class="p">${</span><span class="nx">initialExerciseId</span><span class="p">}</span><span class="s2">.json`</span>
+</code></pre></div></div>
+
+<h4 id="step-4-configure-the-on-change-event-listener">Step 4: Configure the on-change event listener</h4>
+<p>Create an on-change event listener on the dropdown menu. This will trigger any of your subsequent javascript any time the dropdown menu selected value has changed.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+  <span class="c1">// Grab the id from the selected dropdown item</span>
+  <span class="kd">const</span> <span class="nx">selectedExerciseId</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h4 id="step-5-putting-it-all-together">Step 5: Putting it all together</h4>
+
+<p>Now that we have the basic components, we need to put this all together.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// assets/javascripts/exercise.js</span>
+
+<span class="c1">// First, wrap everything in a DOMContentLoaded event listener.</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Set up JS variable for your dropdown</span>
+  <span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
+
+  <span class="c1">// Create JS variables for the fields in the form where you want your new</span>
+  <span class="c1">// JSON data to populate. You can use the default Rails ids here.</span>
+  <span class="kd">const</span> <span class="nx">sets</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_sets</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">reps</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_reps</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">repLength</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_rep_length</span><span class="dl">'</span><span class="p">);</span>
+
+
+  <span class="c1">// Make a function to populate those form fields</span>
+  <span class="kd">function</span> <span class="nx">populateDOM</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">sets</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_sets</span><span class="p">;</span>
+    <span class="nx">reps</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_reps</span><span class="p">;</span>
+    <span class="nx">repLength</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_rep_length</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Make a function to hit that API endpoint</span>
+  <span class="kd">function</span> <span class="nx">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Listen for the user to change the dropdown menu. This will trigger all of our JS to happen.</span>
+  <span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="c1">// Grab the id from the selected dropdown item</span>
+    <span class="kd">const</span> <span class="nx">selectedExerciseId</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="c1">// Build the API endpoint</span>
+    <span class="kd">const</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">origin</span>
+    <span class="kd">const</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">baseUrl</span><span class="p">}</span><span class="s2">/exercises/</span><span class="p">${</span><span class="nx">selectedExerciseId</span><span class="p">}</span><span class="s2">.json`</span>
+
+    <span class="c1">// make the AJAX call</span>
+    <span class="nx">getExercise</span><span class="p">(</span><span class="nx">apiUrl</span><span class="p">);</span>
+  <span class="p">})</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

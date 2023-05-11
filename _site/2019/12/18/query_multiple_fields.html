@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Query by Multiple Fields at Once in Rails</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/12/18/query_multiple_fields.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Query by Multiple Fields at Once in Rails</h1>
+    <p class="post-meta">December 18, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <h2 id="the-problem">The Problem</h2>
+<p>I recently ran into a problem where I wanted to search by a couple of different fields in my postgres database at the same time: a person’s <code class="language-plaintext highlighter-rouge">first_name</code> or <code class="language-plaintext highlighter-rouge">last_name</code> or <code class="language-plaintext highlighter-rouge">email</code>. The search term was coming in via a single form field that could contain data from any of those fields. The original query looked something like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Person</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="s1">'first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE'</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_term</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>But it wasn’t giving me everything I wanted. I wanted to get good results if a user entered:</p>
+<ul>
+  <li>first name only &lt;– works</li>
+  <li>last name only  &lt;– works</li>
+  <li>first last      &lt;– works</li>
+  <li>email           &lt;– works</li>
+  <li>last, first     &lt;– totally doesn’t work :(</li>
+</ul>
+
+<p>And to be honest, I really wasn’t into the idea of passing that same <code class="language-plaintext highlighter-rouge">%#{search_term}%"</code> argument three times in a row. It made the line long and hard to read.</p>
+
+<h2 id="the-solution">The Solution</h2>
+<p>The solution came in the form of postgres concatenation and some lessons I learned in <a href="http://millo.me/search-by-multiple-columns-in-active-record" target="_blank">this post</a>. The goal with this concatenation is to create a single string with all of the values in it and then compare the incoming string to that.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># the postgres concat_ws function</span>
+<span class="n">concat_ws</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">you</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s say we have a person in our database with the following data:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>first_name: Julius
+last_name: Caesar
+email: jcaesar@hotmail.com
+</code></pre></div></div>
+<p>If I concatenated the fields like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">concat_ws</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The concatenated string would look like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Julius Caesar jcaesar@hotmail.com'
+</code></pre></div></div>
+<p>And now we’re comparing our search term only once to that single, concatenated string:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">where</span><span class="p">(</span><span class="s2">"concat_ws(' ', first_name, last_name, email) ILIKE ?"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">search_terms</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Well that’s pretty swell. And it gets us a lot closer to fulfilling that last requirement of searching by <code class="language-plaintext highlighter-rouge">last, first</code>. To get over that last hump, I needed to strip a comma and then make a <code class="language-plaintext highlighter-rouge">first last first</code> sandwich in my concatenated string like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"concat_ws(' ', first_name, last_name, first_name, email)"</span>
+
+<span class="c1"># which looks like this</span>
+<span class="s2">"concat_ws(Julius Caesar Julius jcaesar@hotmail.com)"</span>
+</code></pre></div></div>
+<p>And now we can match on all the things!</p>
+<ul>
+  <li>first name only &lt;– still works</li>
+  <li>last name only  &lt;– still works</li>
+  <li>first last      &lt;– still works</li>
+  <li>email           &lt;– still works</li>
+  <li>last, first     &lt;– totally works now :)</li>
+</ul>
+
+<p>This is what it looks like when I put it all together in my search method:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Person</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">search</span><span class="p">(</span><span class="n">search_terms</span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span>
+    <span class="c1"># default to showing all records if no search terms are provided</span>
+    <span class="k">return</span> <span class="n">all</span> <span class="k">if</span> <span class="n">search_terms</span><span class="p">.</span><span class="nf">blank?</span>
+
+    <span class="c1"># remove any commas and extra spaces between words</span>
+    <span class="n">stripped_terms</span> <span class="o">=</span> <span class="n">search_terms</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="s1">','</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">squish</span>
+
+    <span class="c1"># compare the search terms to a larger, concatenated string in the db</span>
+    <span class="n">where</span><span class="p">(</span><span class="s2">"concat_ws(' ', first_name, last_name, first_name, email) ILIKE ?"</span><span class="p">,</span> <span class="s2">"%</span><span class="si">#{</span><span class="n">stripped_terms</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="caveat">Caveat</h3>
+<p>Concatenating like this removes the ability of the database to use any indexes that are not the primary key. So if our <code class="language-plaintext highlighter-rouge">last_name</code> field were indexed, we would lose those performance savings.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

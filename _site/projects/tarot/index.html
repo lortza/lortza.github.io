@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -57,24 +61,35 @@
       <div class="wrapper">
         <div class="portfolio-show">
 
-  <a href="https://github.com/lortza/tarot" target="_blank" alt="Modern Mystic"><img src="/img/rails_tarot.jpg"></a>
+  <a href="https://github.com/lortza/tarot" target="_blank" alt="Rails Tarot Readings"><img src="/img/project_tarot.jpg"></a>
 
-  <h1>Modern Mystic</h1>
+  <header>
+    <h1>Rails Tarot Readings</h1>
+    <p class="tagline">Instant tarot card readings *magic*</p>
 
-  <p>Get an instant tarot reading! It's complete with full explanations that are generated from the database, including both upright and reverse meanings, yowza! It's fun! Try it out. You'll see. And if you have a hankering for an old school CLI, you can play with the version that started the whole thing here at <a href='https://repl.it/@lortz/tarotreadings' target='_blank'>this repl</a>.</p>
+     <div class="link-buttons">
+      
+      <a href="http://modernmystic.herokuapp.com/" target="_blank" alt="Rails Tarot Readings"><i class="fa fa-external-link"></i> Site</a>
+      
+      
+      <a href="https://github.com/lortza/tarot" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
+      
+    </div> <!-- links -->
+  </header>
+
+  <p>Get an instant tarot reading -- no psychic required! It's complete with full reading explanations that are generated from the database, including both upright and inverse meanings for cards (kind of a big deal). yowza! Plus, I decided to kick it up a notch and flex some CSS grid muscles to make the card layout positions realistic (and wrote about that <a href="/2023/01/03/css-grid-for-tarot.html">here</a>). <a href="https://modernmystic.herokuapp.com/" target="_blank">It's fun! Try it out</a>. <br><br>Single purpose objects provide the solution for marrying 2 sets of data together (<code>Card</code> and <code>ReadingPosition</code>) to generate a unique <code>Reading</code> end product that tells a story. <br><br>If you have a hankering for an old school CLI, you can play with the version that started it all here at <a href='https://repl.it/@lortz/tarotreadings' target='_blank'>this repl</a>.</p>
 
   
-  <p>Check out the <a href="https://github.com/lortza/tarot" target="_blank" alt="Modern Mystic repo">repo README</a> for a tour of the app<br>complete with code snippet explanations and screenshots.</p>
+
   
+  <p>Check out the <a href="https://github.com/lortza/tarot" target="_blank" alt="Rails Tarot Readings repo">repo README</a> for code snippets and screenshots of the most interesting parts.</p>
+  
+
+  <p><strong>Tech Used:</strong> Ruby 2.4, Rails 5.1, PostgreSQL, jQuery, Bootstrap, RSpec, Heroku, Devise, Bullet</p>
 
   <p><strong>My Role:</strong> solo project, full stack</p>
 
-  <div class="link-buttons">
-    
-    <a href="http://modernmystic.herokuapp.com/" target="_blank" alt="Modern Mystic"><i class="fa fa-external-link"></i> Site</a>
-    
-    <a href="https://github.com/lortza/tarot" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
-  </div> <!-- links -->
+
 
   <article class="post-content">
     
@@ -89,7 +104,7 @@
     <footer class="site-footer">
 
   <div class="wrapper">
-  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
   </div>
 
 </footer>

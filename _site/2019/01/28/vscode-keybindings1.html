@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Move Code Up/Down a Line in VS Code</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/01/28/vscode-keybindings1.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Move Code Up/Down a Line in VS Code</h1>
+    <p class="post-meta">January 28, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p>I’ve been using Atom for a while, but I figured I’d give Visual Studio Code a shot. For the past few weeks, I’ve used it here and there, chipping away at customizing it to my liking. In Atom, I love to nudge blocks of code up and down, one line at a time using <code class="language-plaintext highlighter-rouge">ctrl</code>+<code class="language-plaintext highlighter-rouge">cmd</code>+<code class="language-plaintext highlighter-rouge">[arrow]</code>. This is not a default behavior in VS Code, so I set up those keybindings myself. Here’s how I did it:</p>
+
+<h1 id="1-open-the-keybindings-file">1. Open the Keybindings file</h1>
+<p>Open the keybindings file via <code class="language-plaintext highlighter-rouge">File</code> &gt; <code class="language-plaintext highlighter-rouge">Preferences</code> &gt; <code class="language-plaintext highlighter-rouge">Keyboard Shortcuts</code>.</p>
+
+<h1 id="2-add-these-keybindings">2. Add these Keybindings</h1>
+<p>In your <code class="language-plaintext highlighter-rouge">keybindings.json</code>, add the following binding hashes into the array. Remember to add commas between them:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// keybindings.json</span>
+<span class="p">[</span>
+ <span class="p">{</span>
+   <span class="dl">"</span><span class="s2">key</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">ctrl+cmd+up</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">command</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editor.action.moveLinesUpAction</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">when</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editorTextFocus</span><span class="dl">"</span>
+ <span class="p">},</span>
+ <span class="p">{</span>
+   <span class="dl">"</span><span class="s2">key</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">ctrl+cmd+down</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">command</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editor.action.moveLinesDownAction</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">when</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">editorTextFocus</span><span class="dl">"</span>
+ <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<p>And that’s it! The your new keybindings will take effect immediately after save.</p>
+
+<h3 id="pro-tip">Pro Tip</h3>
+<p>If you’d like to do your future self a solid favor, consider creating a repo  with all of your favorite IDE keybindings and settings. This way, whenever you need to set up a new computer, you’ll save yourself a ton of configuration hours by just having this info ready to go.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

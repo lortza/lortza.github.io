@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Grateful Garment StockAid Project Setup</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/11/04/grateful-garment-stockaid.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Grateful Garment StockAid Project Setup</h1>
+    <p class="post-meta">November 4, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <h2 id="what-is-stockaid">What is StockAid?</h2>
+<p><a href="https://github.com/GratefulGarmentProject/StockAid/">StockAid</a> is an inventory management system built in Ruby on Rails for <a href="https://gratefulgarment.org/">The Grateful Garment Project</a> which provides clothing and toiletries for victims of sexual assault. The StockAid software was created by a couple of people in California and is maintained by volunteers. The purpose of the software is to help the small staff at Grateful Garment Project organize inventory and fulfill orders placed by the many hospitals and clinics in LA area who need these supplies for their patients.</p>
+
+<h2 id="women-who-code">Women Who Code</h2>
+<p>I am excited to see the <a href="https://www.womenwhocode.com/">Women Who Code</a> <a href="https://www.meetup.com/Women-Who-Code-Austin/">Austin chapter</a> jump into working on the <a href="https://github.com/GratefulGarmentProject/StockAid/">StockAid</a> project! I met the creators of StockAid at RailsConf 2017 and have been contributing code to this project when I am able to. The setup instructions in the repo are in flux, so I wanted to outline the steps I took to get it up and running on my machine as to make it easier for you Women Who Code contributors to get started at our <a href="https://www.meetup.com/Women-Who-Code-Austin/events/">upcoming meetups</a>. Be sure to check out the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/CODE_OF_CONDUCT.md">Contributor Code of Conduct</a> before getting started.</p>
+
+<h2 id="set-up-your-local-environment">Set Up Your Local Environment</h2>
+
+<h3 id="install-ruby">Install Ruby</h3>
+<p>Go to the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/Gemfile">Gemfile</a> to find out which version of Ruby it requires. As of November 4, 2018, it is ruby 2.4.4, so that is the example I will use in this post. It is subject to change, so please check the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/Gemfile">Gemfile</a>.</p>
+
+<p>Using <a href="https://rvm.io/">RVM</a>, check which ruby versions you have installed. (<a href="https://rvm.io/rvm/install">Installing RVM</a>)</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm list
+</code></pre></div></div>
+<p>If you don’t see <code class="language-plaintext highlighter-rouge">ruby-2.4.4</code> in your list, run:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm install "ruby-2.4.4"
+</code></pre></div></div>
+<p>Tell RVM to use Ruby 2.4.4</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm use ruby-2.4.4
+</code></pre></div></div>
+
+<h3 id="postgres-setup">Postgres Setup</h3>
+<p>Check to see if you have PostgreSQL installed:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres -V
+</code></pre></div></div>
+<p>You should see something like: <code class="language-plaintext highlighter-rouge">postgres (PostgreSQL) 10.5</code>. If you don’t, <a href="https://www.codementor.io/engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb">here’s how to install it on mac</a></p>
+
+<h2 id="set-up-the-project">Set up the Project</h2>
+
+<p>1) Go to the project’s GitHub repo: <a href="https://github.com/GratefulGarmentProject/StockAid/">https://github.com/GratefulGarmentProject/StockAid/</a></p>
+
+<p>2) On the top right of the screen, click “Fork”.</p>
+
+<p>3) Once forked into your own GitHub account, click the “Clone or Download” button.</p>
+
+<p>4) Copy that url and then on your command line, <code class="language-plaintext highlighter-rouge">git clone</code> it to you local machine:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:your-github-username/StockAid.git
+</code></pre></div></div>
+<p>5) Set up a remote called <code class="language-plaintext highlighter-rouge">upstream</code> so you’ll be able to easily keep your <code class="language-plaintext highlighter-rouge">master</code> branch up to date with theirs</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add upstream https://github.com/GratefulGarmentProject/StockAid
+</code></pre></div></div>
+<p>6) <code class="language-plaintext highlighter-rouge">cd</code> into the project directory and bundle all of the gems:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd StockAid
+bundle-install
+</code></pre></div></div>
+<p>7) The project has a CLI tool to help you set up your environmental variables. Run it with:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rake setup
+</code></pre></div></div>
+<p>You will be asked a number of questions in the command line. Here is how you can answer them:</p>
+
+<ul>
+  <li>
+    <p><strong>What is your site’s name?</strong>: <code class="language-plaintext highlighter-rouge">stockaid</code></p>
+  </li>
+  <li>
+    <p><strong>What is your postgres username?</strong>
+You will need to enter your postgres username here. If you don’t know it, it is most likely the same as your main computer username. You can check it in a separate terminal tab by running <code class="language-plaintext highlighter-rouge">psql</code>. This will get you into your postgres database interface. The database that you are currently connected to will appear as the prompt and it is usually also reflective of your postgres username. Make note of that as your username and then quit postgres with <code class="language-plaintext highlighter-rouge">\q</code>.</p>
+  </li>
+  <li><strong>What is your postgres password?</strong>
+I seem to get away with just entering my postgres username in here again</li>
+  <li><strong>What is your Google API key?</strong>: <code class="language-plaintext highlighter-rouge">12345</code></li>
+</ul>
+
+<p>8) Run <code class="language-plaintext highlighter-rouge">rvm .</code>
+9) Set up your database:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rake db:create
+  rake db:migrate
+  rake db:seed
+</code></pre></div></div>
+<p>10) Start the rails server</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  rails s
+</code></pre></div></div>
+<p>11) Browse to <code class="language-plaintext highlighter-rouge">http://localhost:3000/</code></p>
+
+<p>12) Check the <a href="https://github.com/GratefulGarmentProject/StockAid/blob/master/db/seeds.rb#L32">seeds file</a> to find a sample user profile that you’d like to use to sign in. I often use:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>email: "site_admin@fake.com"
+password: "Password1"
+</code></pre></div></div>
+
+<h2 id="wip-selecting-an-issue-to-work-on">WIP: Selecting an Issue to Work On</h2>
+<p><em>This section is a Work in Progress (WIP) and is subject to change. I am in the process of getting more definite information from the project owners.</em></p>
+
+<p>The project’s features and bugs are being managed with a Waffle Board: <a href="https://waffle.io/GratefulGarmentProject/StockAid">https://waffle.io/GratefulGarmentProject/StockAid</a></p>
+
+<p>1) Look in the <code class="language-plaintext highlighter-rouge">Backlog</code> column to find an issue you’d like to work on.</p>
+
+<p>2) Assign yourself to that ticket and move it from <code class="language-plaintext highlighter-rouge">Backlog</code> to <code class="language-plaintext highlighter-rouge">In Progress</code>.</p>
+
+<p>3) Pull the latest version of the <code class="language-plaintext highlighter-rouge">master</code> branch to your machine.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># get access to the branches from the upstream remote</span>
+git fetch upstream
+
+<span class="c"># check out your local master branch</span>
+git checkout master
+
+<span class="c"># on your master branch, merge the contents of their master into your master</span>
+git merge upstream/master
+</code></pre></div></div>
+
+<p>4)  From your <code class="language-plaintext highlighter-rouge">master</code> branch, create a new feature branch for the ticket you want to work on. Name it with the issue number followed by description. Ex:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout -b 612-reports-downloaded-into-csv
+</code></pre></div></div>
+<p>5) Be sure to write tests for any work you contribute. The project uses <a href="http://rspec.info/">rspec</a>.</p>
+
+<h2 id="wip-communicating-status">WIP: Communicating Status</h2>
+<p><em>This section is a Work in Progress (WIP) and is subject to change. I am in the process of getting more definite information from the project owners.</em></p>
+
+<p>Since this is a volunteer-run project, people are often popping in to work on tickets in their spare time. It is important for all of us to communicate clearly, so anyone can understand what is going on with any feature or bug at any given time.</p>
+
+<h4 id="if-you-have-blocker-questions">If you have blocker questions:</h4>
+<ul>
+  <li>Ask them in the related GitHub issue</li>
+  <li>Mention @tekhudson or @smellsblue in that question</li>
+</ul>
+
+<h4 id="if-you-find-that-you-cant-actually-do-this-work-in-a-reasonable-amount-of-time">If you find that you can’t actually do this work in a reasonable amount of time:</h4>
+<ul>
+  <li>Unassign yourself from the Waffle ticket</li>
+  <li>Move it back to the <code class="language-plaintext highlighter-rouge">Backlog</code> column</li>
+</ul>
+
+<h2 id="submitting-your-contribution">Submitting Your Contribution</h2>
+<p>Once you’ve completed your work on your local machine, run the test suite (<code class="language-plaintext highlighter-rouge">rspec</code>) and RuboCop (<code class="language-plaintext highlighter-rouge">rubocop</code>) to make sure all of the test are passing and your code matches their style guide.</p>
+
+<p>Push your feature branch to GitHub and click “Submit a pull request”. Set up a request from your repo’s feature branch to the main repo’s master branch. In the body of your pull request, be sure to include details about what the problem was and how you solved it. Screenshots are very helpful.</p>
+
+<p>From here, the project owners will either approve the work or come back to you with requests for change.</p>
+
+<h2 id="celebrate">Celebrate!</h2>
+<p>You just contributed to an open source project that helps other women! This is what it means to use your powers for good. High five, sister!</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

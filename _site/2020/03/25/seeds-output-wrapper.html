@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Ruby seed output wrapper</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/03/25/seeds-output-wrapper.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Ruby seed output wrapper</h1>
+    <p class="post-meta">March 25, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <h3 id="the-rails-provided-method">The Rails-Provided Method</h3>
+<p>Rails has a handy method that outputs a count and the time it took for a block to run. It’s a nice tool for benchmarking. Here’s how it works:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/seeds.rb</span>
+
+<span class="c1"># 1. Pass your message as an argument</span>
+<span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">.</span><span class="nf">say_with_time</span><span class="p">(</span><span class="s1">'Seeding kittens'</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># 2. Do something in this block. I'm choosing to create some new records.</span>
+  <span class="n">names</span> <span class="o">=</span> <span class="sx">%w[Murph Mindy Jeff]</span>
+  <span class="n">names</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+    <span class="no">Kitten</span><span class="p">.</span><span class="nf">find_or_create_by!</span><span class="p">(</span><span class="ss">name: </span><span class="nb">name</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 3. As the last line of this block, return a count.</span>
+  <span class="no">Kitten</span><span class="p">.</span><span class="nf">count</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>The terminal output you’ll see will have your message, the count, and the time it took to run this block:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Seeding kittens
+  -&gt; 3
+  -&gt; 0.1s
+</code></pre></div></div>
+
+<p>Neat! Since running our seeds file at work took several minutes, I was using this method to give more informative terminal output. I personally hate staring at a blank terminal and wondering if a process is running or if it has gotten hung up somewhere. As I implemented this method and ran it with a lot of different seeds, I found that while the overall output was improved, the count indication was still ambiguous. Most of our seeds are find-or-create-by in nature – but not all of them are – so it is helpful to see terminal output that:</p>
+<ol>
+  <li>indicates which model is being processed</li>
+  <li>how many new records were just created</li>
+  <li>how many total records we now have for that model</li>
+  <li>how long it took to seed that model</li>
+</ol>
+
+<p>In other words, like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Seeding kittens
+  -&gt; 0 new
+  -&gt; 3 total
+  -&gt; 0.15s
+</code></pre></div></div>
+
+<h3 id="the-custom-method">The Custom Method</h3>
+<p>So a coworker and I decided to roll our own seed wrapper output method. In a new file we called <code class="language-plaintext highlighter-rouge">db/seeds_helper.rb</code>, we wrote a method called <code class="language-plaintext highlighter-rouge">count_records_for</code> . It takes a single argument of the model being seeded and it handles all the rest:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/seeds_helper.rb</span>
+
+<span class="k">module</span> <span class="nn">SeedsHelper</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">count_records_for</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">"Seeding </span><span class="si">#{</span><span class="n">model</span><span class="p">.</span><span class="nf">table_name</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">starting_record_count</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">count</span>
+    <span class="n">starting_time</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">current</span>
+
+    <span class="k">yield</span>
+
+    <span class="n">ending_count</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">count</span>
+    <span class="nb">puts</span> <span class="s2">"   -&gt; </span><span class="si">#{</span><span class="n">ending_count</span> <span class="o">-</span> <span class="n">starting_record_count</span><span class="si">}</span><span class="s2"> new"</span>
+    <span class="nb">puts</span> <span class="s2">"   -&gt; </span><span class="si">#{</span><span class="n">ending_count</span><span class="si">}</span><span class="s2"> total"</span>
+    <span class="nb">puts</span> <span class="s2">"   -&gt; </span><span class="si">#{</span><span class="p">(</span><span class="no">Time</span><span class="p">.</span><span class="nf">current</span> <span class="o">-</span> <span class="n">starting_time</span><span class="p">).</span><span class="nf">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">s"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now we can call it like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># db/seeds.rb</span>
+
+<span class="no">SeedsHelper</span><span class="p">.</span><span class="nf">count_records_for</span><span class="p">(</span><span class="no">Kitten</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">names</span> <span class="o">=</span> <span class="sx">%w[Murph Mindy Jeff]</span>
+  <span class="n">names</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+    <span class="no">Kitten</span><span class="p">.</span><span class="nf">find_or_create_by!</span><span class="p">(</span><span class="ss">name: </span><span class="nb">name</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And the output looks like…</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># The first time it's run:</span>
+Seeding kittens
+  -&gt; 3 new
+  -&gt; 3 total
+  -&gt; 0.15s
+
+<span class="c"># The second time it's run, since the records are find-or-create-by</span>
+<span class="c"># we shouldn't see any new records:</span>
+Seeding kittens
+  -&gt; 0 new
+  -&gt; 3 total
+  -&gt; 0.15s
+</code></pre></div></div>
+
+<p>Check out <a href="https://stackoverflow.com/a/3066939">this StackOverflow answer</a> for a refresher on how Ruby’s <code class="language-plaintext highlighter-rouge">yield</code> works.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

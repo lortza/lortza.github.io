@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Unzip 7z Files on a Mac with p7zip</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/11/14/p7zip.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Unzip 7z Files on a Mac with p7zip</h1>
+    <p class="post-meta">November 14, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p><em>This post is brought to you by 30 minutes of frustration. I hope it saves you some time.</em></p>
+
+<p>7z is a is not a native file type on mac. In order to open it, you will need to install a 3rd party application. I chose p7zip because I can manage it using <a href="https://brew.sh/">homebrew</a>.</p>
+
+<h2 id="install-p7zip">Install p7zip</h2>
+<p>Install via homebrew:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew <span class="nb">install </span>p7zip
+</code></pre></div></div>
+
+<h2 id="unzip-a-file">Unzip a File</h2>
+<p>IMPORTANT: be in the SAME directory on your command line as the file you want to extract. If the file is on your desktop, be in the desktop on your command line. &lt;— THIS is the thing that tripped me up.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ex file location:  /Users/yourusername/Desktop/compressed_file.7z</span>
+
+<span class="c"># cd into the correct location</span>
+<span class="nb">cd</span> ~/Desktop
+
+<span class="c"># unzip the file</span>
+7z x compressed_file.7z
+</code></pre></div></div>
+<p>This will add a folder of unzipped files to that location, in this case, my Desktop.</p>
+
+<h2 id="compress-files-or-folder">Compress Files or Folder</h2>
+<p>To zip, use the <code class="language-plaintext highlighter-rouge">a</code> argument followed by output filename and by the files/folder you want to compress. Again, ensure you’re in the same directory on the command line as your input file.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>7z a compressed_file.7z folder_to_compress
+</code></pre></div></div>
+
+<p>You can see more compression options on the app manual page by running:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>man 7z
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

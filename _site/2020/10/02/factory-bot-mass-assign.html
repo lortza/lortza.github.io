@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Mass-assign empty strings in FactoryBot</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/10/02/factory-bot-mass-assign.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Mass-assign empty strings in FactoryBot</h1>
+    <p class="post-meta">October 2, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently had to write some RSpec specs for an importer job that pulled in <code class="language-plaintext highlighter-rouge">claims</code> data to a table that had 600 columns. That was fine until we found out that all of those columns had to be set to <code class="language-plaintext highlighter-rouge">null: false</code>. Now in order to write a spec for a single one of these objects, <em>we had to have some non-null value in all 600 attributes.</em> Yikes.</p>
+
+<p>Fortunately, <code class="language-plaintext highlighter-rouge">"" != nil</code>. This means we could mass assign all attributes to an empty string (<code class="language-plaintext highlighter-rouge">""</code>) and the null constraints were satisfied. This is how to mass-assign <code class="language-plaintext highlighter-rouge">""</code> to an object with the Rails gem, <a href="https://github.com/thoughtbot/factory_bot">FactoryBot</a>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">factory</span> <span class="ss">:claims</span> <span class="k">do</span>
+  <span class="c1"># This table has null constrains on all (~600) columns.</span>
+  <span class="c1"># This block mass-assigns an empty string to each attribute:</span>
+  <span class="n">initialize_with</span> <span class="k">do</span>
+    <span class="n">new</span><span class="p">(</span><span class="no">Claims</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">attributes</span><span class="p">.</span><span class="nf">symbolize_keys</span><span class="p">.</span><span class="nf">transform_values</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:to_s</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Now, in your spec, you can treat this factory as you normally would, overriding the default <code class="language-plaintext highlighter-rouge">""</code> values as needed:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">let</span><span class="p">(</span><span class="ss">:claims</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:claims</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'sunshine'</span><span class="p">,</span> <span class="ss">location: </span><span class="s1">'all the dark corners of the world'</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div></div>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

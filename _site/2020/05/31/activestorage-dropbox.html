@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Store images with Rails ActiveStorage and Dropbox</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/05/31/activestorage-dropbox.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Store images with Rails ActiveStorage and Dropbox</h1>
+    <p class="post-meta">May 31, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently implemented cloud image hosting using Rails ActiveStorage and Dropbox. These are the resources that helped me to do it:</p>
+<ul>
+  <li>Pragmatic Studio’s <a href="https://pragmaticstudio.com/tutorials/using-active-storage-in-rails">Using ActiveStorage in Rails</a></li>
+  <li><a href="https://www.youtube.com/watch?time_continue=150&amp;v=kNRU3CD0oc0&amp;feature=emb_logo">Deleting attached images</a></li>
+  <li>gem <a href="https://github.com/ashishprajapati/activestorage-dropbox">activestorage-dropbox</a></li>
+  <li>gem <a href="https://github.com/Jesus/dropbox_api">dropbox_api</a></li>
+</ul>
+
+<p>ActiveStorage has adapters for a few cloud storage systems (ex: Amazon S3), but it does not have one for Dropbox, so I used the <code class="language-plaintext highlighter-rouge">activestorage-dropbox</code> gem to take this project over the finish line. My PR: <a href="https://github.com/lortza/yayme/pull/39/files">https://github.com/lortza/yayme/pull/39/files</a></p>
+
+<h2 id="1-set-up-activestorage">1. Set Up ActiveStorage</h2>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># install active_storage</span>
+rails active_storage:install
+
+<span class="c"># run the associated migrations</span>
+rails db:migrate
+</code></pre></div></div>
+
+<p>Add the active storage association and associated logic in the model where you want the image to go. I’m adding one to my <code class="language-plaintext highlighter-rouge">Post</code> model.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/post.rb</span>
+
+<span class="c1"># add association</span>
+<span class="n">has_one_attached</span> <span class="ss">:image</span>
+
+<span class="c1"># call a custom validation</span>
+<span class="n">validate</span> <span class="ss">:acceptable_image</span>
+
+<span class="c1"># add ability to delete attached images</span>
+<span class="nb">attr_accessor</span> <span class="ss">:remove_attached_image</span>
+<span class="n">after_save</span> <span class="ss">:purge_attached_image</span><span class="p">,</span> <span class="ss">if: :remove_attached_image?</span>
+
+
+<span class="c1"># define the acceptable_image validation</span>
+<span class="k">def</span> <span class="nf">acceptable_image</span>
+  <span class="k">return</span> <span class="k">unless</span> <span class="n">image</span><span class="p">.</span><span class="nf">attached?</span>
+
+  <span class="k">if</span> <span class="n">image</span><span class="p">.</span><span class="nf">byte_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">.</span><span class="nf">megabyte</span>
+    <span class="n">image_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="nf">byte_size</span> <span class="o">/</span> <span class="mf">1_000_000.0</span><span class="p">).</span><span class="nf">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">errors</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">:image</span><span class="p">,</span> <span class="s2">"size </span><span class="si">#{</span><span class="n">image_size</span><span class="si">}</span><span class="s2"> MB exceeds 1 MB limit"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">acceptable_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'image/jpeg'</span><span class="p">,</span> <span class="s1">'image/jpg'</span><span class="p">,</span> <span class="s1">'image/png'</span><span class="p">]</span>
+  <span class="n">errors</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">:image</span><span class="p">,</span> <span class="s1">'must be a JPEG or PNG'</span><span class="p">)</span> <span class="k">unless</span> <span class="n">acceptable_types</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="nf">content_type</span><span class="p">)</span>
+<span class="k">end</span>
+
+
+<span class="c1"># define the after_save action to remove an image</span>
+<span class="k">def</span> <span class="nf">remove_attached_image?</span>
+  <span class="n">remove_attached_image</span> <span class="o">==</span> <span class="s1">'1'</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">purge_attached_image</span>
+  <span class="n">image</span><span class="p">.</span><span class="nf">purge_later</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Add the new image field to the <code class="language-plaintext highlighter-rouge">post</code>’s form. If there is an image attached, I want to see the image name, and a thumbnail variant of the image (requires ImageMagick, explained later). I also want to include a checkbox to delete the image. (The code below includes Twitter Bootstrap CSS classes. Skip them if you’re not using Bootstrap.)</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.label</span> <span class="na">:image</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="na">post.image.attached</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- display the image name and thumbnail --&gt;</span>
+  <span class="nt">&lt;p&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">image_tag</span><span class="err">(</span><span class="na">post.image.variant</span><span class="err">(</span><span class="na">resize_to_limit:</span> <span class="err">[75,</span> <span class="err">75]))</span> <span class="err">%</span><span class="nt">&gt;&lt;br&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">post.image.filename</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/p&gt;</span>
+
+  <span class="c">&lt;!-- provide a check box to delete the image --&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">'form-check'</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.check_box</span> <span class="na">:remove_attached_image</span><span class="err">,</span> <span class="na">class:</span> <span class="err">'</span><span class="na">form-check-input</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.label</span> <span class="err">'</span><span class="na">Check</span> <span class="na">to</span> <span class="na">remove</span> <span class="na">attached</span> <span class="na">image</span><span class="err">',</span> <span class="na">class:</span> <span class="err">'</span><span class="na">form-check-label</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.file_field</span> <span class="na">:image</span><span class="err">,</span> <span class="na">class:</span> <span class="err">'</span><span class="na">file-field</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>Display the image on the <code class="language-plaintext highlighter-rouge">posts/show.html.erb</code> file:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/posts/show.html.erb --&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">image_tag</span><span class="err">(@</span><span class="na">post.image</span><span class="err">,</span> <span class="na">title:</span> <span class="err">@</span><span class="na">post.image.filename</span><span class="err">)</span> <span class="na">if</span> <span class="err">@</span><span class="na">post.image.present</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>Add the new image params to the <code class="language-plaintext highlighter-rouge">posts_controller.rb</code> whitelist:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/posts_controller.rb</span>
+
+<span class="k">def</span> <span class="nf">post_params</span>
+  <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:post</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:remove_attached_image</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Add variant image processing to allow thumbnail rendering by adding the image_processing gem to the Gemfile and running <code class="language-plaintext highlighter-rouge">bundle install</code>.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gemfile</span>
+
+<span class="n">gem</span> <span class="s1">'image_processing'</span><span class="p">,</span> <span class="s1">'~&gt; 1.2'</span>
+</code></pre></div></div>
+
+<p>On the command line, run bundle and then ensure you’ve installed ImageMagick:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install</span>
+
+<span class="c"># for mac Homebrew users</span>
+brew <span class="nb">install </span>imagemagick
+
+<span class="c"># for linux users</span>
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>imagemagick
+</code></pre></div></div>
+
+<h2 id="2-create-your-app-storage-folder-in-dropbox">2. Create your app storage folder in Dropbox</h2>
+<p>Go to <a href="https://www.dropbox.com/developers/apps?_tk=pilot_lp&amp;_ad=topbar4&amp;_camp=myapps">Dropbox’s developer page for setting up apps</a> and select the options:</p>
+<ul>
+  <li>Create App</li>
+  <li>Choose an API: Dropbox API</li>
+  <li>Choose the type of access you need: App Folder</li>
+  <li>Enter the name of your app – or what you want your app’s folder name to be</li>
+</ul>
+
+<p>This will create an app folder in your Dropbox account that is used for storage for your app. “Your app gets read and write access to this folder only and users can provide content to your app by moving files into this folder.” (<a href="https://www.dropbox.com/developers/reference/developer-guide">from docs</a>)</p>
+
+<p>Get the credentials you need from your app page in Dropbox. You’ll want to get values for all of these fields and add them to your Rails credentials file. If using Rails credentials is new to you, carefully read that section of <a href="https://pragmaticstudio.com/tutorials/using-active-storage-in-rails">Using ActiveStorage in Rails</a>. It’s important that you understand this and get it right.</p>
+
+<p>I open my credentials file using the Atom text editor, so my command looks like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">EDITOR</span><span class="o">=</span><span class="s2">"atom --wait"</span> bin/rails credentials:edit
+</code></pre></div></div>
+<p>Never try to open this file or your master key file directly. I’ve done this in the past and have ruined the encryption because my text editor added a newline at the end of the file. It’s a pickle you don’t want to be in.</p>
+
+<p>Here is what you’ll need to add to your Rails credentials file. Replace all of this text with your own values.</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/credentials.yml.enc</span>
+
+<span class="na">dropbox</span><span class="pi">:</span>
+  <span class="na">app_key</span><span class="pi">:</span> <span class="m">111222333444</span>
+  <span class="na">app_secret</span><span class="pi">:</span> <span class="m">111222333444</span>
+  <span class="na">access_token</span><span class="pi">:</span> <span class="m">111222333444</span>
+  <span class="na">user_id</span><span class="pi">:</span> <span class="s">your-dropbox-associated-email-address@email.com</span>
+</code></pre></div></div>
+<p>When you save and close the file, Rails encrypts it for you. We’ll access those values in a bit by using <code class="language-plaintext highlighter-rouge">Rails.application.credentials.some_value</code>.</p>
+
+<p>If you haven’t done so already, add your <code class="language-plaintext highlighter-rouge">RAILS_MASTER_KEY</code> to your production environment. I use Heroku, so I added it by running this on the command line:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heroku config:set <span class="nv">RAILS_MASTER_KEY</span><span class="o">=</span>yourmasterkeynumbershere
+
+<span class="c"># ex</span>
+heroku config:set <span class="nv">RAILS_MASTER_KEY</span><span class="o">=</span>12345123451234512345
+</code></pre></div></div>
+<p>You can confirm that it worked by going to your Heroku settings <code class="language-plaintext highlighter-rouge">https://dashboard.heroku.com/apps/your-app-name/settings</code> and looking in the <code class="language-plaintext highlighter-rouge">Config Vars</code> section. Also, do yourself a favor and store your master key somewhere safe like a password manager. You don’t want to lose it.</p>
+
+<h2 id="3-connect-activestorage-and-dropbox">3. Connect ActiveStorage and Dropbox</h2>
+<p>Add these adapter gems to your Gemfile. They hold the logic that connects ActiveStorage to your Dropbox app folder.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'activestorage-dropbox'</span>    <span class="c1"># adapter for dropbox</span>
+<span class="n">gem</span> <span class="s1">'dropbox_api'</span>              <span class="c1"># required for `activestorage-dropbox` gem</span>
+</code></pre></div></div>
+
+<p>Run bundle</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install</span>
+</code></pre></div></div>
+
+<p>Declare a Dropbox service in <code class="language-plaintext highlighter-rouge">config/storage.yml</code> for the <code class="language-plaintext highlighter-rouge">activestorage-dropbox</code> to read. This file is <em>not</em> encrypted, so we need to add these values <em>by referencing the credentials file</em> inside of <code class="language-plaintext highlighter-rouge">erb</code> tags like this:</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/storage.yml</span>
+
+<span class="na">dropbox</span><span class="pi">:</span>
+  <span class="na">service</span><span class="pi">:</span> <span class="s">Dropbox</span>
+  <span class="na">app_key</span><span class="pi">:</span> <span class="s">&lt;%= Rails.application.credentials.dig(:dropbox, :app_key) %&gt;</span>
+  <span class="na">app_secret</span><span class="pi">:</span> <span class="s">&lt;%= Rails.application.credentials.dig(:dropbox, :app_secret) %&gt;</span>
+  <span class="na">access_token</span><span class="pi">:</span> <span class="s">&lt;%= Rails.application.credentials.dig(:dropbox, :access_token) %&gt;</span>
+  <span class="na">user_id</span><span class="pi">:</span> <span class="s">&lt;%= Rails.application.credentials.dig(:dropbox, :user_id) %&gt;</span>
+  <span class="na">access_type</span><span class="pi">:</span> <span class="s">app</span>
+</code></pre></div></div>
+
+<p>To use the Dropbox service in development, you add the following to <code class="language-plaintext highlighter-rouge">config/environments/development.rb</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">active_storage</span><span class="p">.</span><span class="nf">service</span> <span class="o">=</span> <span class="ss">:dropbox</span>
+
+<span class="c1"># or you can keep your development storage "local", which is what I do:</span>
+<span class="n">config</span><span class="p">.</span><span class="nf">active_storage</span><span class="p">.</span><span class="nf">service</span> <span class="o">=</span> <span class="ss">:local</span>
+</code></pre></div></div>
+<p>To use the Dropbox service in production, you add the following to <code class="language-plaintext highlighter-rouge">config/environments/production.rb</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">active_storage</span><span class="p">.</span><span class="nf">service</span> <span class="o">=</span> <span class="ss">:dropbox</span>
+</code></pre></div></div>
+
+<p>That should do it. Now you’ll be able to upload images from a form, display them on a page, and delete them from a form.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

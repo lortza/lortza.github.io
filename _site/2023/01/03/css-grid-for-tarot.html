@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | CSS display grid put the magic 🪄 back into my layout</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2023/01/03/css-grid-for-tarot.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">CSS display grid put the magic 🪄 back into my layout</h1>
+    <p class="post-meta">January 3, 2023</p>
+  </header>
+
+  <article class="post-content">
+    <p>Back in 2018 I <a href="/2018/05/20/favorite-refactor-tarot-controller.html">wrote this post</a> about a refactor on my tarot-card-reading app that allowed me to scale the quantity of readings and quantity of cards per reading, but the cost was that I lost the ability to place the cards exactly where I wanted them to go on the screen.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Before Scaling</th>
+      <th>After Scaling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img class="post-image-small" src="/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread" /></td>
+      <td><img class="post-image-small" src="/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="tarot cards in a row" title="tarot cards in a row" /></td>
+    </tr>
+    <tr>
+      <td><span class="table-caption">This 4-card spread had individually hand-coded, curated, artisenal positioning HTML</span></td>
+      <td><span class="table-caption"> This 8-card spread just spits out the right number of cards out into generic non-customized columns and rows.</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+<br />
+I was fine with that sacrifice at the time, but as time passed and folks familiar with real tarot spreads came to play with my app, I found myself apologizing for the boring rows. Fortunately, the last person I was apologizing to is a long time friend and fellow developer who gave me mentorship years ago. He knew exactly how to give me the kick in the butt I needed to stop telling this silly tale of defeat and just fix the dang thing.</p>
+
+<p>I started the process by outlining my requirements for making realistic-looking tarot spreads appear on the screen:</p>
+<ol>
+  <li>Position a specific card to an exact location on a on the screen</li>
+  <li>Store the card’s exact positioning information somewhere so it can be rendered dynamically (spoiler: I put it in the database)</li>
+  <li>Shrink or grow the size of the spread area to fit any size reading (a 1-card reading does not need a 10x10 grid)</li>
+  <li>Make flexible, reusable classes for building grids and positioning cards on the fly</li>
+  <li>BONUS: Cross a card (rotate 90 degrees) over another card</li>
+  <li>BONUS: Overlap certain cards’ rows or columns so that the layout actually looks like a real tarot spread</li>
+</ol>
+
+<h2 id="css-grid-for-the-win">CSS Grid for the Win</h2>
+<p>In my original implementation, I was using <a href="https://getbootstrap.com/">Twitter Bootstrap</a>’s column &amp; row system – which was limited in its capability. And now I know that there is some hot CSS technology that lets you put <code class="language-plaintext highlighter-rouge">&lt;div&gt;</code>s exactly where you want them on a screen. We’re talking about <code class="language-plaintext highlighter-rouge">display: grid;</code> and it’s been supported by all browsers since 2017. As I spend most of my time in the back end of Rails apps (which you probably wouldn’t guess by the front-end nature of my posts), I needed a refresher before digging into <code class="language-plaintext highlighter-rouge">grid</code>. I watched (and highly recommend) Brad Traversy’s <a href="https://www.youtube.com/watch?v=jV8B24rSN5o&amp;ab_channel=TraversyMedias">CSS Grid Layout Crash Course</a>. You’ll see in that video that there are different ways to use grid. I’m choosing to assign exact grid cell locations to my DOM objects, which I’ll explain below.
+<!-- <iframe width="420" height="315" src="https://www.youtube.com/embed/jV8B24rSN5o"></iframe> --></p>
+
+<p>This is the spread I’ll use to demonstrate how I used grid to lay out my cards:</p>
+
+<p><img class="post-image-small" src="/img/posts/2023-01-03_tarot_grid_simple.png" alt="simple tarot spread" title="simple tarot spread" /></p>
+
+<h2 id="requirement-position-a-specific-card-to-an-exact-cell-on-a-grid">Requirement: Position a specific card to an exact cell on a grid</h2>
+<p>Before I get fancy, I like to hard-code whatever I’m doing to make sure it works, so that’s the approach I’ll take here. First we need a grid. This tarot spread has 3 columns and 3 rows, so we need a grid with 3 columns and 3 rows.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
+  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Then we need to position card #1 in row 1, column 2:</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.card-1</span> <span class="p">{</span>
+  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here’s how it plays out in the HTML:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-container"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"card-1"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>#1<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Repeat this process for each of the 4 cards. Now this this working proof-of-concept, I can move on to making it dynamic.</p>
+
+<h2 id="requirement-store-the-cards-exact-positioning-information-somewhere-so-it-can-be-rendered-dynamically">Requirement: Store the card’s exact positioning information somewhere so it can be rendered dynamically</h2>
+<p>Storing knowledge about a database object in the HTML doesn’t scale, so it’s better to store it in the database along with the appropriate object. To do that, I added a <code class="language-plaintext highlighter-rouge">grid_column</code> and a <code class="language-plaintext highlighter-rouge">grid_row</code> field to the <code class="language-plaintext highlighter-rouge">reading_positions</code> table in my database in order to store each card’s position in a given reading. After the database table was updated, I manually added the data to each <code class="language-plaintext highlighter-rouge">reading_position</code> (aka card in the spread). The data for our example cards in this spread looks something like this:</p>
+
+<p><img class="post-image-small" src="/img/posts/2023-01-03_tarot_grid_simple_gridlines.png" alt="simple tarot spread with gridlines" title="simple tarot spread with gridlines" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Card 1:
+  grid_column: 2, grid_row: 1
+
+Card 2:
+  grid_column: 1, grid_row: 2
+
+Card 3:
+  grid_column: 3, grid_row: 2
+
+Card 4:
+  grid_column: 2, grid_row: 3
+</code></pre></div></div>
+
+<p>Now I can pull these attributes dynamically when the reading is rendered.</p>
+
+<h2 id="requirement-shrink-or-grow-the-size-of-the-spread-area-to-fit-any-size-reading">Requirement: Shrink or grow the size of the spread area to fit any size reading</h2>
+<p>Some readings spreads have 1 card, some have 10. Depending on the shape of a particular spread, we may need a 1x1 grid, 3x3, 4x4 etc. At first, I just made a big grid because why not make one big enough to hold the biggest reading spread? As it turns out, when I made the grid the static size of 100x100, there was a <em>lot</em> of extra blank space on the page where the empty grid cells were. Ooof.</p>
+
+<p>In order to overcome that, I decided to render this grid size dynamically like I did with the individual card positions. I added some fields to the <code class="language-plaintext highlighter-rouge">readings</code> database table (<code class="language-plaintext highlighter-rouge">grid_columns</code> and <code class="language-plaintext highlighter-rouge">grid_rows</code>) to store this data and then I manually filled in this data for each reading. The data for our reading spread looks something like this for a 3x3 grid:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grid_columns: 3
+grid_rows: 3
+</code></pre></div></div>
+
+<h2 id="requirement-make-flexible-reusable-classes-for-building-grids-and-positioning-cards-on-the-fly">Requirement: Make flexible, reusable classes for building grids and positioning cards on the fly</h2>
+<p>Currently our grid class is completely committed to being a 3x3 grid, always.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
+  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>How did I shove a dynamic value into this class so it can be whatever size I want? Well, I didn’t. After reviewing the shapes of all of my reading spreads, I built a library of utility classes for grids of sizes up to the largest grid I needed. Now I can swap out classes on the fly by breaking the original <code class="language-plaintext highlighter-rouge">grid-container</code>’s properties into different classes. Here is a sample of some of the classes I wrote – these are the classes that are relevant to our example grid:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.grid-container-3-col</span> <span class="p">{</span>
+  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.grid-container-3-row</span> <span class="p">{</span>
+  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And then by applying multiple classes in the HTML, we’re able to achieve the same result as having the single class with all of the properties in it.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- How it looks in plain HTML --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-container grid-container-3-col grid-container-3-row"</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- cards go here --&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- How it looks in ERB with dynamic values --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-container grid-container-&lt;%= @reading.grid_columns %&gt;-col grid-container-&lt;%= @reading.grid_rows %&gt;-row"</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- cards go here --&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+</code></pre></div></div>
+
+<p>I took that same approach for positioning the cards dynamically.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* Instead of a single class for each possible position on the grid... */</span>
+<span class="nc">.card-1</span> <span class="p">{</span>
+  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* I made classes for each column and row address on the grid */</span>
+<span class="nc">.grid-col-2</span> <span class="p">{</span>
+  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.grid-row-1</span> <span class="p">{</span>
+  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Again, applying multiple classes to the cards achieves the same result as having the single class with all of the properties in it. This is the whole enchilada as it appears in the HTML:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- How it looks in plain HTML --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-container grid-container-3-col grid-container-3-row"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-col-2 grid-row-1"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>#1<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-col-1 grid-row-2"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>#2<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-col-3 grid-row-2"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>#3<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-col-2 grid-row-3"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;p&gt;</span>#4<span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- How it looks in ERB with dynamic values --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-container grid-container-&lt;%= @reading.grid_columns %&gt;-col grid-container-&lt;%= @reading.grid_rows %&gt;-row"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">reading.positioned_cards.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">card</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"grid-col-&lt;%= card.grid_column %&gt; grid-row-&lt;%= card.grid_row %&gt;"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">card.position_number</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>And that’s the stuff right there! 🎉 I’m still able to easily loop over the cards in the reading, but now they all have their position information stored in the database with the card itself and all of it points to a set of CSS utility classes to make the grid magic happen. 🔮 🪄 I’m feeling pretty proud of myself.</p>
+
+<p><img src="https://media.giphy.com/media/HGyoHFl11wwyyo1vr1/giphy.gif" alt="giphy proud" title="giphy proud" /></p>
+
+<h2 id="bonus-round">Bonus Round!</h2>
+<p>The hard work is over, so now it’s time to flex a little to get those final touches in place.</p>
+
+<h3 id="bonus-requirement-overlap-certain-cards-rows-or-columns-so-that-the-layout-actually-looks-like-a-real-tarot-spread">Bonus Requirement: Overlap certain cards’ rows or columns so that the layout actually looks like a real tarot spread</h3>
+<p>Now for the tricky part. How do you get cards to look overlapped like this if a grid is made of columns and rows that don’t overlap?
+<img src="/img/posts/2023-01-03_tarot_grid_complex.png" alt="grid with half positions" title="grid with half positions" /></p>
+
+<p>This was a real headscratcher. I redesigned my grid concept to have twice as many columns and rows and then refer to the overlapping locations as “half” locations. 🤯</p>
+
+<p><img src="/img/posts/2023-01-03_tarot_grid_complex_gridlines.png" alt="grid with half position gridlines" title="grid with half position gridlines" /></p>
+
+<p>So the data for this reading spread looks something like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Card 1:
+  grid_column: 1, grid_row: 1.5
+
+Card 2:
+  grid_column: 2, grid_row: 1
+
+Card 3:
+  grid_column: 2, grid_row: 2
+
+Card 4:
+  grid_column: 5, grid_row: 1.5
+
+Card 5:
+  grid_column: 4, grid_row: 1
+
+Card 6:
+  grid_column: 4, grid_row: 2
+
+Card 7:
+  grid_column: 3, grid_row: 1.5
+</code></pre></div></div>
+
+<p>And then I built out the corresponding CSS classes to match.</p>
+
+<h3 id="bonus-requirement-cross-a-card-rotate-90-degrees-over-another-card">Bonus Requirement: Cross a card (rotate 90 degrees) over another card</h3>
+<p>Okay, now in this spread, notice how card #2 is crossing over card #1?
+<img src="/img/posts/2023-01-03_tarot_crossed_cards.png" alt="example of crossed cards" title="example of crossed cards" /></p>
+
+<p>The first part is easy. When entering the positioning data, I simply assigned cards #1 and #2 to the same place in the grid.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Card 1:
+  grid_column: 2, grid_row: 1
+
+Card 2:
+  grid_column: 2, grid_row: 1
+</code></pre></div></div>
+
+<p>Voila. But then I needed to add another column to my <code class="language-plaintext highlighter-rouge">reading_positions</code> table to indicate if a card in this position should be crossed. I tossed a boolean called <code class="language-plaintext highlighter-rouge">crossed</code> in there and was good to go. As for the styling, I wrote a class that rotated the card and rendered that class in the HTML if the <code class="language-plaintext highlighter-rouge">reading_position.crossed?</code> was true.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.crossed</span> <span class="p">{</span>
+  <span class="nl">-ms-transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">IE</span> <span class="err">9</span>
+  <span class="nl">-webkit-transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">Safari</span> <span class="err">3-8</span>
+  <span class="nl">transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now that we have ovelapping cards (with those half columns and half rows) and crossed cards (rotated 90 degrees), we can render the classic Celtic Cross spread!</p>
+
+<p><img src="/img/posts/2023-01-03_tarot_celtic_cross.png" alt="celtic cross tarot spread" title="celtic cross tarot spread" /></p>
+
+<h2 id="in-summary">In Summary</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Before Grid</th>
+      <th>After Grid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img class="post-image-small" src="/img/posts/2023-01-03_tarot_bigger_picture_before.png" alt="8-card spread in a row" title="8-card spread in a row" /></td>
+      <td><img class="post-image-small" src="/img/posts/2023-01-03_tarot_bigger_picture_after.png" alt="8-card spread in grid" title="8-card spread in grid" /></td>
+    </tr>
+    <tr>
+      <td><span class="table-caption">The cards are rendered into generic non-customized columns and rows.</span></td>
+      <td><span class="table-caption">The cards are positioned exactly where I want them to be.</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+This refactor was satisfying because it solved a problem that I had stopped thinking about solutions for a long time ago. It took some creative problem solving to figure it out and the results are so pretty! I’m glad to have gotten the inspiration I needed to finally endeavor on this long-overdue refactor.</p>
+
+<p>Of course, the next set of feature I want is already in my mind: when I use the admin interface to create a new reading spread and fill in the grid size and card locations, I have to picture a grid in my mind (complete with half rows and half columns 😱) or use a whiteboard to figure it out. I would love to be able to click on a square in a grid on the form page or drag and drop a card to a grid location. Right now, that’s outside of the limits of my desire to do this work 😂 and I don’t see myself building a whole lot more spreads right now, so we’ll see how many more years it takes for me to get around to implementing that admin feature.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

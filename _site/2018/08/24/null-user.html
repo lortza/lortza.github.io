@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How RuboCop Led me to Implement the Null Object Pattern</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/08/24/null-user.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How RuboCop Led me to Implement the Null Object Pattern</h1>
+    <p class="post-meta">August 24, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>Last week, in an effort to level-up my knowledge of Ruby style conventions, I connected <a href="https://codeclimate.com/">Code Climate</a> and installed the <a href="https://github.com/rubocop-hq/rubocop">RuboCop gem</a> in a few of the older projects I’ve been refactoring. As I expected with a new install in existing apps, RuboCop presented me with a backlog of roughly 300 items to address in each app.</p>
+
+<p>The most interesting suggestions were in a <code class="language-plaintext highlighter-rouge">SessionsController</code> because I got to learn about the <a href="http://mitrev.net/ruby/2015/11/13/the-operator-in-ruby/">Safe Navigation Operator</a>, or <code class="language-plaintext highlighter-rouge">&amp;.</code>, which led to learning about using the <a href="https://www.youtube.com/watch?v=29MAL8pJImQ&amp;feature=youtu.be&amp;t=10m30s">Null Object Pattern</a>.</p>
+
+<p>In the <code class="language-plaintext highlighter-rouge">SessionsController</code> below, you’ll see the first RuboCop suggestion (i.e. the tip of the iceberg):</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/sessions_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">email: </span><span class="n">params</span><span class="p">[</span><span class="ss">:email</span><span class="p">])</span>
+
+    <span class="c1"># RUBOCOP says: Style/SafeNavigation: Use SafeNavigation</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="o">&amp;&amp;</span> <span class="n">user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:password</span><span class="p">])</span>
+      <span class="c1"># [log the user in]</span>
+    <span class="k">else</span>
+      <span class="c1"># [re-render the sign-in form and show an error message]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>So what is this <code class="language-plaintext highlighter-rouge">Style/SafeNavigation</code> suggestion about? The Safe Navigation Operator returns <code class="language-plaintext highlighter-rouge">nil</code> if a method is called on a nil object instead of throwing an error.</p>
+
+<p>In his post, <a href="http://mitrev.net/ruby/2015/11/13/the-operator-in-ruby/">The Safe Navigation Operator (&amp;.) in Ruby</a>, <a href="http://mitrev.net/about/">Georgi Mitrev</a> has a nice explanation of the case for it:</p>
+
+<blockquote>
+  <p>Imagine you have an account that has an owner and you want to get the owner’s address. If you want to be safe and not risk a Nil error you would write something like the following:</p>
+  <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">account</span> <span class="o">&amp;&amp;</span> <span class="n">account</span><span class="p">.</span><span class="nf">owner</span> <span class="o">&amp;&amp;</span> <span class="n">account</span><span class="p">.</span><span class="nf">owner</span><span class="p">.</span><span class="nf">address</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div>  </div>
+  <p>We can rewrite the previous example using the safe navigation operator:</p>
+  <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">account</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">owner</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">address</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<p>Now that’s some pretty nifty shorthand for an otherwise long string of <code class="language-plaintext highlighter-rouge">&amp;&amp;</code>s. So in my case, this is the style change RuboCop is suggesting:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">user</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:password</span><span class="p">])</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Right? Not quite. When I implemented it, RuboCop said:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Lint/SafeNavigationChain: Do not chain ordinary method call after safe navigation operator.
+</code></pre></div></div>
+<p>Okay… thanks for the sweet tip on <code class="language-plaintext highlighter-rouge">&amp;.</code>, but <em>what do you want from me, RuboCop???</em></p>
+
+<p>Better object-oriented programming, my friends. Better OOP. Are you <a href="https://www.youtube.com/watch?v=idx3GSL2KWs">down with OOP</a>? lol.</p>
+
+<h1 id="the-null-object-pattern-solution">The Null Object Pattern Solution</h1>
+
+<p>In a pairing session, I was able to see the bigger situation here, which is that my code is asking an object about whether it exists when it could just be handing the <code class="language-plaintext highlighter-rouge">nil</code> value in a predicted way. What if <code class="language-plaintext highlighter-rouge">user.authenticate(params[:password])</code> could just safely run regardless of whether an instance of the <code class="language-plaintext highlighter-rouge">User</code> class exists?</p>
+
+<p>That would be nice. And to make that dream a reality, we need a null user object. As Sandi Metz explains in her <a href="https://www.youtube.com/watch?v=29MAL8pJImQ&amp;feature=youtu.be&amp;t=10m30s">Nothing is Something talk</a>, this object will stand in as a legitimate object where we’d otherwise have a <code class="language-plaintext highlighter-rouge">nil</code>. Since we will have built this custom object, we get to tell it how to react to situations that would otherwise result in a <code class="language-plaintext highlighter-rouge">nil</code> value and subsequent error.</p>
+
+<p>Running this in the console, we get:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; user = User.find_by(email: "email-that-doesn't-exist")
+
+&gt;&gt; user
+=&gt; nil
+
+&gt;&gt; user.authenticate(params[:password])
+!! #&lt;NoMethodError: undefined method `authenticate' for nil:NilClass&gt;
+</code></pre></div></div>
+
+<h3 id="the-guaranteed-user">The Guaranteed User</h3>
+
+<p>The controller doesn’t want to manage <code class="language-plaintext highlighter-rouge">nil</code> users. It’s busy and has its own stuff to do. It wants a <em>guaranteed user</em> to work with. The controller doesn’t care by what means this guaranteed user happens, it just needs one in order to move forward.</p>
+
+<p>Instead of creating a <code class="language-plaintext highlighter-rouge">user</code> variable with the potential of equaling <code class="language-plaintext highlighter-rouge">nil</code> because a matching record isn’t found in the database, our <code class="language-plaintext highlighter-rouge">user</code> variable will equal some safe object provided to us by our new <code class="language-plaintext highlighter-rouge">GuaranteedUser</code> class. Then, since we don’t have to safeguard against <code class="language-plaintext highlighter-rouge">nil</code>s, we can safely run the <code class="language-plaintext highlighter-rouge">user.authenticate</code> method.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/sessions_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">SessionsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="c1"># Instead of a potentially nil instance of the User</span>
+    <span class="c1"># class, we're guaranteeing an actual object which is</span>
+    <span class="c1"># provided by the GuaranteedUser class</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="no">GuaranteedUser</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">email: </span><span class="n">params</span><span class="p">[</span><span class="ss">:email</span><span class="p">])</span>
+
+    <span class="c1"># Now that we're not worried about managing nils, we can run</span>
+    <span class="c1"># the authenticate method without other safeguards in place</span>
+    <span class="k">if</span> <span class="n">user</span><span class="p">.</span><span class="nf">authenticate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:password</span><span class="p">])</span>
+      <span class="c1"># [log the user in]</span>
+    <span class="k">else</span>
+      <span class="c1"># [re-render the sign-in form and show an error message]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h4 id="if-the-user-doesnt-actually-exist-in-the-users-table-how-can-we-guarantee-a-user-object">If the user doesn’t actually exist in the <code class="language-plaintext highlighter-rouge">users</code> table, how can we guarantee a user object?</h4>
+<p>We’re not guaranteed to get a <code class="language-plaintext highlighter-rouge">User</code> object, but we’re guaranteed to get a user-like object, and that’s really all we need. The <code class="language-plaintext highlighter-rouge">GuaranteedUser</code> class searches the <code class="language-plaintext highlighter-rouge">users</code> table and if it finds a matching user, it returns that <code class="language-plaintext highlighter-rouge">User</code> object. If there is no user that matches, it returns a <code class="language-plaintext highlighter-rouge">NullUser</code> object. Either outcome supplies us with the user-like object that we need.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/guaranteed_user.rb</span>
+
+<span class="k">class</span> <span class="nc">GuaranteedUser</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">find_by</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="no">User</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">||</span> <span class="no">NullUser</span><span class="p">.</span><span class="nf">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+
+<span class="c1"># app/models/null_user.rb</span>
+
+<span class="k">class</span> <span class="nc">NullUser</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>In the console, we try to find a user via its email address. When we cannot find a match, we get an object instead of a nil value:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; user = GuaranteedUser.find_by(email: "email-that-doesn't-exist")
+
+&gt;&gt; user
+=&gt; #&lt;NullUser:0x00007f88130dbc70&gt;
+</code></pre></div></div>
+
+<h4 id="but-how-is-userauthenticate-safe-to-run-now">But how is <code class="language-plaintext highlighter-rouge">user.authenticate</code> safe to run now?</h4>
+<p>It’s not yet, but after we create an <code class="language-plaintext highlighter-rouge">authenticate</code> method for <code class="language-plaintext highlighter-rouge">NullUser</code>, it will be. We’ll make the method return <code class="language-plaintext highlighter-rouge">false</code> just like the <code class="language-plaintext highlighter-rouge">authenticate</code> method from the <code class="language-plaintext highlighter-rouge">User</code> class would if a user that actually existed didn’t pass authentication. This method will always return false because a <code class="language-plaintext highlighter-rouge">NullUser</code> will never pass authentication.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/null_user.rb</span>
+
+<span class="k">class</span> <span class="nc">NullUser</span>
+  <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+    <span class="kp">false</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Running this in the console, we get:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; user = GuaranteedUser.find_by(email: "email-that-doesn't-exist")
+
+&gt;&gt; user
+=&gt; #&lt;NullUser:0x0007fed23436d6&gt;
+
+&gt;&gt; user.authenticate(params[:password])
+=&gt; false
+</code></pre></div></div>
+
+<p>The generated <code class="language-plaintext highlighter-rouge">NullUser</code> object fails authentication, the sign-in form is re-rendered in the browser, and the human user sees an error about incorrect credentials.</p>
+
+<p>In the case of a legitimate user (an email that does exist in the <code class="language-plaintext highlighter-rouge">users</code> table) that fails authentication because of the wrong password, in the console we get:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; user2 = GuaranteedUser.find_by(email: 'sample@gmail.com')
+=&gt; #&lt;User id: 2, name: "Actual User", email: "sample@gmail.com", created_at: "2016-01-26 18:05:14", updated_at: "2018-08-20 10:03:44"&gt;
+
+&gt;&gt; user2.authenticate('wrong-password')
+=&gt; false
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">User</code> object fails authentication, the sign-in form is re-rendered in the browser, and the human user sees an error about incorrect credentials. The key point here is <em>regardless of whether the <code class="language-plaintext highlighter-rouge">user</code> variable is pointed to an instance of <code class="language-plaintext highlighter-rouge">User</code> or <code class="language-plaintext highlighter-rouge">NullUser</code>, the rest of the process flows in the same way.</em></p>
+
+<p>This approach makes for a much cleaner controller. It also leaves decisions about what defines a <code class="language-plaintext highlighter-rouge">GuaranteedUser</code> and a <code class="language-plaintext highlighter-rouge">NullUser</code> up to their own classes to handle. Since we’ve wrapped the concept of a user-like object in a reliable API called <code class="language-plaintext highlighter-rouge">GuaranteedUser</code>, we can access it confidently throughout our codebase and limit the number of conditions we’d otherwise have to write.</p>
+
+<h3 id="taking-this-beyond-the-sessionscontroller">Taking this beyond the SessionsController</h3>
+
+<p>I personally haven’t implemented anything beyond what my needs were for this controller yet. However, have done so is making me think about other possible uses for this guaranteed user object. I can think of a couple of projects I’ve worked on where I needed a “guest” user to keep my views from blowing up when no logged-in user was present. Using this pattern, gets me a lot closer to what I wanted to have happen in my views:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/null_user.rb</span>
+
+<span class="k">class</span> <span class="nc">NullUser</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">name</span>
+    <span class="s1">'Guest'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/some_view.html.erb --&gt;</span>
+
+<span class="c">&lt;!-- I'd get to do this: --&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Hello, #{@user.name}!<span class="nt">&lt;/h1&gt;</span>
+
+<span class="c">&lt;!-- Instead of this: --&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">if</span> <span class="vi">@user</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Hello, #{@user.name}!<span class="nt">&lt;/h1&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">else</span> <span class="cp">%&gt;</span>
+  <span class="nt">&lt;h1&gt;</span>Hello, Guest!<span class="nt">&lt;/h1&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+
+</code></pre></div></div>
+
+<p>Though I still have to work out the rest of the details of making this happen, this Null Object Pattern concept feels like a solid foundation on which to work.</p>
+
+<hr />
+
+<h4 id="side-note">Side Note:</h4>
+
+<p>A big chunk of those 300ish RuboCop suggestions belonged to the  <code class="language-plaintext highlighter-rouge">Style/FrozenStringLiteralComment</code> category, which is to prepare my Ruby 2.5.0 codebase for upcoming changes in Ruby 3.0. If you find yourself staring down the prospect of adding the <a href="https://idiosyncratic-ruby.com/58-magic-instructions.html">magic comment</a> line:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># frozen_string_literal: true
+</code></pre></div></div>
+<p>to the top of almost all of the files in your Rails app like I did, don’t worry, <a href="https://github.com/Invoca/magic_frozen_string_literal">there’s a gem for that</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

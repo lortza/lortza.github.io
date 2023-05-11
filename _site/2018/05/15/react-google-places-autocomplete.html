@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Implementing a Cities Autocomplete with the Google Places API in React</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/05/15/react-google-places-autocomplete.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Implementing a Cities Autocomplete with the Google Places API in React</h1>
+    <p class="post-meta">May 15, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently built a <a href="https://github.com/lortza/react_rails_api_city_data">City Data React app</a> which consumes a <a href="https://github.com/lortza/rails_api_integrator">separate Rails API</a>. The user inputs a US city, and in return gets local weather, events, new articles, and Flickr photos.</p>
+
+<p>In the spirit of consistent input and a better user-experience, I wanted the location input field to be an autocomplete. I was surprised to discover that implementing one in vanilla Javascript was much easier than I expected.</p>
+
+<h2 id="autocomplete-using-vanilla-javascript">Autocomplete Using Vanilla Javascript</h2>
+
+<p>This implementation is based on code from <a href="https://www.w3docs.com/learn-javascript/places-autocomplete.html">this handy tutorial</a>.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- index.html --&gt;</span>
+
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"viewport"</span> <span class="na">content=</span><span class="s">"width=device-width, initial-scale=1, shrink-to-fit=no"</span><span class="nt">&gt;</span>
+
+    <span class="c">&lt;!-- 1. Load the Google Places library --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&amp;language=en"</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+
+    <span class="c">&lt;!-- 2. Insert and input tag with a useful id --&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">id=</span><span class="s">"autocomplete"</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!-- 3. Use this script to call the Google Places API --&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+      <span class="kd">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">autocomplete</span><span class="dl">'</span><span class="p">)</span>
+
+      <span class="c1">// Limit the results to just Cities in the US</span>
+      <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">types</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">(cities)</span><span class="dl">'</span><span class="p">],</span>
+        <span class="na">componentRestrictions</span><span class="p">:</span> <span class="p">{</span><span class="na">country</span><span class="p">:</span> <span class="dl">"</span><span class="s2">us</span><span class="dl">"</span><span class="p">}</span>
+       <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">autocomplete</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">places</span><span class="p">.</span><span class="nx">Autocomplete</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+
+      <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="nx">autocomplete</span><span class="p">,</span> <span class="dl">'</span><span class="s1">place_changed</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+         <span class="kd">var</span> <span class="nx">place</span> <span class="o">=</span> <span class="nx">autocomplete</span><span class="p">.</span><span class="nx">getPlace</span><span class="p">()</span>
+      <span class="p">})</span>
+    <span class="nt">&lt;/script&gt;</span>
+
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>I mean, that just <em>worked</em> right out of the box.</p>
+
+<p>But my project is in React. So this vanilla Javascript approach didn’t work no matter how much I tried to coerce it into playing nicely in my <code class="language-plaintext highlighter-rouge">&lt;ReportForm /&gt;</code> component.</p>
+
+<p>Thankfully, there’s an npm package for that!</p>
+
+<h2 id="autocomplete-in-react">Autocomplete in React</h2>
+
+<p>This is more complicated than the vanilla javascript implementation above, but accomplishable! At a high level, this is how it works: the React app input field is a component that hits the Google Places API. The form then takes this result and passes it in a call to the Rails API.</p>
+
+<p>More specifically:</p>
+
+<ul>
+  <li>The user starts typing in the location input field</li>
+  <li>The input field component hits the Google API to return location suggestions</li>
+  <li>The user selects one of those suggestions</li>
+  <li>The user submits the form</li>
+  <li>The form data is used to hit the Rails API</li>
+  <li>React displays the results from the Rails API data</li>
+</ul>
+
+<p>The React App Architecture looks like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>App.js                    ← Houses the whole app
+- ReportForm              ← Submits the form and formats user input
+  - LocationSearchInput   ← Interacts with the Google Places API
+    - PlacesAutocomplete  ← Renders the input field
+- Report                  ← Interacts with the Rails API
+  - Weather (etc)         ← Displays the data
+</code></pre></div></div>
+
+<h3 id="install-the-npm-package">Install the npm package</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install --save react-places-autocomplete
+</code></pre></div></div>
+
+<p>The readme is full of great configuration information: <a href="https://github.com/kenny-hibino/react-places-autocomplete">https://github.com/kenny-hibino/react-places-autocomplete</a>.</p>
+
+<h3 id="add-the-google-places-library-to-your-indexhtml">Add the Google Places library to your index.html</h3>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- public/index.html --&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+  ...
+  <span class="c">&lt;!-- As of 5/2018 this non-api-key version is working but soon may be deprecated. --&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://maps.googleapis.com/maps/api/js?libraries=places&amp;language=en"</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+  <span class="c">&lt;!-- You may need to switch to the api-key version --&gt;</span>
+  <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&amp;libraries=places"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+</code></pre></div></div>
+
+<h3 id="build-the-locationsearchinput-component">Build the LocationSearchInput Component</h3>
+
+<p>Create a file called <code class="language-plaintext highlighter-rouge">src/components/LocationSearchInput.js</code>. The <a href="https://github.com/kenny-hibino/react-places-autocomplete">npm package readme</a> provides fully-functional starter code. This version below has a couple of tweaks to meet the needs of my project.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/components/LocationSearchInput.js</span>
+
+<span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">PlacesAutocomplete</span><span class="p">,</span> <span class="p">{</span> <span class="nx">geocodeByAddress</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-places-autocomplete</span><span class="dl">'</span>
+
+<span class="kd">class</span> <span class="nx">LocationSearchInput</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">address</span><span class="p">:</span> <span class="dl">''</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">address</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">address</span> <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="c1">// When the user selects an autocomplete suggestion...</span>
+  <span class="nx">handleSelect</span> <span class="o">=</span> <span class="p">(</span><span class="nx">address</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// Pull in the setFormLocation function from the parent ReportForm</span>
+    <span class="kd">const</span> <span class="nx">setFormLocation</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">setFormLocation</span>
+
+    <span class="nx">geocodeByAddress</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
+        <span class="c1">// Set the location in the parent ReportFrom</span>
+        <span class="nx">setFormLocation</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">formatted_address</span><span class="p">)</span>
+      <span class="p">})</span>
+      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">))</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">renderInput</span> <span class="o">=</span> <span class="p">({</span> <span class="nx">getInputProps</span><span class="p">,</span> <span class="nx">getSuggestionItemProps</span><span class="p">,</span> <span class="nx">suggestions</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">autocomplete-root</span><span class="dl">"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">form-control</span><span class="dl">"</span> <span class="p">{...</span><span class="nx">getInputProps</span><span class="p">()}</span> <span class="sr">/</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">autocomplete-dropdown-container</span><span class="dl">"</span><span class="o">&gt;</span>
+          <span class="p">{</span><span class="nx">suggestions</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">suggestion</span> <span class="o">=&gt;</span> <span class="p">(</span>
+            <span class="c">&lt;!--</span> <span class="nx">Add</span> <span class="nx">a</span> <span class="nx">style</span> <span class="k">of</span> <span class="dl">"</span><span class="s2">suggestion</span><span class="dl">"</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">suggested</span> <span class="nx">locations</span> <span class="o">--&gt;</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="p">{...</span><span class="nx">getSuggestionItemProps</span><span class="p">(</span><span class="nx">suggestion</span><span class="p">)}</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">suggestion</span><span class="dl">"</span><span class="o">&gt;</span>
+              <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">suggestion</span><span class="p">.</span><span class="nx">description</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
+</span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>          <span class="p">))}</span>
+        <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>    <span class="p">);</span>
+
+    <span class="c1">// Limit the suggestions to show only cities in the US</span>
+    <span class="kd">const</span> <span class="nx">searchOptions</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">types</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">(cities)</span><span class="dl">'</span><span class="p">],</span>
+      <span class="na">componentRestrictions</span><span class="p">:</span> <span class="p">{</span><span class="na">country</span><span class="p">:</span> <span class="dl">"</span><span class="s2">us</span><span class="dl">"</span><span class="p">}</span>
+     <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">PlacesAutocomplete</span>
+        <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">address</span><span class="p">}</span>
+        <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">}</span>
+        <span class="nx">onSelect</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleSelect</span><span class="p">}</span>
+        <span class="c1">// Pass the search options prop</span>
+        <span class="nx">searchOptions</span><span class="o">=</span><span class="p">{</span><span class="nx">searchOptions</span><span class="p">}</span>
+      <span class="o">&gt;</span>
+        <span class="p">{</span><span class="nx">renderInput</span><span class="p">}</span>
+      <span class="o">&lt;</span><span class="sr">/PlacesAutocomplete</span><span class="err">&gt;
+</span>    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">LocationSearchInput</span>
+</code></pre></div></div>
+
+<h3 id="write-the-css-for-the-autocomplete-suggestion-text">Write the CSS for the Autocomplete Suggestion Text</h3>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* src/App.css */</span>
+
+<span class="nc">.suggestion</span> <span class="p">{</span>
+  <span class="nl">background-color</span><span class="p">:</span> <span class="m">#f1f1f1</span><span class="p">;</span>
+  <span class="nl">color</span><span class="p">:</span> <span class="no">gray</span><span class="p">;</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">80%</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">0.25em</span> <span class="m">0.7em</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="add-the-locationsearchinput-to-the-reportform">Add the LocationSearchInput to the ReportForm</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">&lt;ReportForm /&gt;</code> component ties together the user input acquired by the autocomplete input field and the <code class="language-plaintext highlighter-rouge">&lt;App /&gt;</code> component. The biggest challenge I had in implementing this feature was getting the selected autocomplete data into the function that handles the form submission so that it could be passed on to the Rails API call. I solved it by creating a <code class="language-plaintext highlighter-rouge">state</code> in the <code class="language-plaintext highlighter-rouge">&lt;ReportForm /&gt;</code>. <code class="language-plaintext highlighter-rouge">state</code> turned out to be a helpful middle ground, tying these to functions together.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/components/ReportForm.js</span>
+
+<span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">react</span><span class="dl">"</span>
+<span class="c1">// import the LocationSearchInput</span>
+<span class="k">import</span> <span class="nx">LocationSearchInput</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./LocationSearchInput</span><span class="dl">'</span>
+
+<span class="kd">class</span> <span class="nx">ReportForm</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="c1">// Set up a state to help pass data back to the parent App component</span>
+  <span class="kd">constructor</span><span class="p">(){</span>
+    <span class="k">super</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">cityLoc</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
+      <span class="na">stateLoc</span><span class="p">:</span> <span class="dl">''</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Get the info from the LocationSearchInput component and save</span>
+  <span class="c1">// it to state here in ReportForm.</span>
+  <span class="nx">setFormLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">googleLocation</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// The Google result comes back as a comma-separated string:</span>
+    <span class="c1">// "Austin, TX, USA". Parse it into usable data.</span>
+    <span class="kd">let</span> <span class="nx">parsedLoc</span> <span class="o">=</span> <span class="nx">googleLocation</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+      <span class="na">cityLoc</span><span class="p">:</span> <span class="nx">parsedLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+      <span class="na">stateLoc</span><span class="p">:</span> <span class="nx">parsedLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Process the form submission with the info that was just</span>
+  <span class="c1">// saved to ReportForm.state</span>
+  <span class="nx">createReportLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">inputLocation</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">cityLoc</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cityLoc</span><span class="p">,</span>
+      <span class="na">stateLoc</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">stateLoc</span>
+    <span class="p">}</span>
+    <span class="c1">// Call the parent App component's setReportLocation function, which</span>
+    <span class="c1">// sets App.state. so that all other components will have access to it.</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">setReportLocation</span><span class="p">(</span><span class="nx">inputLocation</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Render the form</span>
+  <span class="nx">render</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="c1">// Set the form submission handler to createReportLocation</span>
+      <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">createReportLocation</span><span class="p">}</span>  <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">card card-body mb-3</span><span class="dl">"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">row</span><span class="dl">"</span><span class="o">&gt;</span>
+          <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">col-sm-12</span><span class="dl">"</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">Enter</span> <span class="nx">a</span> <span class="nx">US</span> <span class="nx">City</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>          <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">row</span><span class="dl">"</span><span class="o">&gt;</span>
+          <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">col-sm-10</span><span class="dl">"</span><span class="o">&gt;</span>
+            <span class="c1">// Pass the setFormLocation function as a prop to be called</span>
+            <span class="c1">// in the LocationSearchInput component.</span>
+            <span class="o">&lt;</span><span class="nx">LocationSearchInput</span> <span class="nx">setFormLocation</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">setFormLocation</span><span class="p">}</span><span class="sr">/</span><span class="err">&gt;
+</span>          <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>
+          <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">col-sm-2</span><span class="dl">"</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">submit</span><span class="dl">"</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">btn btn-xs btn-primary</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Submit</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>          <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">ReportForm</span>
+</code></pre></div></div>
+
+<p>Now that the autocomplete information has made its way to the topmost component, the <code class="language-plaintext highlighter-rouge">&lt;App /&gt;</code> component, everything becomes business as usual. The <code class="language-plaintext highlighter-rouge">&lt;Report /&gt;</code> component receives the location information from <code class="language-plaintext highlighter-rouge">&lt;App /&gt;</code> after the call to the Rails API.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/components/App.js</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="p">...</span>
+  <span class="c1">// Sets the state of App.js and is called from within the ReportForm</span>
+  <span class="nx">setReportLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">location</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+      <span class="na">cityLoc</span><span class="p">:</span> <span class="nx">location</span><span class="p">.</span><span class="nx">cityLoc</span><span class="p">,</span>
+      <span class="na">stateLoc</span><span class="p">:</span> <span class="nx">location</span><span class="p">.</span><span class="nx">stateLoc</span>
+    <span class="p">})</span>
+    <span class="c1">// Call the function to get the Rails API Data,</span>
+    <span class="c1">// passing it this location information</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">getReportData</span><span class="p">(</span><span class="nx">location</span><span class="p">)</span>
+  <span class="p">}</span>
+    <span class="p">...</span>
+    <span class="c1">// Pass on the report data to the Report</span>
+    <span class="p">{</span><span class="nx">reportData</span> <span class="p">?</span> <span class="o">&lt;</span><span class="nx">Report</span> <span class="nx">data</span><span class="o">=</span><span class="p">{</span><span class="nx">reportData</span><span class="p">}</span> <span class="nx">cityLoc</span><span class="o">=</span><span class="p">{</span><span class="nx">cityLoc</span><span class="p">}</span> <span class="nx">stateLoc</span><span class="o">=</span><span class="p">{</span><span class="nx">stateLoc</span><span class="p">}</span><span class="sr">/&gt; : ""</span><span class="err">}
+</span>    <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">App</span><span class="p">;</span>
+
+</code></pre></div></div>
+
+<p>That wraps up the Google Places location autocomplete in React inplementaion. To see the full app, check out <a href="https://github.com/lortza/react_rails_api_city_data">the repo</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

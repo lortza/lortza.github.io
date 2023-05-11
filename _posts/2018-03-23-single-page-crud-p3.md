@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  Single Page CRUD App in Rails - Part 3 - Editing Records
+title:  'Single Page CRUD App in Rails: Part 3 - Editing Records'
 date:   2018-03-23
+published: true
 ---
 
 Well here we are in the final stretch of making our Rails app AJAX CRUDdy! In this series, I explain how to interact with database records on the index page without reloading or refreshing the page.

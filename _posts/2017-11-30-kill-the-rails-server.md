@@ -2,6 +2,7 @@
 layout: post
 title:  How to fix it when the Rails Server is already running, but not where you can find it
 date:   2017-11-30
+published: true
 ---
 
 Have you ever accidentally closed a terminal tab while the `rails server` was still running and weren't able to find it again?

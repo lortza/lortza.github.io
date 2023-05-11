@@ -2,6 +2,7 @@
 layout: post
 title:  Finding Prime Numbers in Ruby
 date:   2017-09-22
+published: true
 ---
 
 Code quizzes commonly have a prime number challenge, which got me to thinking, shouldn't there already be an `is_prime` method? Well, yes, there should be. And in Ruby, there is.

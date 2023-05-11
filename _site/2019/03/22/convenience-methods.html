@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Convenience Methods in Rails are so... Convenient</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/03/22/convenience-methods.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Convenience Methods in Rails are so... Convenient</h1>
+    <p class="post-meta">March 22, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p>Several months ago in a code review, someone suggested to me that I wrap a model constant in a convenience method. I thought, “hmmm okay. This seems superfluous, but I’ll give it a go.” But then last night, the a-ha moment happened.</p>
+
+<p>I needed to write specs for a couple of methods that called two constants and two helper methods, and I found myself doing a bunch of brittle math inside of my specs. I don’t like finding myself doing math at all, and math that leads to brittle specs is double whammy of <em>nope</em>. The lightbulb in my head snapped on and I wrote a couple of convenience methods.</p>
+
+<p>In my <code class="language-plaintext highlighter-rouge">Plan</code> class, I have 2 constants. I call those constants in a couple of methods.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Plan</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+
+  <span class="no">EFFICIENCY_RATE</span> <span class="o">=</span> <span class="mf">0.66</span>
+  <span class="no">PREP_END_TIME</span> <span class="o">=</span> <span class="s1">'5:00 PM'</span><span class="p">.</span><span class="nf">to_time</span>
+
+  <span class="k">def</span> <span class="nf">estimated_time</span>
+    <span class="p">(</span><span class="n">total_time</span> <span class="o">*</span> <span class="no">EFFICIENCY_RATE</span><span class="p">).</span><span class="nf">to_i</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">recommended_start_time</span>
+    <span class="p">(</span><span class="no">PREP_END_TIME</span> <span class="o">-</span> <span class="n">estimated_time</span> <span class="o">*</span> <span class="mi">60</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s1">'%I:%M %p'</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>So that’s cool. But I need to figure out how to test those methods.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'#estimated_time'</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s1">'will output a time X% shorter than the total time'</span> <span class="k">do</span>
+    <span class="c1">#</span>
+    <span class="c1"># somehow make this happen</span>
+    <span class="c1">#</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">plan</span><span class="p">.</span><span class="nf">estimated_time</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span>  <span class="n">exactly</span> <span class="no">Plan</span><span class="o">::</span><span class="no">EFFICIENCY_RATE</span> <span class="n">less</span> <span class="n">than</span> <span class="n">the</span> <span class="n">total</span> <span class="n">time</span>  <span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">describe</span> <span class="s1">'#recommended_start_time'</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s1">'outputs the correct hour'</span> <span class="k">do</span>
+    <span class="c1">#</span>
+    <span class="c1"># somehow make this happen</span>
+    <span class="c1">#</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">plan</span><span class="p">.</span><span class="nf">recommended_start_time</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span> <span class="n">a</span> <span class="n">time</span> <span class="n">that</span> <span class="n">is</span> <span class="no">Plan</span><span class="o">::</span><span class="no">EFFICIENCY_RATE</span> <span class="n">less</span> <span class="n">than</span> <span class="no">Plan</span><span class="o">::</span><span class="no">PREP_END_TIME</span> <span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+<p>This is hard to do. Currently, the <code class="language-plaintext highlighter-rouge">EFFICIENCY_RATE</code> value is 0.66. That makes for annoying math, plus it’s brittle to state that value explicitly in the test. So let’s make some shiny new convenience methods:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Plan</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+
+  <span class="no">EFFICIENCY_RATE</span> <span class="o">=</span> <span class="mf">0.66</span>
+  <span class="no">PREP_END_TIME</span> <span class="o">=</span> <span class="s1">'5:00 PM'</span><span class="p">.</span><span class="nf">to_time</span>
+
+  <span class="k">def</span> <span class="nf">estimated_time</span>
+    <span class="c1"># Replace the constant `EFFICIENCY_RATE` with the</span>
+    <span class="c1"># new `efficiency_rate` method</span>
+    <span class="p">(</span><span class="n">total_time</span> <span class="o">*</span> <span class="n">efficiency_rate</span><span class="p">).</span><span class="nf">to_i</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">recommended_start_time</span>
+    <span class="c1"># Replace the constant `PREP_END_TIME` with the new</span>
+    <span class="c1"># `prep_end_time` method</span>
+    <span class="p">(</span><span class="n">prep_end_time</span> <span class="o">-</span> <span class="n">estimated_time</span> <span class="o">*</span> <span class="mi">60</span><span class="p">).</span><span class="nf">strftime</span><span class="p">(</span><span class="s1">'%I:%M %p'</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="c1"># Now `efficiency_rate` will return EFFICIENCY_RATE or whatever</span>
+  <span class="c1"># I need it to return in the test</span>
+  <span class="k">def</span> <span class="nf">efficiency_rate</span>
+    <span class="no">EFFICIENCY_RATE</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Same thing here: `prep_end_time` will return PREP_END_TIME</span>
+  <span class="c1"># or whatever I need it to return in the test</span>
+  <span class="k">def</span> <span class="nf">prep_end_time</span>
+    <span class="no">PREP_END_TIME</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<h3 id="on-to-the-specs">On to the specs!</h3>
+<p>Now we can turn to our good friend allow-to-receive-and-return (a.k.a <a href="https://relishapp.com/rspec/rspec-mocks/v/2-14/docs/method-stubs">method stubs</a>). When you have to test a method that depends on other methods, but you need those dependencies to return specific things, it can get tricky fast. Using allow-to-receive-and-return is great because you can just mock out those dependencies (or totally fake the unimportant parts) and get down to business truly isolating the method you want to test.</p>
+
+<p>Here, you’ll see that I’m setting values for the dependencies <code class="language-plaintext highlighter-rouge">total_time</code> and <code class="language-plaintext highlighter-rouge">efficiency_rate</code>, which used to be just the constant <code class="language-plaintext highlighter-rouge">EFFICIENCY_RATE</code>. And now I can do simple, predictable math to test my <code class="language-plaintext highlighter-rouge">estimated_time</code> method.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'#estimated_time'</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s1">'will output a time X% shorter than the total time'</span> <span class="k">do</span>
+    <span class="c1"># Outline what the expected values should be with Very Simple Math</span>
+    <span class="n">minutes</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">est_time</span> <span class="o">=</span> <span class="mi">50</span>
+
+    <span class="c1"># Tell `total_time` that its new value in this spec is 100.</span>
+    <span class="n">allow</span><span class="p">(</span><span class="n">plan</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:total_time</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span>
+
+    <span class="c1"># Tell `efficiency_rate` (formerly an untouchable constant) that</span>
+    <span class="c1"># its new value in this spec is 0.5.</span>
+    <span class="n">allow</span><span class="p">(</span><span class="n">plan</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:efficiency_rate</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+
+    <span class="c1"># Now when `estimated_time` is called, it employs those 2</span>
+    <span class="c1"># values from above and outputs the calculation</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">plan</span><span class="p">.</span><span class="nf">estimated_time</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="n">est_time</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>I’ve taken the same approach with this method by setting values for the dependencies <code class="language-plaintext highlighter-rouge">estimated_time</code> and <code class="language-plaintext highlighter-rouge">prep_end_time</code>, which used to be just the constant <code class="language-plaintext highlighter-rouge">PREP_END_TIME</code>. And now I can do simple, predictable math to test my <code class="language-plaintext highlighter-rouge">estimated_time</code> method.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'#recommended_start_time'</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">{</span> <span class="n">create</span><span class="p">(</span><span class="ss">:plan</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s1">'outputs in time format'</span> <span class="k">do</span>
+    <span class="c1"># Outline what the expected values should be with Very Simple Math</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="s1">'12:00 PM'</span><span class="p">.</span><span class="nf">to_time</span>
+    <span class="n">est_minutes</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">expected_time</span> <span class="o">=</span> <span class="s1">'11:00 AM'</span><span class="p">.</span><span class="nf">to_time</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s1">'%I:%M %p'</span><span class="p">)</span>
+
+    <span class="c1"># Tell `estimated_time` that its new value in this spec is 60.</span>
+    <span class="n">allow</span><span class="p">(</span><span class="n">plan</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:estimated_time</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="n">est_minutes</span><span class="p">)</span>
+    <span class="c1"># Tell `prep_end_time` (formerly an untouchable constant) that</span>
+    <span class="c1"># its new value in this spec is a timestamp of Noon.</span>
+    <span class="n">allow</span><span class="p">(</span><span class="n">plan</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:prep_end_time</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="c1"># Now when `recommended_start_time` is called, it employs those 2</span>
+    <span class="c1"># values from above and outputs the calculation</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">plan</span><span class="p">.</span><span class="nf">recommended_start_time</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span><span class="p">(</span><span class="n">expected_time</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Isn’t that nice? Now both of those methods are tested in isolation. There was no overreaching, no scope creep, just full confidence that they’re working as expected.</p>
+
+<h3 id="but-why-not-ditch-the-constants">But why not ditch the constants?</h3>
+<p>So why not just ditch the constants all together? Why bother writing them, just to wrap them when I could just set the method to return what the constant returns? Why not skip the middleman?</p>
+
+<p><a href="http://www.quickmeme.com/meme/3t9y28"><img src="http://www.quickmeme.com/img/03/034f6e98174583e154f326dce722c110810ea1487b69fa1d0bc7674545f8b21b.jpg" title="Office Space: What would you say you do here?" alt="Office Space Meme: What would you say you do here?" class="post-image" /></a></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># why not just do this:</span>
+<span class="k">def</span> <span class="nf">prep_end_time</span>
+  <span class="s1">'5:00 PM'</span><span class="p">.</span><span class="nf">to_time</span>
+<span class="k">end</span>
+
+<span class="c1"># ...instead of this?</span>
+<span class="k">def</span> <span class="nf">prep_end_time</span>
+  <span class="no">PREP_END_TIME</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Well, that’s just, like, <em>my opinion</em>, man. But there are reasons behind my opinion. Both values stored by the constants are static values. They don’t calculate anything and can be represented nicely by a variable. They’re both things that feel a little bit like global settings. Storing them in constants at the top of a model feels like the natural place to look for this kind of information. Ultimately, this decision is more about convention and communication between developers than it is about DRYness.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

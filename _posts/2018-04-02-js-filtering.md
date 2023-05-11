@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  Filtering Table Records with Javascript
+title:  Filtering Rails Table Records with Javascript
 date:   2018-04-02
+published: true
 ---
 
 I like Rails. I've felt pretty darned comfortable in the Rails ecosystem for a couple of years now. Branching out into javascript features, however, has been out of my comfort zone. It makes the learning hard, but so satisfying when I figure out something new!

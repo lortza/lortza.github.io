@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Set up a Shell Script on Mac for Postgres Backups</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/10/01/shell-script-mac.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Set up a Shell Script on Mac for Postgres Backups</h1>
+    <p class="post-meta">October 1, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>I was recently setting up a new computer and I needed to back up and restore several PostgreSQL databases in the process. It occurred to me that typing <code class="language-plaintext highlighter-rouge">pg_dump db_name &gt; /really-long-path-to-dropbox-folder/db_name_again-today's_date.sql</code> followed by
+<code class="language-plaintext highlighter-rouge">postgres db_name &lt; /really-long-path-to-dropbox-folder/db_name_again-today's_date.sql</code> over and over again could be simplified by a script in my terminal. And it was. This is how I did it, with a lot of help from <a href="https://medium.com/devnetwork/how-to-create-your-own-custom-terminal-commands-c5008782a78e">this post</a>.</p>
+
+<ol>
+  <li>Create a Scripts File</li>
+  <li>Source the Scripts File in the <code class="language-plaintext highlighter-rouge">.bash_profile</code></li>
+  <li>Set the File Permissions</li>
+  <li>Echo a Hello World</li>
+  <li>Try a Manual Version</li>
+  <li>Incorporate Some Global Variables from the Shell</li>
+</ol>
+
+<h3 id="1-create-a-scripts-file">1. Create a Scripts File</h3>
+
+<p>In my root folder, I created a file called <code class="language-plaintext highlighter-rouge">.my_custom_scripts.sh</code> and opened it in SublimeText</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Go to my root folder</span>
+<span class="nb">cd</span> ~
+
+<span class="c"># Create a new file to house my scripts</span>
+<span class="nb">touch</span> .my_custom_scripts.sh
+
+<span class="c"># Open the scripts file in Sublime</span>
+subl ~/.my_custom_scripts.sh
+</code></pre></div></div>
+
+<h3 id="2-source-the-scripts-file-in-the-bash_profile">2. Source the Scripts File in the .bash_profile</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">.bash_profile</code> holds configurations for the Terminal on mac. So in order to get this scripts file to load every time a new Terminal session is started, I needed to source the scrips file in the <code class="language-plaintext highlighter-rouge">.bash_profile</code>. Then, just for convenience, I created an alias called <code class="language-plaintext highlighter-rouge">scripts</code> that would open <code class="language-plaintext highlighter-rouge">.my_custom_scripts.sh</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Load my custom commands into Terminal</span>
+<span class="nb">source</span> ~/.my_custom_commands.sh
+
+<span class="c"># Open my scripts file</span>
+<span class="nb">alias </span><span class="nv">scripts</span><span class="o">=</span><span class="s1">'subl ~/.my_custom_commands.sh'</span>
+</code></pre></div></div>
+
+<h3 id="3-set-the-file-permissions">3. Set the File Permissions</h3>
+<p>After creating the file, I needed to modify the permissions of it so that I could access it via terminal commands. In the terminal I ran:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chmod +x .my_custom_commands.sh
+</code></pre></div></div>
+
+<h3 id="4-echo-a-hello-world">4. Echo a Hello World</h3>
+
+<p>Just to make sure everything is set up so far, I wrote a super simple function to output ‘Hello World’.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>sample_echoer<span class="o">()</span> <span class="o">{</span>
+  <span class="nb">echo</span> <span class="s1">'Hello World'</span>
+<span class="o">}</span>
+
+<span class="c"># &gt; sample_echoer</span>
+<span class="c"># =&gt; Hello World</span>
+</code></pre></div></div>
+
+<h3 id="5-try-a-manual-version">5. Try a Manual Version</h3>
+
+<p>Since I knew exactly the command I wanted to run, I tried a manual version of it to see if it would work. In order to get the accurate path to my Dropbox folder, I selected an existing file in the Dropbox folder and dragged it into terminal. I copied the relevant parts and went from there.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>dump_dev<span class="o">()</span> <span class="o">{</span>
+  <span class="nb">echo</span> <span class="s1">'pg_dump db_name &gt; /User/my_username/Dropbox/db_backups/db_name_2018_09_30.eql'</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Just running <code class="language-plaintext highlighter-rouge">dump_dev</code> in the terminal created a new file in my Dropbox folder called <code class="language-plaintext highlighter-rouge">db_name_2018_09_30.eql</code>. Hooray! It worked.</p>
+
+<h3 id="6-incorporate-some-global-variables-from-the-shell">6. Incorporate Some Global Variables from the Shell</h3>
+
+<p>Once I established that everything was working so far, I decided to start using some global variables from the shell to make my life easier. My goals:</p>
+
+<ul>
+  <li>Be inside of the root folder of a Rails app when I call <code class="language-plaintext highlighter-rouge">dump</code>, so I wanted to be able to grab my current directory name. The default project database name in rails is the project’s root directory name + the environment (ex: <code class="language-plaintext highlighter-rouge">_development</code>)</li>
+  <li>Be able to use this script on my 2 different computers. Those computers have different usernames, so hardcoding <code class="language-plaintext highlighter-rouge">my_username</code> wasn’t going to work.</li>
+  <li>Append the database filename that’s saved to Dropbox with today’s date.</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>dump_dev<span class="o">(){</span>
+  <span class="c"># Grab today's date and format it like 2018_09_30</span>
+  <span class="nv">today</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> +<span class="s1">'%Y_%m_%d'</span><span class="si">)</span>
+
+  <span class="c"># Grab the name of the Rails root directory</span>
+  <span class="nv">project</span><span class="o">=</span><span class="si">$(</span><span class="nb">basename</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="si">)</span>
+
+  <span class="c"># Incorporate the variables in the script. $USER is the shell variable that gives you the current computer username.</span>
+  pg_dump <span class="k">${</span><span class="nv">project</span><span class="k">}</span>_development <span class="nt">-O</span> <span class="nt">-x</span> <span class="o">&gt;</span> /User/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>/Dropbox/db_backups/<span class="k">${</span><span class="nv">project</span><span class="k">}</span>_development_<span class="k">${</span><span class="nv">today</span><span class="k">}</span>.sql
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>And that worked! My next goal was to be able to restore the database on my other computer from the Dropbox file. In order to do this, I needed my <code class="language-plaintext highlighter-rouge">restore_dev</code> script to take an argument with the location of the backup file that I wanted to use. In shell, you can access the first argument with <code class="language-plaintext highlighter-rouge">$1</code>. (The second argument is <code class="language-plaintext highlighter-rouge">$2</code>, and so on.)</p>
+
+<p>Again, I planned to run this script from within the Rails project root directory, so I had access to that <code class="language-plaintext highlighter-rouge">basename</code> variable. In the terminal, I wanted to run <code class="language-plaintext highlighter-rouge">restore_dev</code> and then drag the file from Dropbox into the terminal window to supply the argument.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>restore_dev<span class="o">(){</span>
+  <span class="c"># Grab the name of the Rails root directory</span>
+  <span class="nv">project</span><span class="o">=</span><span class="si">$(</span><span class="nb">basename</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="si">)</span>
+
+  <span class="c"># Take advantage the $1 argument variable for the pathname</span>
+  psql <span class="k">${</span><span class="nv">project</span><span class="k">}</span>_development &lt; <span class="nv">$1</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>And that’s it. I sure do like when I get to make my life a little bit more efficient. :)</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

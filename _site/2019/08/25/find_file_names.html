@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Script to search for files and folders from the command line</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2019/08/25/find_file_names.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Script to search for files and folders from the command line</h1>
+    <p class="post-meta">August 25, 2019</p>
+  </header>
+
+  <article class="post-content">
+    <p>Have you ever renamed a resource in a Rails project but missed a filename or folder name somewhere? Yeah, guilty. Wouldn’t it be handy to run a script that searches for a search term in both the filenames and folders in your project directory? I thought so, and I made one today :)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># save this somewhere with your scripts.sh</span>
+
+<span class="c"># Search for files and folders with a a search term in their name.</span>
+<span class="c"># Run like: find_files yoursearchterm</span>
+find_files<span class="o">()</span> <span class="o">{</span>
+  <span class="nv">project</span><span class="o">=</span><span class="si">$(</span><span class="nb">basename</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="si">)</span>
+
+  <span class="nb">echo</span> <span class="s2">"Search results for '</span><span class="k">${</span><span class="p">@</span><span class="k">}</span><span class="s2">' in /</span><span class="k">${</span><span class="nv">project</span><span class="k">}</span><span class="s2">..."</span>
+  <span class="nb">echo</span> <span class="s2">""</span>
+  <span class="nb">echo</span> <span class="s2">"-&gt; filename:"</span>
+  find <span class="nb">.</span> <span class="nt">-name</span> <span class="s2">"*</span><span class="k">${</span><span class="p">@</span><span class="k">}</span><span class="s2">*"</span> <span class="nt">-print</span>
+  <span class="nb">echo</span> <span class="s2">""</span>
+  <span class="nb">echo</span> <span class="s2">"-&gt; folder name:"</span>
+  find <span class="nb">.</span> <span class="nt">-name</span> <span class="s2">"*</span><span class="k">${</span><span class="p">@</span><span class="k">}</span><span class="s2">*"</span> <span class="nt">-type</span> d
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="sample-output">Sample Output</h3>
+<p>This is sample output from a standard Rails app.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>find_files yoursearchterm
+
+Search results <span class="k">for </span>yoursearchterm <span class="k">in</span> /yourprojectdirectory...
+
+-&gt; filename:
+./app/controllers/yoursearchterm_controller.rb
+./app/controllers/yoursearchterm
+./app/views/yoursearchterm
+./app/helpers/yoursearchterm_helper.rb
+./spec/requests/yoursearchterm_spec.rb
+./spec/factories/yoursearchterm.rb
+./spec/routing/yoursearchterm
+./spec/routing/yoursearchterm_routing_spec.rb
+./spec/controllers/yoursearchterm_controller_spec.rb
+./spec/views/yoursearchterm
+./spec/helpers/yoursearchterm_helper_spec.rb
+./db/migrate/20190616232503_change_pt_sessions_to_yoursearchterm.rb
+
+-&gt; folder name:
+./app/controllers/yoursearchterm
+./app/views/yoursearchterm
+./spec/routing/yoursearchterm
+./spec/views/yoursearchterm
+</code></pre></div></div>
+
+<p>You’ll still need to do the find-and-replace work inside the files themselves, but this will help you catch those rogue files and folders that I often miss.</p>
+
+<p>Not sure how to set up a shell script on Mac? <a href="/2018/10/01/shell-script-mac.html">This post may help</a>.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

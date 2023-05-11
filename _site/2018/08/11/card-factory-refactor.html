@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Refactor: Solving a Pesky Naming Problem</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2018/08/11/card-factory-refactor.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Refactor: Solving a Pesky Naming Problem</h1>
+    <p class="post-meta">August 11, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>Back in February, I wrote <a href="/2018/02/26/card-factory.html">a post about a refactor</a> to <a href="http://modernmystic.herokuapp.com/">this app</a> that made use of a factory-style class for some nifty data construction. Recently, I’ve found myself being bothered by a couple of things in that refactor, so thought I’d take a crack at making it better.</p>
+
+<h2 id="my-list-of-things-to-address">My List of Things to Address</h2>
+
+<h3 id="1-my-controller-still-knows-too-much">1. My controller still knows too much</h3>
+<p>Here in the controller, the <code class="language-plaintext highlighter-rouge">show</code> action does a lot of asking around and building of data before it can get down to the business of delivering data to the <code class="language-plaintext highlighter-rouge">show.html.erb</code> view.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/readings_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="vi">@reading</span><span class="p">.</span><span class="nf">positions</span><span class="p">.</span><span class="nf">order</span><span class="p">(</span><span class="ss">:position_number</span><span class="p">).</span><span class="nf">to_a</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="no">CardFactory</span><span class="p">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
+    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">cards</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="2-the-name-of-my-factory-doesnt-seem-quite-right">2. The name of my factory doesn’t seem quite right</h3>
+
+<p>The model that produces a modified, view-ready <code class="language-plaintext highlighter-rouge">Card</code> object is called a <code class="language-plaintext highlighter-rouge">CardFactory</code>. That’s not accurate because it’s instantiating <em>card-like</em> objects, not actual <code class="language-plaintext highlighter-rouge">Card</code> objects and not <code class="language-plaintext highlighter-rouge">CardFactory</code> objects. Hmmm.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/card_factory.rb</span>
+
+<span class="k">class</span> <span class="nc">CardFactory</span>
+   <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="n">theme</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="n">orientation</span><span class="p">)</span>
+    <span class="vi">@card</span> <span class="o">=</span> <span class="n">card</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+    <span class="vi">@theme</span> <span class="o">=</span> <span class="n">theme</span>
+    <span class="vi">@keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+    <span class="vi">@orientation</span> <span class="o">=</span> <span class="n">orientation</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<p>In addition, the end goal of this class is to provide the controller with a set of card-like objects when what the controller <em>really needs</em> is a set of data with card-like objects matched up to reading position objects:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/readings_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="c1"># This is what I really want:</span>
+    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="p">[</span><span class="n">array</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">cards</span><span class="o">+</span><span class="n">positions</span><span class="p">]</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>I think I’m asking too much of the wrong things from a model with this name.</p>
+
+<h3 id="3-my-tests-are-hard-to-write">3. My tests are hard to write</h3>
+
+<p>As I was writing my <code class="language-plaintext highlighter-rouge">it</code> statements for this class, I found myself being confused about my expectations for its purpose.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">describe</span> <span class="s1">'a valid card factory'</span> <span class="k">do</span>
+  <span class="n">context</span> <span class="s1">'when has valid params'</span> <span class="k">do</span>
+    <span class="c1"># But why does a 'factory' object need to be valid?</span>
+    <span class="c1"># I actually need a card-like object to be valid.</span>
+    <span class="o">...</span>
+
+<span class="n">describe</span> <span class="s1">'.build_cards'</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s1">'returns an array of card factory objects'</span> <span class="k">do</span>
+    <span class="c1"># But I actually want an array of card-like objects,</span>
+    <span class="c1"># not an array of factories.</span>
+    <span class="o">...</span>
+</code></pre></div></div>
+<p>And that’s what pretty much sealed the deal. So, according to my husband, I spent some time doing this:</p>
+
+<p><a href="https://twitter.com/JenMsft/status/1027018324037623810"><img src="https://pbs.twimg.com/media/DkCzXJ2U4AE1sWk.jpg" title="When you try to choose a meaningful variable name by twitter.com/JenMsft" alt="Narcos' Pablo Escobar, thinking in various locations" class="post-image" /></a></p>
+
+<p>And then I set out to refactor this thing.</p>
+
+<h2 id="the-refactor">The Refactor</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">CardFactory</code> name was bothering me, not because I needed a better name, but because the thing I was trying to name was confused about its purpose. During a conversation with my <a href="https://www.linkedin.com/in/scott-maslar-b1650b36/">mentor</a>, we realized that it needed to be two different models. So the <code class="language-plaintext highlighter-rouge">CardFactory</code> model ended up diverging into a <code class="language-plaintext highlighter-rouge">ReadingCard</code> model and a <code class="language-plaintext highlighter-rouge">ReadingCardSet</code> model, each with a more job-specific name.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">ReadingCard</code> will generate that card-like object I’ve been wanting and that’s all it does.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/reading_card.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingCard</span>
+
+  <span class="c1"># Now I can logically validate these objects and test for validation</span>
+  <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Validations</span>
+
+  <span class="nb">attr_reader</span> <span class="ss">:card</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:theme</span><span class="p">,</span> <span class="ss">:keywords</span><span class="p">,</span> <span class="ss">:orientation</span>
+
+  <span class="c1"># Bonus refactor: the copious arguments required are now</span>
+  <span class="c1"># delivered via keywords for accuracy instead of as</span>
+  <span class="c1"># fixed-position arguments</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">card</span><span class="p">:,</span> <span class="nb">name</span><span class="p">:,</span> <span class="n">theme</span><span class="p">:,</span> <span class="n">keywords</span><span class="p">:,</span> <span class="n">orientation</span><span class="p">:)</span>
+    <span class="vi">@card</span> <span class="o">=</span> <span class="n">card</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+    <span class="vi">@theme</span> <span class="o">=</span> <span class="n">theme</span>
+    <span class="vi">@keywords</span> <span class="o">=</span> <span class="n">keywords</span>
+    <span class="vi">@orientation</span> <span class="o">=</span> <span class="n">orientation</span>
+  <span class="k">end</span>
+
+  <span class="n">delegate</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:image_file</span><span class="p">,</span> <span class="ss">:arcana_id</span><span class="p">,</span> <span class="ss">:suit_id</span><span class="p">,</span> <span class="ss">to: :card</span>
+
+  <span class="n">validates</span> <span class="ss">:card</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:theme</span><span class="p">,</span> <span class="ss">:keywords</span><span class="p">,</span> <span class="ss">:orientation</span><span class="p">,</span> <span class="ss">presence: </span><span class="kp">true</span>
+
+  <span class="k">def</span> <span class="nf">reversed?</span>
+    <span class="vi">@orientation</span> <span class="o">==</span> <span class="s1">'reverse'</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>A <code class="language-plaintext highlighter-rouge">ReadingCardSet</code> decides how many <code class="language-plaintext highlighter-rouge">ReadingCard</code>s are needed for a <code class="language-plaintext highlighter-rouge">Reading</code> and it knows how to align <code class="language-plaintext highlighter-rouge">ReadingCard</code> data with <code class="language-plaintext highlighter-rouge">ReadingPosition</code> data. It puts all of this together and delivers a single set of data for the <code class="language-plaintext highlighter-rouge">ReadingsController</code> to consume.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/models/reading_card_set.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingCardSet</span>
+
+  <span class="c1"># All of this logic used to live in the 'ReadingsController#show'</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">build_set</span><span class="p">(</span><span class="n">reading</span><span class="p">)</span>
+    <span class="c1"># The responsibility of knowing how to `order` positions is now</span>
+    <span class="c1"># in the ReadingPositions model</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">reading</span><span class="p">.</span><span class="nf">positions</span><span class="p">.</span><span class="nf">ordered</span><span class="p">.</span><span class="nf">to_a</span>
+    <span class="n">reading_cards</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">positions</span><span class="p">.</span><span class="nf">count</span><span class="p">)</span>
+    <span class="n">positions</span><span class="p">.</span><span class="nf">zip</span><span class="p">(</span><span class="n">reading_cards</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">build_cards</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="no">Card</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">qty</span><span class="p">)</span>
+    <span class="n">orientation_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'reverse'</span><span class="p">,</span> <span class="s1">'upright'</span><span class="p">]</span>
+
+    <span class="n">reading_cards</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">cards</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">card</span><span class="o">|</span>
+      <span class="n">orientation</span> <span class="o">=</span> <span class="n">orientation_options</span><span class="p">.</span><span class="nf">sample</span>
+      <span class="n">built_theme</span> <span class="o">=</span> <span class="n">card</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">orientation</span><span class="si">}</span><span class="s2">_theme"</span><span class="p">)</span>
+      <span class="n">built_keywords</span> <span class="o">=</span> <span class="n">card</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">orientation</span><span class="si">}</span><span class="s2">_keywords"</span><span class="p">)</span>
+      <span class="n">built_name</span> <span class="o">=</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s1">'upright'</span> <span class="p">?</span> <span class="n">card</span><span class="p">.</span><span class="nf">name</span> <span class="p">:</span> <span class="s2">"Reversed </span><span class="si">#{</span><span class="n">card</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="n">built_card</span> <span class="o">=</span> <span class="no">ReadingCard</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span>
+                    <span class="ss">card: </span><span class="n">card</span><span class="p">,</span>
+                    <span class="ss">name: </span><span class="n">built_name</span><span class="p">,</span>
+                    <span class="ss">theme: </span><span class="n">built_theme</span><span class="p">,</span>
+                    <span class="ss">keywords: </span><span class="n">built_keywords</span><span class="p">,</span>
+                    <span class="ss">orientation: </span><span class="n">orientation</span>
+                  <span class="p">)</span>
+      <span class="n">reading_cards</span> <span class="o">&lt;&lt;</span> <span class="n">built_card</span> <span class="k">if</span> <span class="n">built_card</span><span class="p">.</span><span class="nf">valid?</span>
+    <span class="k">end</span>
+    <span class="n">reading_cards</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">ReadingsController</code> is relieved of its duty to build that set and now simply gets to deliver the display data that’s been handed to it.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/readings_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ReadingsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="o">...</span>
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="vi">@positioned_cards</span> <span class="o">=</span> <span class="no">ReadingCardSet</span><span class="p">.</span><span class="nf">build_set</span><span class="p">(</span><span class="vi">@reading</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And my tests finally make sense since these two new models now have clarity of purpose.</p>
+
+<h2 id="future-improvements">Future Improvements</h2>
+
+<p>I really like how this refactor has gone. However, I don’t love that the view still has to know the anatomy of the <code class="language-plaintext highlighter-rouge">@positioned_cards</code> array in order to display data correctly.</p>
+
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/readings/show.html.erb --&gt;</span>
+
+<span class="c">&lt;!-- This loop has to know that 'position' comes first
+     and 'card' comes second in the array of pairs --&gt;</span>
+<span class="cp">&lt;%</span> <span class="vi">@positioned_cards</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">position</span><span class="p">,</span> <span class="n">card</span><span class="o">|</span> <span class="cp">%&gt;</span>
+  <span class="cp">&lt;%=</span> <span class="n">render</span> <span class="s1">'positioned_card'</span><span class="p">,</span> <span class="ss">position: </span><span class="n">position</span><span class="p">,</span> <span class="ss">card: </span><span class="n">card</span> <span class="cp">%&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+</code></pre></div></div>
+
+<p>I’ll address that in my next refactor session.</p>
+
+<h4 id="update-ive-refactored-this-codebase-since-writing-this-post">Update: I’ve refactored this codebase since writing this post.</h4>
+<ul>
+  <li><a href="/2023/01/03/css-grid-for-tarot.html">January 2023</a></li>
+</ul>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

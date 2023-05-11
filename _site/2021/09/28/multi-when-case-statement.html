@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | TIL multiple values in a ruby case statement 'when' block</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2021/09/28/multi-when-case-statement.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">TIL multiple values in a ruby case statement 'when' block</h1>
+    <p class="post-meta">September 28, 2021</p>
+  </header>
+
+  <article class="post-content">
+    <p>Today I learned that you can include multiple options in a Ruby case statement.</p>
+
+<p>I have a helper method that I use to determine which <a href="https://getbootstrap.com/">Bootstrap</a> class to use when styling the flash message on a page:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">bootstrap_flash_class</span><span class="p">(</span><span class="n">type</span><span class="p">)</span>
+  <span class="k">case</span> <span class="n">type</span>
+  <span class="k">when</span> <span class="s1">'alert'</span> <span class="k">then</span> <span class="s1">'warning'</span>
+  <span class="k">when</span> <span class="s1">'error'</span> <span class="k">then</span> <span class="s1">'danger'</span>
+  <span class="k">when</span> <span class="s1">'notice'</span> <span class="k">then</span> <span class="s1">'success'</span>
+  <span class="k">when</span> <span class="s1">'warning'</span> <span class="k">then</span> <span class="s1">'warning'</span> <span class="c1"># &lt;-- RUBOCOP NO LIKEY</span>
+  <span class="k">else</span>
+    <span class="s1">'info'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>(Yes, I use Bootstrap in my personal projects. I am aware of how dreadfully uncool I am.)</p>
+
+<p>Rubocop was telling me that it didn’t like me making a second decision about what should return a value of <code class="language-plaintext highlighter-rouge">'warning'</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Offenses:
+
+app/helpers/application_helper.rb:18:5: W: Lint/DuplicateBranch: Duplicate branch body detected.
+    when <span class="s1">'warning'</span> <span class="k">then</span> <span class="s1">'warning'</span>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+</code></pre></div></div>
+
+<p>Well aw jeeeeze Rubocop, I want more than one input to return <code class="language-plaintext highlighter-rouge">'warning'</code>! So I googled it and :oh-snap: you <em>can</em> include multiple options in that <code class="language-plaintext highlighter-rouge">when</code> block: <a href="https://stackoverflow.com/a/10197397" target="_blank">https://stackoverflow.com/a/10197397</a>. As it turns out, in a case statement, a <code class="language-plaintext highlighter-rouge">,</code> is the equivalent of a <code class="language-plaintext highlighter-rouge">||</code> in an <code class="language-plaintext highlighter-rouge">if</code> statement. Neat!</p>
+
+<p>So I tucked that little nugget of knowledge in my back pocket for later and updated my case statement:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">bootstrap_flash_class</span><span class="p">(</span><span class="n">type</span><span class="p">)</span>
+  <span class="k">case</span> <span class="n">type</span>
+  <span class="k">when</span> <span class="s1">'alert'</span><span class="p">,</span> <span class="s1">'warning'</span> <span class="k">then</span> <span class="s1">'warning'</span>
+  <span class="k">when</span> <span class="s1">'error'</span> <span class="k">then</span> <span class="s1">'danger'</span>
+  <span class="k">when</span> <span class="s1">'notice'</span> <span class="k">then</span> <span class="s1">'success'</span>
+  <span class="k">else</span>
+    <span class="s1">'info'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>High five, Rubocop! Thanks for the lesson.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -43,7 +43,11 @@
           <a class="page-link" href="/portfolio/">portfolio</a>
           
         
-        <a class="page-link" href="/docs/richardson_resume.pdf" target="_blank">resume</a>
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
       </div>
     </nav>
 
@@ -115,7 +119,7 @@
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>You can extract the duplicated <code class="highlighter-rouge">likes</code> and <code class="highlighter-rouge">comments</code> code into their own concern files like this:</p>
+<p>You can extract the duplicated <code class="language-plaintext highlighter-rouge">likes</code> and <code class="language-plaintext highlighter-rouge">comments</code> code into their own concern files like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># app/models/concerns/liking.rb</span>
 
@@ -149,7 +153,7 @@
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>And then DRY up those models with <code class="highlighter-rouge">include</code> statements like this:</p>
+<p>And then DRY up those models with <code class="language-plaintext highlighter-rouge">include</code> statements like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># app/models/blog_post.rb</span>
   <span class="k">class</span> <span class="nc">BlogPost</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
@@ -221,7 +225,7 @@
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Not only are those method names really long and specialized, <em>they’re repeated 3 times</em>. Ack! Fortunately, Ruby lets you call methods on variables all over the place, so using a generic object in place of a specific one aint no thang. Just ensure you have the same relationships to <code class="highlighter-rouge">likes</code> across each model receiving the call (which is streamlined if you’ve employed the concern approach above), then use a generic object like this:</p>
+<p>Not only are those method names really long and specialized, <em>they’re repeated 3 times</em>. Ack! Fortunately, Ruby lets you call methods on variables all over the place, so using a generic object in place of a specific one aint no thang. Just ensure you have the same relationships to <code class="language-plaintext highlighter-rouge">likes</code> across each model receiving the call (which is streamlined if you’ve employed the concern approach above), then use a generic object like this:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># app/helpers/likes_helper.rb</span>
   <span class="k">module</span> <span class="nn">LikesHelper</span>
@@ -239,11 +243,11 @@
 
 <p>Are you ready to get a little meta?</p>
 
-<h3 id="example-2-getting-meta-by-extracting-a-class-from-an-object-and-using-send">Example 2: Getting Meta by Extracting a Class from an Object and Using <code class="highlighter-rouge">send</code></h3>
+<h3 id="example-2-getting-meta-by-extracting-a-class-from-an-object-and-using-send">Example 2: Getting Meta by Extracting a Class from an Object and Using <code class="language-plaintext highlighter-rouge">send</code></h3>
 
-<p>Using <code class="highlighter-rouge">send</code> is probably one of my favorite means of metaprogramming. It’s so flexible! Every time I find myself thinking “aww jee, if I could only customize this method and it would solve <em>everything</em>,” it usually means <code class="highlighter-rouge">send</code> is in order. Personally, I think you have to strike a balance between DRY and readable. Since we spend most of our time reading code, it makes sense to have easily readable code. Future me always appreciates when past me has been thoughtful in this regard. Though this method gets a little dense, I think it’s still readable enough.</p>
+<p>Using <code class="language-plaintext highlighter-rouge">send</code> is probably one of my favorite means of metaprogramming. It’s so flexible! Every time I find myself thinking “aww jee, if I could only customize this method and it would solve <em>everything</em>,” it usually means <code class="language-plaintext highlighter-rouge">send</code> is in order. Personally, I think you have to strike a balance between DRY and readable. Since we spend most of our time reading code, it makes sense to have easily readable code. Future me always appreciates when past me has been thoughtful in this regard. Though this method gets a little dense, I think it’s still readable enough.</p>
 
-<p>When a user is looking at a stream of content (blog posts, photos, and their respective comments), I needed to give them the option to <code class="highlighter-rouge">Like</code> and <code class="highlighter-rouge">Unlike</code> any of these objects. This helper method toggles the <code class="highlighter-rouge">Like</code> / <code class="highlighter-rouge">Unlike</code> links.</p>
+<p>When a user is looking at a stream of content (blog posts, photos, and their respective comments), I needed to give them the option to <code class="language-plaintext highlighter-rouge">Like</code> and <code class="language-plaintext highlighter-rouge">Unlike</code> any of these objects. This helper method toggles the <code class="language-plaintext highlighter-rouge">Like</code> / <code class="language-plaintext highlighter-rouge">Unlike</code> links.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># app/helpers/likes_helper.rb</span>
 
@@ -270,7 +274,7 @@
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Okay, so it’s a little dense and requires some research on building <a href="http://api.rubyonrails.org/classes/ActionDispatch/Routing/PolymorphicRoutes.html"><code class="highlighter-rouge">polymorphic_url</code></a>s, but I like it better than the crazy conditional that would have been in its place. <code class="highlighter-rouge">Like</code>s are a little complex, and I enjoyed working through this puzzle. I hope it sheds some light on some approach options for you too.</p>
+<p>Okay, so it’s a little dense and requires some research on building <a href="http://api.rubyonrails.org/classes/ActionDispatch/Routing/PolymorphicRoutes.html"><code class="language-plaintext highlighter-rouge">polymorphic_url</code></a>s, but I like it better than the crazy conditional that would have been in its place. <code class="language-plaintext highlighter-rouge">Like</code>s are a little complex, and I enjoyed working through this puzzle. I hope it sheds some light on some approach options for you too.</p>
 
   </article>
 
@@ -282,7 +286,7 @@
     <footer class="site-footer">
 
   <div class="wrapper">
-  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2018</p>
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
   </div>
 
 </footer>

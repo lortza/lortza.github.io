@@ -2,6 +2,7 @@
 layout: post
 title:  How to Access Your Sublime Snippets
 date:   2017-07-14 20:53
+published: true
 ---
 
 Once I discovered the power of SublimeText's snippet feature, there was no turning back. Any time I find myself typing a thing that could be automated, I make a snippet for it. The trouble is, sometimes I like to look back at my existing snippets, but I couldn't get to them easily. Well, I've solved that problem today and figured I'd share it with you. Here is how to easily access your existing Sublime snippets on a mac.

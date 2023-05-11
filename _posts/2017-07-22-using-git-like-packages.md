@@ -2,6 +2,7 @@
 layout: post
 title:  Using Git is like Sending Packages in the Mail
 date:   2017-07-22 11:00
+published: true
 ---
 
 So you've just gotten your feet wet with web development or programming and in the whirlwind of setting up your machine for class, you have a <a href="github.com" target="_blank" rel="noopener noreferrer">GitHub</a> account and <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer">Git</a> installed on your machine. The trouble is, though you understand that Git is version-control software, you still don't really understand the whole staging and committing process. What's the differences between `git add` and `git commit`?
@@ -148,6 +149,3 @@ And the great news is, we have reusable tape! To seal the commit back up with th
 ```
 git commit -c ORIG_HEAD
 ```
-
-
-Understanding Git is a big learning curve for a lot of new developers, so if you have any suggestions on how to make this explanation easier to understand, <a href="http://localflavormarketing.com/contact/">please drop me a line</a>!

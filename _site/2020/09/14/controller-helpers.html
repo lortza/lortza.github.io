@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Accessing the link_to helper in a Rails controller and adding a link to a flash message</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2020/09/14/controller-helpers.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title page-link" href="/">Anne Richardson</a>
+
+    <nav class="site-nav">
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">about</a>
+          
+        
+          
+          <a class="page-link" href="/blog/">tech blog</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/portfolio/">portfolio</a>
+          
+        
+          
+        
+          
+        
+        <a class="page-link" href="/resume/" target="_blank">resume</a>
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Accessing the link_to helper in a Rails controller and adding a link to a flash message</h1>
+    <p class="post-meta">September 14, 2020</p>
+  </header>
+
+  <article class="post-content">
+    <p>In my food planning app, after clicking a link to add all recipe ingredients to a shopping list, I display a flash message that looks like:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>38 items added to your Grocery list.
+</code></pre></div></div>
+
+<p>Which is actually:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[calculated integer] [pluralized word] added to your [list name] list.
+</code></pre></div></div>
+
+<p>After having this feature in place for a while, I found myself wanting to be able to click on the list name in the flash message to take me to that shopping list. So how do you put a link in a flash message?</p>
+
+<h2 id="step-1-accessing-the-link_to-helper-inside-a-rails-controller">Step 1: Accessing the <code class="language-plaintext highlighter-rouge">link_to</code> helper inside a Rails controller</h2>
+<p>If you want to access some of the useful helper methods while inside the scope of a controller, you can pull them in with <code class="language-plaintext highlighter-rouge">ActionController::Base.helpers</code>. In this example, I wanted to take advantage of <code class="language-plaintext highlighter-rouge">link_to</code> and <code class="language-plaintext highlighter-rouge">pluralize</code> and interpolate them into a flash message:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ShoppingListItemBuildersController</span>
+
+<span class="k">def</span> <span class="nf">create</span>
+  <span class="o">...</span>
+  <span class="n">flash</span><span class="p">[</span><span class="ss">:notice</span><span class="p">]</span> <span class="o">=</span> <span class="n">flash_message</span><span class="p">(</span><span class="n">ingredient_ids</span><span class="p">)</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+
+<span class="kp">private</span>
+
+<span class="k">def</span> <span class="nf">flash_message</span><span class="p">(</span><span class="n">ingredient_ids</span><span class="p">)</span>
+  <span class="n">pluralized_items</span> <span class="o">=</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">helpers</span><span class="p">.</span><span class="nf">pluralize</span><span class="p">(</span><span class="n">ingredient_ids</span><span class="p">.</span><span class="nf">length</span><span class="p">,</span> <span class="s1">'item'</span><span class="p">)</span>
+  <span class="n">link</span> <span class="o">=</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">helpers</span><span class="p">.</span><span class="nf">link_to</span><span class="p">(</span><span class="vi">@shopping_list</span><span class="p">.</span><span class="nf">name</span><span class="p">.</span><span class="nf">titleize</span><span class="p">,</span> <span class="n">shopping_list_path</span><span class="p">(</span><span class="vi">@shopping_list</span><span class="p">))</span>
+
+  <span class="s2">"</span><span class="si">#{</span><span class="n">pluralized_items</span><span class="si">}</span><span class="s2"> added to your </span><span class="si">#{</span><span class="n">link</span><span class="si">}</span><span class="s2"> list."</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>At this point, we’re half way there. We have a flash message that looks like this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>38 items added to your &lt;a href="/shopping_lists/7"&gt;Grocery&lt;/a&gt; list.
+</code></pre></div></div>
+<p>That’s just HTML and not an actual clickable link. We have a little more work to do.</p>
+
+<h2 id="step-2-make-the-link-clickable">Step 2: Make the link clickable</h2>
+
+<p>In order for the HTML passed into the flash message to be rendered as live HTML and not text, I called the <code class="language-plaintext highlighter-rouge">html_safe</code> method on it in my flashes partial.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/shared/_flashes.html.erb --&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">flash.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">type</span><span class="err">,</span> <span class="na">message</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"flash-notice"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">message.html_safe</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>Now, be careful here, <a href="https://apidock.com/rails/String/html_safe">like the docs say</a>, “It is your responsibility to ensure that the string contains no malicious content.”</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2023</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -2,6 +2,7 @@
 layout: post
 title:  Keeping your Polymorphic "like"s Code DRY
 date:   2018-01-30 03:53
+published: true
 ---
 
 I was recently setting up a social media app with BlogPosts, PhotoPosts, and Comments -- and I needed to have users be able to "like" and "comment" on all three of those models. My first crack at it involved some duplicate code. And that's fine. In Sandi Metz's [POODR](http://www.poodr.com/), she recommends waiting until you see a pattern 3 times before refactoring. And that's exactly what happened, so here are some ways I DRYed up my code.

@@ -6,22 +6,37 @@ layout: default
 
   <a href="{{ page.repo }}" target="_blank" alt="{{ page.name }}"><img src="{{ page.img }}"></a>
 
-  <h1>{{ page.name }}</h1>
+  <header>
+    <h1>{{ page.name }}</h1>
+    <p class="tagline">{{ page.tagline }}</p>
+
+     <div class="link-buttons">
+      {% unless page.site == nil %}
+      <a href="{{ page.site }}" target="_blank" alt="{{ page.name }}"><i class="fa fa-external-link"></i> Site</a>
+      {% endunless %}
+      {% unless page.repo == nil %}
+      <a href="{{ page.repo }}" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
+      {% endunless %}
+    </div> <!-- links -->
+  </header>
 
   <p>{{ page.description }}</p>
 
+  {% unless page.codeclimate == nil %}
+    <div class="badge">
+      {{ page.codeclimate }}
+    </div>
+  {% endunless %}
+
   {% if page.readme == true %}
-  <p>Check out the <a href="{{ page.repo }}" target="_blank" alt="{{ page.name }} repo">repo README</a> for a tour of the app<br>complete with code snippet explanations and screenshots.</p>
+  <p>Check out the <a href="{{ page.repo }}" target="_blank" alt="{{ page.name }} repo">repo README</a> for code snippets and screenshots of the most interesting parts.</p>
   {% endif %}
+
+  <p><strong>Tech Used:</strong> {{ page.tech_used }}</p>
 
   <p><strong>My Role:</strong> {{ page.role }}</p>
 
-  <div class="link-buttons">
-    {% unless page.site == nil %}
-    <a href="{{ page.site }}" target="_blank" alt="{{ page.name }}"><i class="fa fa-external-link"></i> Site</a>
-    {% endunless %}
-    <a href="{{ page.repo }}" target="_blank" alt="repo"><i class="fa fa-code-fork"></i> Repo</a>
-  </div> <!-- links -->
+
 
   <article class="post-content">
     {{ content }}
