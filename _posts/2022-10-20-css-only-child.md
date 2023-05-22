@@ -65,4 +65,4 @@ Wow that’s so much lighter than a bunch of ruby & javascript show/hide logic e
 </ul>
 ```
 
-But then what if we expect [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA)-like behavior on this page where new cats are added by other users and our browser updates automatically? Now we need to add in javascript or Rails Action Cable logic after `create`, after `destroy`, and probably some other scenarios that start to get complicated. No thanks. This lightweight approach has really made my day. :grinning:
+But then what if we expect [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA)-like behavior on this page where new cats are added by other users and our browser updates automatically? Now we need to add in javascript or Rails Turbo/Hotwire logic after `create`, after `destroy`, and probably some other scenarios that start to get complicated. No thanks. This lightweight approach has really made my day. :grinning:
