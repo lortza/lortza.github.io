@@ -40,6 +40,10 @@ This is a long one, but it is very thorough and really goes step-by step through
 Format: video & written course <br>
 I appreciate how this course gives you a functioning Rails app (saving you time b/c you already know how to do this) and then steps you through converting it over to using Howtire.
 
+### [RailsDiff](https://railsdiff.org/)
+Format: tool<br>
+RailsDiff is an awesome tool to help you with your Rails version upgrades. It lets you enter the Rails versions your upgrading from and to and then shows you the difference between a `rails new` of those 2 versions.
+
 ----------
 ## Javascript
 ### [Javascript and the DOM](https://www.udacity.com/course/javascript-and-the-dom--ud117) -- on Udacity
@@ -93,6 +97,13 @@ Though you're going to need to learn how to use version control (and most likely
 Format: interactive tutorial<br>
 This is a great tutorial where you step through exercises using git version control, learning one little concept at a time.
 
+### [git - the simple guide](https://rogerdudler.github.io/git-guide/)
+Format: blog post<br>
+I like this resource because it steps you through each basic concept one at a time.
+
+### [Git Cheat Sheet](https://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf)
+Format: cheat sheet<br>
+
 ----------
 ## Database
 ### [SQLBolt](https://sqlbolt.com/)
@@ -135,6 +146,11 @@ Format: short interactive tutorial<br>
 ### [Intro to Rails Testing](https://www.twitch.tv/videos/395392522) -- by [Scott Maslar](https://github.com/mascott)
 Format: tech talk <br>
 When I first started learning about testing, I didn't really get it. It seemed redundant and weird. I wish I had heard this talk back then. I really like how Scott gives examples of each type of test and explains what the goal of the test is and what tools we can use to accomplish it.
+
+### RSpec Cheat Sheets
+Format: cheatsheet<br>
+* [RSpec](https://devhints.io/rspec)
+* [RSpec-rails](https://devhints.io/rspec-rails)
 
 ----------
 ## Deeper Learning in OOP
