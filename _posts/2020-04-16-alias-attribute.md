@@ -10,7 +10,7 @@ Renaming an attribute. Ever have an attribute on your Rails model that you wish 
 ```ruby
 # in your model file
 
-alias_attribute :old_attribute_name, :new_aliased_name
+alias_attribute :new_aliased_name, :old_attribute_name
 ```
 
 For example, let's say we have a model called `Article` that has a `header` attribute and we'd like to change it to `title`. Using `alias_attribute` in the `app/models/article.rb` file will write the new getter and setter for us.
@@ -19,7 +19,7 @@ For example, let's say we have a model called `Article` that has a `header` attr
 # renaming from `header` to `title`
 
 # this one-liner
-alias_attribute :header, :title
+alias_attribute :title, :header
 
 # is the same as
 def title
