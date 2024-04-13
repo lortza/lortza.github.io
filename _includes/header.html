@@ -1,8 +1,6 @@
-<header class="site-header">
-
+<!-- <header class="site-header">
   <div class="wrapper">
     <a class="site-title page-link" href="{{ site.baseurl }}/">{{ site.title }}</a>
-
     <nav class="site-nav">
       <div class="trigger">
         {% for page in site.pages %}
@@ -13,7 +11,29 @@
         <a class="page-link" href="{{ site.baseurl }}/resume/" target="_blank">resume</a>
       </div>
     </nav>
-
   </div>
+</header> -->
 
-</header>
+  <header class="site-header2">
+    <div class="wrapper">
+      <div class="nav-row align-items-center justify-content-between">
+        <div class="site-title2">
+          <a class="" href="{{ site.baseurl }}/">{{ site.title }}</a>
+        </div>
+        <input type="checkbox" id="nav-check">
+        <label for="nav-check" class="nav-toggler">
+          <span></span>
+        </label>
+        <nav class="nav-items">
+          <ul>
+            {% for page in site.pages %}
+              {% if page.title %}
+                <li><a class="" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a></li>
+              {% endif %}
+            {% endfor %}
+            <li><a class="" href="{{ site.baseurl }}/resume/" target="_blank">resume</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>

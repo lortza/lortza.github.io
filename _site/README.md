@@ -10,7 +10,7 @@ This is my personal web development portfolio and blog [site](http://lortza.gith
 
 This theme is *not* one of the select GitHub-approved themes, so it can not be updated through the GitHub theme interface. The different iterations of this site live on different branches in this repo.
 
--  `folio_theme` (03-2018) <-- current
+-  [`folio_theme`](https://github.com/bogoli/-folio?tab=readme-ov-file) (03-2018) <-- current
 -  `single_page_theme` (04-2017)
 
 ## Notes to Self for Updating the Site
