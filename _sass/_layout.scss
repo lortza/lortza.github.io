@@ -1,94 +1,60 @@
-// :root{
-//   --color-1: #673ab7;
-// }
-// body{
-// 	line-height: 1.5;
-// 	font-family: sans-serif;
-// 	background-color: #c6cde0;
-// }
-// *{
-// 	box-sizing: border-box;
-// 	margin:0;
-// 	padding:0;
-// }
-// a{
-// 	text-decoration: none;
-// }
-// ul{
-// 	list-style: none;
-// }
-// .container{
-// 	max-width: 1170px;
-// 	margin: auto;
-// }
+/* Navbar  ******************************************/
+.site-header {
+  a { color: $text-color; }
+  border-bottom: 1px solid $grey-color-light;
+  background-color: $background-color;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: $nav-height;
+  width: 100%;
+  z-index: 50;
+}
+
 .nav-row {
 	display: flex;
 	flex-wrap: wrap;
+  align-items: center;
+  height: $nav-height;
 }
 
-/*header*/
-.site-header2 {
-	// background-color: var(--color-1);
-	// padding: 12px 0;
-	// position: relative;
-
-  a {color: $text-color;}
-  border-bottom: 1px solid $grey-color-light;
-  background-color: #fff;
-  // opacity: 0.75;
-  position:fixed;
-  left:0px;
-  top:0px;
-  height:56px;
-  width:100%;
-  z-index: 50;
-  // line-height: $nav-height;
-
-}
-.site-header2 .site-title2,
-.site-header2 .nav-items {
-	// padding:0 15px;
-}
-.site-header2 .site-title2 a {
-	// font-size: 30px;
-	// color: #ffffff;
-	// text-transform: capitalize;
-  line-height: $nav-height;
+.site-header .site-title,
+.site-header .nav-items {
   text-transform: lowercase;
 }
-.site-header2 .nav-items ul li{
+
+.site-header .nav-items ul { margin: 0; }
+
+.site-header .nav-items ul li {
 	display: inline-block;
 	margin-left: 1.5rem;
 }
-.site-header2 .nav-items ul li a{
-	display: block;
-	font-size: 16px;
-	padding:10px 0;
-	// color: rgba(255,255,255,0.7);
-	// text-transform: capitalize;
+.site-header .nav-items ul li a {
 	transition: all 0.5s ease;
 }
-.site-header2 .nav-items ul li a:hover,
-.site-header2 .nav-items ul li a.active{
-	color: $purple;
+.site-header .nav-items ul li a:hover,
+.site-header .nav-items ul li a.active {
+	color: $theme-color;
 }
-.site-header2 #nav-check{
+
+.site-header #nav-checkbox {
 	position: absolute;
-	opacity:0;
+	opacity: 0;
 	pointer-events: none;
 }
-.nav-toggler{
+
+.nav-toggler {
 	height: 34px;
 	width: 44px;
-	background-color: #ffffff;
+	background-color: $background-color;
 	border-radius: 4px;
 	cursor: pointer;
 	display: none;
 	align-items: center;
 	justify-content: center;
-	margin-right: 15px;
 }
-.nav-toggler span{
+
+.nav-toggler span {
 	display: block;
 	height: 2px;
 	width: 20px;
@@ -96,140 +62,63 @@
 	position: relative;
 }
 .nav-toggler span::before,
-.nav-toggler span::after{
-   content: '';
-   position: absolute;
-   width: 100%;
-   height: 100%;
-   background-color: $text-color;
-   left:0;
+.nav-toggler span::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: $text-color;
+  left: 0;
 }
-.nav-toggler span::before{
-	top: -6px;
-}
-.nav-toggler span::after{
-	top: 6px;
-}
-@media(max-width: 991px){
-  .nav-toggler {
-    display: flex;
-  }
-  .site-header2 .nav-items {
+.nav-toggler span::before { top: -6px; }
+.nav-toggler span::after { top: 6px; }
+
+@media(max-width: $on-laptop){
+  .nav-toggler { display: flex; }
+  .site-header .nav-items {
     position: absolute;
-    left:0;
-    top:100%;
+    left: 0;
+    top: 100%;
     width: 100%;
-    background-color: #fff;
-    border-top: 1px solid rgba(255,255,255,0.2);
-    opacity:0;
+    background-color: $background-color;
+    border-top: 1px solid $grey-color-light;
+    border-bottom: 1px solid $grey-color-light;
+    opacity: 0;
     visibility: hidden;
+    max-height: fit-content;
+    box-shadow: 0 1rem .75rem -.75rem $grey-color-light;
   }
-  .site-header2 .nav-items ul li {
+
+  .site-header .nav-items ul {
+    margin-left: 1rem;
+  }
+  .site-header .nav-items ul li {
     display: block;
-    margin:0;
+    margin: 0;
+    padding: .75rem 0;
   }
-  .site-header2 #nav-check:checked ~ .nav-items {
-      opacity: 1;
-      visibility: visible;
+  .site-header #nav-checkbox:checked ~ .nav-items {
+    opacity: 1;
+    visibility: visible;
   }
-  .site-header2 #nav-check:focus ~ .nav-toggler {
+  .site-header #nav-checkbox:focus ~ .nav-toggler {
     box-shadow: 0 0 .25rem $grey-color-light;
   }
-  .site-header2 #nav-check:checked ~ .nav-toggler span {
+  .site-header #nav-checkbox:checked ~ .nav-toggler span {
     background-color: transparent;
   }
-  .site-header2 #nav-check:checked ~ .nav-toggler span::before {
-    top:0;
+  .site-header #nav-checkbox:checked ~ .nav-toggler span::before {
+    top: 0;
     transform: rotate(45deg);
   }
-  .site-header2 #nav-check:checked ~ .nav-toggler span::after {
-    top:0;
+  .site-header #nav-checkbox:checked ~ .nav-toggler span::after {
+    top: 0;
     transform: rotate(-45deg);
   }
 }
 
 
-
-
-
-
-/**
- * Site header   **********************************************************
- */
- .site-header {
-  a {color: $text-color;}
-  border-bottom: 1px solid $grey-color-light;
-  background-color: #fff;
-  opacity: 0.75;
-  position:fixed;
-  left:0px;
-  top:0px;
-  height:56px;
-  width:100%;
-  z-index: 50;
-}
-
-.site-title {
-  line-height: $nav-height;
-  text-transform: lowercase;
-}
-
-.site-nav {
-  float: right;
-  line-height: $nav-height;
-  .page-link{
-    line-height: $base-line-height;
-        // Gaps between nav items, but not on the first one
-        &:not(:first-child) {
-          margin-left: 10px;
-        }
-      }
-      @include media-query($on-palm) {
-        position: fixed;
-        top: 0px;
-        right: 10px;
-        text-align: right;
-        &:hover .trigger {
-          display: block;
-          padding-bottom: 5px;
-        }
-        .page-link {
-          display: line;
-        }
-      }
-    }
-
-    .header-bar{
-      text-transform: lowercase;
-      left: 0px;
-      top: 0px;
-      position: relative;
-      font-size: 20px;
-      display: block;
-      opacity: 0.75;
-      width: 100%;
-      text-align: center;
-      padding-top: 25px;
-      line-height: 3em;
-      z-index: 25;
-      h1{
-        color: $theme-color;
-        font-size:75px;
-        margin-top: 0px;
-        margin-bottom: 0px;
-      }
-      h2{
-        font-size:25px;
-      }
-      img {
-        width: 200px;
-        border-radius: 50%;
-      } /* img */
-    }
-
-/**
- * Site footer  **********************************************************
- */
+/* Site footer  ******************************************/
  .site-footer {
   text-align: center;
   border-top: 1px solid $grey-color-dark;
@@ -242,13 +131,10 @@
   bottom:0px;
   height:25px;
   width:100%;
-  a {
-    color: $grey-color-light;
-  } /* a */
+  a { color: $grey-color-light; }
 }
-/**
- * Pagination   **********************************************************
- */
+
+/* Pagination   ************************************************/
  .pagination{
   max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit} * 2));
   text-align: center;
