@@ -180,6 +180,11 @@
     margin-bottom: $vertical-spacing-unit;
   }
 }
+@include media-query($on-laptop) {
+  .post-list {
+      > li { margin-bottom: 0; }
+  }
+}
 
 img.about-pic {
   margin-right: 1.25em;
@@ -197,6 +202,7 @@ img.about-pic {
 .center{
   text-align: center;
 }
+
 /**
  * Posts  **********************************************************
  */
@@ -204,19 +210,21 @@ img.about-pic {
   margin-bottom: $vertical-spacing-unit;
 }
 .post-title {
-  font-size: 30px;
+  font-size: 1.75rem;
   letter-spacing: -1px;
-  line-height: 1;
   @include media-query($on-laptop) {
-    font-size: 30px;
+    font-size: 1.25rem;
   }
 }
+
+
 .post-content {
   h2 {
     font-size: 30px !important;
     margin-top: 2em;
     @include media-query($on-laptop) {
       font-size: 28px;
+      margin-top: .5em;
     }
   }
   h3 {

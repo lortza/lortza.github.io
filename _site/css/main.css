@@ -32,7 +32,7 @@ ul, ol { margin-left: 50px; }
 li > ul, li > ol { margin-bottom: 0; }
 
 /* Headings */
-h1, h2, h3, h4, h5, h6 { font-weight: 400; line-height: 110%; margin-top: 0.5em; margin-bottom: 0.25em; }
+h1, h2, h3, h4, h5, h6 { font-weight: 400; margin-top: 0.5em; margin-bottom: 0.25em; }
 
 /* Links */
 a { color: #2698BA; text-decoration: none; /* &:visited { color: darken($brand-color, 15%); } */ }
@@ -120,6 +120,8 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 
 .post-list > li { margin-bottom: 40px; }
 
+@media screen and (max-width: 800px) { .post-list > li { margin-bottom: 0; } }
+
 img.about-pic { margin-right: 1.25em; }
 
 .contact-icon { font-size: 50px; display: block; margin: 10px; /* a */ }
@@ -132,13 +134,13 @@ img.about-pic { margin-right: 1.25em; }
 /** Posts  ********************************************************** */
 .post-header { margin-bottom: 40px; }
 
-.post-title { font-size: 30px; letter-spacing: -1px; line-height: 1; }
+.post-title { font-size: 1.75rem; letter-spacing: -1px; }
 
-@media screen and (max-width: 800px) { .post-title { font-size: 30px; } }
+@media screen and (max-width: 800px) { .post-title { font-size: 1.25rem; } }
 
 .post-content h2 { font-size: 30px !important; margin-top: 2em; }
 
-@media screen and (max-width: 800px) { .post-content h2 { font-size: 28px; } }
+@media screen and (max-width: 800px) { .post-content h2 { font-size: 28px; margin-top: .5em; } }
 
 .post-content h3 { font-size: 20px !important; margin-top: 1.5em; margin-bottom: 0.25em; }
 
