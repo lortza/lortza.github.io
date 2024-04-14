@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Calculating the difference in timestamps with PostgreSQL</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2024/03/08/calculating-the-difference-in-timestamps-with-sql.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+    
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          
+            
+              <li><a class="" href="/about/">about</a></li>
+            
+          
+            
+              <li><a class="" href="/blog/">tech blog</a></li>
+            
+          
+            
+          
+            
+          
+            
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+            
+          
+            
+              <li><a class="" href="/resources/">resources</a></li>
+            
+          
+            
+          
+            
+          
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Calculating the difference in timestamps with PostgreSQL</h1>
+    <p class="post-meta">March 8, 2024</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently needed to do a little analytic research for our UX team. We wanted to know how long it usually took between the time our app makes a web request to an external API and the time we received the webhook back from that API. Knowing that would help us to plan a more pleasant experience for our customers.</p>
+
+<h2 id="calculating-the-difference">Calculating the difference</h2>
+<p>When we initiate a call to the API, we save an instance of our <code class="language-plaintext highlighter-rouge">Listing</code> class in the database with a <code class="language-plaintext highlighter-rouge">created_at</code> timestamp. When the API calls us back, we update the <code class="language-plaintext highlighter-rouge">listing</code> with the new response data. This gives us a fresh <code class="language-plaintext highlighter-rouge">updated_at</code> value. Taking the difference between these two values gives us the age:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- AGE(bigger_number, smaller_number)</span>
+<span class="n">AGE</span><span class="p">(</span><span class="n">updated_at</span><span class="p">,</span> <span class="n">created_at</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>In our case, we only care about records that were successful so we’re filtering for a specific <code class="language-plaintext highlighter-rouge">status</code>. As you can see, the magic is in the <code class="language-plaintext highlighter-rouge">SELECT</code> statement:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">AGE</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">updated_at</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">created_at</span><span class="p">),</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">listings</span> <span class="n">l</span>
+<span class="k">WHERE</span> <span class="n">l</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="s1">'success'</span>
+<span class="p">;</span>
+</code></pre></div></div>
+<p>Now we have a number value, signifying the time difference, for each row.</p>
+
+<h2 id="but-i-really-wanted-an-average">But I really wanted an average…</h2>
+<p>But what I <em>really</em> want to know is what the average time is for us to get a callback from this API, so I wrapped the <code class="language-plaintext highlighter-rouge">AGE</code> function in the <code class="language-plaintext highlighter-rouge">AVG</code> function to get that, like:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- AVG(a_number_value_for_each_row)</span>
+<span class="k">AVG</span><span class="p">(</span><span class="n">AGE</span><span class="p">(</span><span class="n">updated_at</span><span class="p">,</span> <span class="n">created_at</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>So the whole query is now:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="n">AGE</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">updated_at</span><span class="p">,</span> <span class="n">l</span><span class="p">.</span><span class="n">created_at</span><span class="p">))</span>
+<span class="k">FROM</span> <span class="n">listings</span> <span class="n">l</span>
+<span class="k">WHERE</span> <span class="n">l</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="s1">'success'</span>
+<span class="p">;</span>
+</code></pre></div></div>
+<p>Now we have a single number signifying the average for all rows.</p>
+
+<p>And my answer is <code class="language-plaintext highlighter-rouge">00:02:21.59232</code>, roughly 2.5 minutes on my local machine.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2024</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

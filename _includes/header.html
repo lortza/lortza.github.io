@@ -1,19 +1,23 @@
 <header class="site-header">
-
   <div class="wrapper">
-    <a class="site-title page-link" href="{{ site.baseurl }}/">{{ site.title }}</a>
-
-    <nav class="site-nav">
-      <div class="trigger">
-        {% for page in site.pages %}
-          {% if page.title %}
-          <a class="page-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-          {% endif %}
-        {% endfor %}
-        <a class="page-link" href="{{ site.baseurl }}/resume/" target="_blank">resume</a>
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="{{ site.baseurl }}/">{{ site.title }}</a>
       </div>
-    </nav>
-
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          {% for page in site.pages %}
+            {% if page.title %}
+              <li><a class="" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a></li>
+            {% endif %}
+          {% endfor %}
+          <li><a class="" href="{{ site.baseurl }}/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
-
 </header>

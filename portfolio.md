@@ -69,6 +69,10 @@ permalink: /portfolio/
 
   <p class="section-explanation">Ruby, Rails, Action Cable, Hotwire, RSpec & testing, CSS3, BEM & utility classes, JavaScript, React.js, Redux, jQuery, PostgreSQL, Git, GitHub, BitBucket, Heroku, Firebase, Jekyll, XML & JSON parsing, database design, product design and launch, copy editing, and graphic design</p>
 
+  <h2>Recommendations</h2>
+  <p> If you'd like an idea of what it's like to work with me,  <a href="{{site.linkedin_recommendation_url}}" target="_blank" alt="Linkedn recommendations" title="Linkedn recommendations">here are some of the things my clients and coworkers have said about me</a>.
+  </p>
+
   <h2>Open Source Contributions</h2>
 
   <div class="open-source">

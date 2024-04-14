@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Case Statements in PostgreSQL</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2024/02/20/sql-case-statements.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+    
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          
+            
+              <li><a class="" href="/about/">about</a></li>
+            
+          
+            
+              <li><a class="" href="/blog/">tech blog</a></li>
+            
+          
+            
+          
+            
+          
+            
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+            
+          
+            
+              <li><a class="" href="/resources/">resources</a></li>
+            
+          
+            
+          
+            
+          
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Case Statements in PostgreSQL</h1>
+    <p class="post-meta">February 20, 2024</p>
+  </header>
+
+  <article class="post-content">
+    <p>If you’ve ever had a database table that uses enums (just an integer) or some kind of mysterious code to signify meaning, then you’ve probably reached for a case statement in your <code class="language-plaintext highlighter-rouge">SELECT</code> to output that nonsense into a human-friendly value. If you haven’t, oh boy do I have a treat for you.</p>
+
+<p>For this example, let’s pretend I have a table called <code class="language-plaintext highlighter-rouge">home_listings</code> and that table has several columns – one is a <code class="language-plaintext highlighter-rouge">category</code> field that uses a strange code and the other is a <code class="language-plaintext highlighter-rouge">status</code> field that uses an integer. eww…</p>
+
+<table class="table">
+  <tr>
+    <th>nickname</th>
+    <th>location</th>
+    <th>category</th>
+    <th>status</th>
+  </tr>
+  <tr>
+    <td>Bob's seaward adventure</td>
+    <td>Kitty Hawk, NC</td>
+    <td>H33Y</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>victorian fixer-upper</td>
+    <td>Denver, CO</td>
+    <td>SF78</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td>downtown penthouse</td>
+    <td>Pittsburgh, PA</td>
+    <td>SX5F</td>
+    <td>3</td>
+  </tr>
+</table>
+
+<p>I’d like to output this to something I can understand. All the fun happens inside the <code class="language-plaintext highlighter-rouge">SELECT</code> statement since this is display logic and not querying logic.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+  <span class="n">hl</span><span class="p">.</span><span class="n">nickname</span><span class="p">,</span>
+  <span class="n">hl</span><span class="p">.</span><span class="k">location</span><span class="p">,</span>
+  <span class="n">hl</span><span class="p">.</span><span class="n">category</span><span class="p">,</span>
+  <span class="k">CASE</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">category</span> <span class="o">=</span> <span class="s1">'H33Y'</span> <span class="k">THEN</span> <span class="s1">'aquatic dwelling'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">category</span> <span class="o">=</span> <span class="s1">'SF78'</span> <span class="k">THEN</span> <span class="s1">'single family'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">category</span> <span class="o">=</span> <span class="s1">'SX5F'</span> <span class="k">THEN</span> <span class="s1">'apartment complex'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">category</span> <span class="o">=</span> <span class="s1">'MX85'</span> <span class="k">THEN</span> <span class="s1">'mobile home'</span>
+  <span class="k">END</span> <span class="k">AS</span> <span class="n">category_to_s</span><span class="p">,</span>
+  <span class="n">hl</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+  <span class="k">CASE</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">THEN</span> <span class="s1">'unlisted'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">THEN</span> <span class="s1">'for sale'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">THEN</span> <span class="s1">'for rent'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">THEN</span> <span class="s1">'contract pending'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">4</span> <span class="k">THEN</span> <span class="s1">'sold'</span>
+    <span class="k">WHEN</span> <span class="n">hl</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">THEN</span> <span class="s1">'removed'</span>
+  <span class="k">END</span> <span class="k">AS</span> <span class="n">status_to_s</span><span class="p">,</span>
+<span class="k">FROM</span> <span class="n">home_listings</span> <span class="n">hl</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">hl</span><span class="p">.</span><span class="n">created_at</span> <span class="k">DESC</span>
+<span class="p">;</span>
+</code></pre></div></div>
+<p>It looks a lot like a case statement in ruby. Easy peasy.</p>
+
+<p>Any now my eyeballs are happier because look at this hot new output:</p>
+
+<table class="table">
+  <tr>
+    <th>nickname</th>
+    <th>location</th>
+    <th>category</th>
+    <th>category_to_s</th>
+    <th>status</th>
+    <th>status_to_s</th>
+  </tr>
+  <tr>
+    <td>Bob's seaward adventure</td>
+    <td>Kitty Hawk, NC</td>
+    <td>H33Y</td>
+    <td>aquatic dwelling</td>
+    <td>2</td>
+    <td>for rent</td>
+  </tr>
+  <tr>
+    <td>victorian fixer-upper</td>
+    <td>Denver, CO</td>
+    <td>SF78</td>
+    <td>single family</td>
+    <td>1</td>
+    <td>for sale</td>
+  </tr>
+  <tr>
+    <td>downtown penthouse</td>
+    <td>Pittsburgh, PA</td>
+    <td>SX5F</td>
+    <td>apartment complex</td>
+    <td>3</td>
+    <td>contract pending</td>
+  </tr>
+</table>
+
+<p>Here are the docs: <a href="https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-case/">https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-case/</a></p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2024</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

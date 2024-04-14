@@ -12,10 +12,14 @@ sup { font-size: 8px; }
 
 /** Variables **********************************************/
 $base-font-family:              Helvetica, sans-serif;
-$base-line-height:              1.5em;
-$horizontal-spacing-unit:       50px;
-$vertical-spacing-unit:         40px;
-$nav-height:                    56px;
+$base-font-size: 16px;
+$base-line-height: 1.5rem;
+$small-font-size: $base-font-size * 0.875;
+
+$spacing-unit:            30px;
+$horizontal-spacing-unit: 50px;
+$vertical-spacing-unit:   40px;
+$nav-height:              56px;
 
 /* portfolio tinkering */
 $img_spacing: 5px;
@@ -32,17 +36,36 @@ $green: #11D68B;
 $lime_green: #B7D12A;
 $purple: #B509AC;
 
+$grey-color:#828282;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-medium: #AAA;
+$grey-color-dark:  darken($grey-color, 25%);
 
-$grey-color-dark: #333;   /* footer */
-$grey-color-medium: #aaa; /* footer */
-$grey-color-light: #ddd;  /* navigation bar border */
-$text-color: #666;
+$text-color: $grey-color;
+$background-color: #FFF;
 
-/* Set theme color *************************/
-$theme-color:   $blue;
+/* Set theme colors */
+$brand-color: $blue;
+$theme-color: $blue;
 $theme-color-2: $purple;
 
 
+/* Media Query Sizes */
+$on-palm:          600px;
+$on-laptop:        800px;
+
+// Using media queries with like this:
+// @include media-query($palm) {
+//     .wrapper {
+//         padding-right: $spacing-unit / 2;
+//         padding-left: $spacing-unit / 2;
+//     }
+// }
+@mixin media-query($device) {
+  @media screen and (max-width: $device) {
+    @content;
+  }
+}
 /************************************************************/
 
 /**
@@ -55,7 +78,7 @@ $theme-color-2: $purple;
     // font-weight: 100;
     color: $text-color;
     background-color: $background-color;
-    -webkit-text-size-adjust: 100%;
+    // -webkit-text-size-adjust: 100%;
 }
 
 
@@ -63,173 +86,140 @@ $theme-color-2: $purple;
 /**
  * Set `margin-bottom` to maintain vertical rhythm
  */
- p, blockquote, pre,
- ul, ol, dl, figure,
- %vertical-rhythm {
-    margin-bottom: $vertical-spacing-unit / 2;
+p, blockquote, pre,
+ul, ol, dl, figure,
+%vertical-rhythm {
+  margin-bottom: $vertical-spacing-unit / 2;
 }
 
-.alignright {
-    float: right;
-}
+.alignright { float: right; }
 
 
-hr{
-    /* Inset, by Dan Eden */
-    border: 0;
-    height: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-
+hr {
+  /* Inset, by Dan Eden */
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 
-/**
- * Figures
- */
- figure > img {
-    display: block;
-}
+/* Figures */
+figure > img { display: block; }
 
-figcaption {
-    font-size: $small-font-size;
-}
+figcaption { font-size: $small-font-size; }
 
 .table-caption {
   font-size: $small-font-size;
   color: $caption_color;
 }
 
-/**
- * Lists
- */
- ul, ol {
-    margin-left: $horizontal-spacing-unit;
-}
+/* Lists */
+ul, ol { margin-left: $horizontal-spacing-unit; }
 
 li {
-    > ul,
-    > ol {
-       margin-bottom: 0;
-   }
+  > ul,
+  > ol {
+    margin-bottom: 0;
+  }
 }
 
 
-
-/**
- * Headings
- */
+/* Headings */
  h1, h2, h3, h4, h5, h6 {
-    font-weight: 400;
-    line-height: 110%;
-    margin-top: 0.5em;
-    margin-bottom: 0.25em;
+  font-weight: 400;
+  // line-height: 110%;
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
 }
 
 
-/**
- * Links
- */
- a {
-    color: $theme-color;
+/* Links */
+a {
+  color: $theme-color;
+  text-decoration: none;
+  // font-weight: 500;
+  /*
+  &:visited { color: darken($brand-color, 15%); }
+  */
+  &:hover {
+    color: $theme-color-2;
+    // color: darken($theme-color, 10%);
     text-decoration: none;
-    /*
-    &:visited {
-        color: darken($brand-color, 15%);
-    }
-    */
-    &:hover {
-        color: $theme-color-2;
-        // color: darken($theme-color, 10%);
-        text-decoration: none;
-    }
+  }
 }
 
-article a {
-    color: $theme-color;
-    font-weight: 100;
-
-    &:hover {
-        text-decoration: none;
-    }
-}
+// article a {
+//   color: $theme-color;
+//   font-weight: 100;
+//   &:hover { text-decoration: none; }
+// }
 
 
 
-/**
- * Blockquotes
- */
- blockquote {
-    color: $text-color;
-    border-left: 10px solid $grey-color-light;
-    padding-left: $horizontal-spacing-unit / 2;
-    font-size: 18px;
-    font-style: italic;
+/* Blockquotes */
+blockquote {
+  color: $text-color;
+  border-left: 10px solid $grey-color-light;
+  padding-left: $horizontal-spacing-unit / 2;
+  font-size: 18px;
+  font-style: italic;
 
-    > :last-child {
-        margin-bottom: 0;
-    }
+  > :last-child {
+      margin-bottom: 0;
+  }
 }
 
 
 
-/**
- * Code formatting
- */
- pre,
- code {
-    font-size: 15px;
-    border-radius: 3px;
-    background-color: $grey-color-light;
-}
-
+/* Code formatting */
+pre,
 code {
-    padding: 1px 5px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: $grey-color-light;
 }
+
+code { padding: 1px 5px; }
 
 pre {
-    padding: 8px 12px;
-    overflow-x: scroll;
+  padding: 8px 12px;
+  overflow-x: scroll;
 
-    > code {
-        border: 0;
-        padding-right: 0;
-        padding-left: 0;
-    }
+  > code {
+      border: 0;
+      padding-right: 0;
+      padding-left: 0;
+  }
 }
 
 
 
-/**
- * Wrapper
- */
+/* Wrapper */
+.wrapper {
+  max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit} * 2));
+  max-width:         calc(800px - (#{$horizontal-spacing-unit} * 2));
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: $horizontal-spacing-unit;
+  padding-left: $horizontal-spacing-unit;
+  @extend %clearfix;
 
- .wrapper {
-    max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit} * 2));
-    max-width:         calc(800px - (#{$horizontal-spacing-unit} * 2));
-    margin-right: auto;
-    margin-left: auto;
-    padding-right: $horizontal-spacing-unit;
-    padding-left: $horizontal-spacing-unit;
-    @extend %clearfix;
-
-    @include media-query($on-laptop) {
-        max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit}));
-        max-width:         calc(800px - (#{$horizontal-spacing-unit}));
-        padding-right: $spacing-unit / 2;
-        padding-left: $spacing-unit / 2;
-    }
+  @include media-query($on-laptop) {
+    max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit}));
+    max-width:         calc(800px - (#{$horizontal-spacing-unit}));
+    padding-right: $spacing-unit / 2;
+    padding-left: $spacing-unit / 2;
+  }
 }
 
 
-/**
- * Clearfix
- */
- %clearfix {
-    &:before,
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
+/* Clearfix */
+%clearfix {
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 }
