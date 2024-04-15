@@ -88,6 +88,16 @@ Format: course <br>
 This course is fast-paced and designed for people who 1) already know how Rails works and 2) have a concept of how a front-end framework works. In the course, they weave together a Vue front end with a Rails API, walking us through how the pieces all talk to each other. I picked up this course since I just started working in Vue at work and it has paid off immediately.
 
 ----------
+## ML & AI
+### [ChatGPT Prompt Engineering for Developers](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/) -- DeepLearningAI
+Format: video tutorial<br>
+Good for experienced developers following along in Python (or in your language of choice).
+
+### [Generative AI vs Traditional AI](https://www.linkedin.com/learning/generative-ai-vs-traditional-ai) -- linkedin learning
+Format: video lecture with quizzes<br>
+Nice primer for AI and LLM terminology and concepts. No coding skills necessary.
+
+----------
 ## Git (Version Control)
 ### [GitHub for Non-technical Roles](https://ben.balter.com/2023/03/02/github-for-non-technical-roles/)
 Format: blog post<br>
