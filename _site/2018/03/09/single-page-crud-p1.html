@@ -145,7 +145,7 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/new.js.erb</span>
 
 <span class="c1">// Locate the placeholder in the DOM</span>
-<span class="kd">let</span> <span class="nx">placeholder</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">placeholder</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">)</span>
 
 <span class="c1">// Insert the partial as the content of the placeholder div</span>
 <span class="nx">placeholder</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'new' ) %&gt;</span><span class="dl">"</span>
@@ -154,7 +154,7 @@
 <span class="c1">// Another Option:</span>
 <span class="c1">// Condensed both of those lines above to 1 line.</span>
 <span class="c1">// It's your call on what you feel is more readable.</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'new' ) %&gt;</span><span class="dl">"</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'new' ) %&gt;</span><span class="dl">"</span>
 </code></pre></div></div>
 
 <p>In Rails, when rendering a partial, we call it <code class="language-plaintext highlighter-rouge">'new'</code> but Rails will be looking for a file called <code class="language-plaintext highlighter-rouge">_new</code>. Create a file called (or rename your existing file to) <code class="language-plaintext highlighter-rouge">_new.html.erb</code> to stand in as your “new” view, and give it this content:</p>
@@ -289,16 +289,16 @@
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/create.js.erb</span>
 
 <span class="c1">// Locate the &lt;tbody&gt; in the HTML</span>
-<span class="kd">let</span> <span class="nx">tableBody</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody#critters</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">tableBody</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody#critters</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="c1">// Insert the newly-populated `_critter` partial as the first row in the</span>
 <span class="c1">// table, passing it the @critter value as defined in the controller's</span>
 <span class="c1">// `create` action</span>
-<span class="nx">tableBody</span><span class="p">.</span><span class="nx">insertAdjacentHTML</span><span class="p">(</span><span class="dl">'</span><span class="s1">afterbegin</span><span class="dl">'</span><span class="p">,</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">tableBody</span><span class="p">.</span><span class="nf">insertAdjacentHTML</span><span class="p">(</span><span class="dl">'</span><span class="s1">afterbegin</span><span class="dl">'</span><span class="p">,</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;</span><span class="dl">"</span><span class="p">)</span>
 
 <span class="c1">// Make the form disappear by setting the placeholder div's content</span>
 <span class="c1">// to an empty string</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">""</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">new-form-placeholder</span><span class="dl">"</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">""</span>
 </code></pre></div></div>
 
 <p>Give it a whirl! Refresh your index page, then add a new critter. You’ll see your new record appear as the last record in the table.</p>

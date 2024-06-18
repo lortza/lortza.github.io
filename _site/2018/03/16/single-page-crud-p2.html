@@ -141,7 +141,7 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
 
-<span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hey! The destroy.js.erb file is responding!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nf">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hey! The destroy.js.erb file is responding!</span><span class="dl">"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>If you refresh your page, then click the delete button, you’ll get an alert box that says “Are you sure?”. Click “ok”, then you’ll see a new box pop up that says “Hey! The destroy.js.erb file is reponding!” After you dismiss that box, you’ll notice that your content is still on the index page – even though it’s been removed from the database. This is the expected behavior. Now we need to remove it from the index with javascript.</p>
@@ -151,7 +151,7 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/destroy.js.erb</span>
 
-<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nf">remove</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>Voila! That’s it! Refresh your page again, then go through the process of deleting another record. You should see that your record is no longer on the index. Pretty nifty ;)</p>

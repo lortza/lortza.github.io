@@ -168,14 +168,14 @@
 <h4 id="step-2-build-the-ajax-call">Step 2: Build the AJAX call</h4>
 <p>Now that we have data available to us, we need to be able to fetch it. This is done with a javascript <code class="language-plaintext highlighter-rouge">fetch</code> call like this where the <code class="language-plaintext highlighter-rouge">url</code> is the api endpoint we just created:</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// pass in the api endpoint as the url</span>
-  <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+  <span class="nf">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nf">json</span><span class="p">())</span>
     <span class="c1">// use the response to populate the DOM</span>
-    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
     <span class="c1">// make sure to resolve the fetch promise with an error message</span>
-    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -189,7 +189,7 @@
 <p>In order to complete that call, we need to grab the selected value from the dropdown. We’ll get that using the standard, Rails-issued form id:</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Find the dropdown menu</span>
-<span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>We can then use that to build that API endpoint:</p>
@@ -203,8 +203,8 @@
 <h4 id="step-4-configure-the-on-change-event-listener">Step 4: Configure the on-change event listener</h4>
 <p>Create an on-change event listener on the dropdown menu. This will trigger any of your subsequent javascript any time the dropdown menu selected value has changed.</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">event</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">();</span>
   <span class="c1">// Grab the id from the selected dropdown item</span>
   <span class="kd">const</span> <span class="nx">selectedExerciseId</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
 <span class="p">})</span>
@@ -217,35 +217,35 @@
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// assets/javascripts/exercise.js</span>
 
 <span class="c1">// First, wrap everything in a DOMContentLoaded event listener.</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">()</span> <span class="p">{</span>
   <span class="c1">// Set up JS variable for your dropdown</span>
-  <span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">exerciseDropdown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_exercise_id</span><span class="dl">'</span><span class="p">);</span>
 
   <span class="c1">// Create JS variables for the fields in the form where you want your new</span>
   <span class="c1">// JSON data to populate. You can use the default Rails ids here.</span>
-  <span class="kd">const</span> <span class="nx">sets</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_sets</span><span class="dl">'</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">reps</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_reps</span><span class="dl">'</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">repLength</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_rep_length</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">sets</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_sets</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">reps</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_reps</span><span class="dl">'</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">repLength</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">exercise_log_rep_length</span><span class="dl">'</span><span class="p">);</span>
 
 
   <span class="c1">// Make a function to populate those form fields</span>
-  <span class="kd">function</span> <span class="nx">populateDOM</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nf">populateDOM</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">sets</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_sets</span><span class="p">;</span>
     <span class="nx">reps</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_reps</span><span class="p">;</span>
     <span class="nx">repLength</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">default_rep_length</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="c1">// Make a function to hit that API endpoint</span>
-  <span class="kd">function</span> <span class="nx">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
-      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
-      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
-      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+  <span class="kd">function</span> <span class="nf">getExercise</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nf">json</span><span class="p">())</span>
+      <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="nx">populateDOM</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
   <span class="p">}</span>
 
   <span class="c1">// Listen for the user to change the dropdown menu. This will trigger all of our JS to happen.</span>
-  <span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+  <span class="nx">exerciseDropdown</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">change</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">();</span>
     <span class="c1">// Grab the id from the selected dropdown item</span>
     <span class="kd">const</span> <span class="nx">selectedExerciseId</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="c1">// Build the API endpoint</span>
@@ -253,7 +253,7 @@
     <span class="kd">const</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">baseUrl</span><span class="p">}</span><span class="s2">/exercises/</span><span class="p">${</span><span class="nx">selectedExerciseId</span><span class="p">}</span><span class="s2">.json`</span>
 
     <span class="c1">// make the AJAX call</span>
-    <span class="nx">getExercise</span><span class="p">(</span><span class="nx">apiUrl</span><span class="p">);</span>
+    <span class="nf">getExercise</span><span class="p">(</span><span class="nx">apiUrl</span><span class="p">);</span>
   <span class="p">})</span>
 <span class="p">});</span>
 </code></pre></div></div>

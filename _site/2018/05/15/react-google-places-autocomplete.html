@@ -104,17 +104,17 @@
 
     <span class="c">&lt;!-- 3. Use this script to call the Google Places API --&gt;</span>
     <span class="nt">&lt;script&gt;</span>
-      <span class="kd">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">autocomplete</span><span class="dl">'</span><span class="p">)</span>
+      <span class="kd">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">autocomplete</span><span class="dl">'</span><span class="p">)</span>
 
       <span class="c1">// Limit the results to just Cities in the US</span>
       <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="na">types</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">(cities)</span><span class="dl">'</span><span class="p">],</span>
         <span class="na">componentRestrictions</span><span class="p">:</span> <span class="p">{</span><span class="na">country</span><span class="p">:</span> <span class="dl">"</span><span class="s2">us</span><span class="dl">"</span><span class="p">}</span>
        <span class="p">}</span>
-      <span class="kd">var</span> <span class="nx">autocomplete</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">places</span><span class="p">.</span><span class="nx">Autocomplete</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+      <span class="kd">var</span> <span class="nx">autocomplete</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">places</span><span class="p">.</span><span class="nc">Autocomplete</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
 
-      <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="nx">autocomplete</span><span class="p">,</span> <span class="dl">'</span><span class="s1">place_changed</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-         <span class="kd">var</span> <span class="nx">place</span> <span class="o">=</span> <span class="nx">autocomplete</span><span class="p">.</span><span class="nx">getPlace</span><span class="p">()</span>
+      <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nf">addListener</span><span class="p">(</span><span class="nx">autocomplete</span><span class="p">,</span> <span class="dl">'</span><span class="s1">place_changed</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+         <span class="kd">var</span> <span class="nx">place</span> <span class="o">=</span> <span class="nx">autocomplete</span><span class="p">.</span><span class="nf">getPlace</span><span class="p">()</span>
       <span class="p">})</span>
     <span class="nt">&lt;/script&gt;</span>
 
@@ -182,14 +182,14 @@
 <span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span>
 <span class="k">import</span> <span class="nx">PlacesAutocomplete</span><span class="p">,</span> <span class="p">{</span> <span class="nx">geocodeByAddress</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-places-autocomplete</span><span class="dl">'</span>
 
-<span class="kd">class</span> <span class="nx">LocationSearchInput</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-  <span class="kd">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nc">LocationSearchInput</span> <span class="kd">extends</span> <span class="nc">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nf">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">address</span><span class="p">:</span> <span class="dl">''</span> <span class="p">}</span>
   <span class="p">}</span>
 
   <span class="nx">handleChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">address</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">address</span> <span class="p">})</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">setState</span><span class="p">({</span> <span class="nx">address</span> <span class="p">})</span>
   <span class="p">}</span>
 
   <span class="c1">// When the user selects an autocomplete suggestion...</span>
@@ -197,22 +197,22 @@
     <span class="c1">// Pull in the setFormLocation function from the parent ReportForm</span>
     <span class="kd">const</span> <span class="nx">setFormLocation</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">setFormLocation</span>
 
-    <span class="nx">geocodeByAddress</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span>
-      <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
+    <span class="nf">geocodeByAddress</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
         <span class="c1">// Set the location in the parent ReportFrom</span>
-        <span class="nx">setFormLocation</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">formatted_address</span><span class="p">)</span>
+        <span class="nf">setFormLocation</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">formatted_address</span><span class="p">)</span>
       <span class="p">})</span>
-      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">))</span>
+      <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Error</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">))</span>
   <span class="p">}</span>
 
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="nx">renderInput</span> <span class="o">=</span> <span class="p">({</span> <span class="nx">getInputProps</span><span class="p">,</span> <span class="nx">getSuggestionItemProps</span><span class="p">,</span> <span class="nx">suggestions</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">(</span>
       <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">autocomplete-root</span><span class="dl">"</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">form-control</span><span class="dl">"</span> <span class="p">{...</span><span class="nx">getInputProps</span><span class="p">()}</span> <span class="sr">/</span><span class="err">&gt;
+        <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">form-control</span><span class="dl">"</span> <span class="p">{...</span><span class="nf">getInputProps</span><span class="p">()}</span> <span class="sr">/</span><span class="err">&gt;
 </span>        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">autocomplete-dropdown-container</span><span class="dl">"</span><span class="o">&gt;</span>
-          <span class="p">{</span><span class="nx">suggestions</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">suggestion</span> <span class="o">=&gt;</span> <span class="p">(</span>
+          <span class="p">{</span><span class="nx">suggestions</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="nx">suggestion</span> <span class="o">=&gt;</span> <span class="p">(</span>
             <span class="c">&lt;!--</span> <span class="nx">Add</span> <span class="nx">a</span> <span class="nx">style</span> <span class="k">of</span> <span class="dl">"</span><span class="s2">suggestion</span><span class="dl">"</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">suggested</span> <span class="nx">locations</span> <span class="o">--&gt;</span>
-            <span class="o">&lt;</span><span class="nx">div</span> <span class="p">{...</span><span class="nx">getSuggestionItemProps</span><span class="p">(</span><span class="nx">suggestion</span><span class="p">)}</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">suggestion</span><span class="dl">"</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="nx">div</span> <span class="p">{...</span><span class="nf">getSuggestionItemProps</span><span class="p">(</span><span class="nx">suggestion</span><span class="p">)}</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">suggestion</span><span class="dl">"</span><span class="o">&gt;</span>
               <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">suggestion</span><span class="p">.</span><span class="nx">description</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/span</span><span class="err">&gt;
 </span>            <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
 </span>          <span class="p">))}</span>
@@ -226,7 +226,7 @@
       <span class="na">componentRestrictions</span><span class="p">:</span> <span class="p">{</span><span class="na">country</span><span class="p">:</span> <span class="dl">"</span><span class="s2">us</span><span class="dl">"</span><span class="p">}</span>
      <span class="p">}</span>
 
-    <span class="k">return</span> <span class="p">(</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="o">&lt;</span><span class="nx">PlacesAutocomplete</span>
         <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">address</span><span class="p">}</span>
         <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">}</span>
@@ -264,9 +264,9 @@
 <span class="c1">// import the LocationSearchInput</span>
 <span class="k">import</span> <span class="nx">LocationSearchInput</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./LocationSearchInput</span><span class="dl">'</span>
 
-<span class="kd">class</span> <span class="nx">ReportForm</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nc">ReportForm</span> <span class="kd">extends</span> <span class="nc">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
   <span class="c1">// Set up a state to help pass data back to the parent App component</span>
-  <span class="kd">constructor</span><span class="p">(){</span>
+  <span class="nf">constructor</span><span class="p">(){</span>
     <span class="k">super</span><span class="p">()</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
       <span class="na">cityLoc</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
@@ -279,8 +279,8 @@
   <span class="nx">setFormLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">googleLocation</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="c1">// The Google result comes back as a comma-separated string:</span>
     <span class="c1">// "Austin, TX, USA". Parse it into usable data.</span>
-    <span class="kd">let</span> <span class="nx">parsedLoc</span> <span class="o">=</span> <span class="nx">googleLocation</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">)</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+    <span class="kd">let</span> <span class="nx">parsedLoc</span> <span class="o">=</span> <span class="nx">googleLocation</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">setState</span><span class="p">({</span>
       <span class="na">cityLoc</span><span class="p">:</span> <span class="nx">parsedLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
       <span class="na">stateLoc</span><span class="p">:</span> <span class="nx">parsedLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="p">})</span>
@@ -289,19 +289,19 @@
   <span class="c1">// Process the form submission with the info that was just</span>
   <span class="c1">// saved to ReportForm.state</span>
   <span class="nx">createReportLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>
     <span class="kd">const</span> <span class="nx">inputLocation</span> <span class="o">=</span> <span class="p">{</span>
       <span class="na">cityLoc</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">cityLoc</span><span class="p">,</span>
       <span class="na">stateLoc</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">stateLoc</span>
     <span class="p">}</span>
     <span class="c1">// Call the parent App component's setReportLocation function, which</span>
     <span class="c1">// sets App.state. so that all other components will have access to it.</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">setReportLocation</span><span class="p">(</span><span class="nx">inputLocation</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nf">setReportLocation</span><span class="p">(</span><span class="nx">inputLocation</span><span class="p">)</span>
   <span class="p">}</span>
 
   <span class="c1">// Render the form</span>
-  <span class="nx">render</span><span class="p">(){</span>
-    <span class="k">return</span> <span class="p">(</span>
+  <span class="nf">render</span><span class="p">(){</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="c1">// Set the form submission handler to createReportLocation</span>
       <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">createReportLocation</span><span class="p">}</span>  <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">card card-body mb-3</span><span class="dl">"</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">row</span><span class="dl">"</span><span class="o">&gt;</span>
@@ -333,17 +333,17 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/components/App.js</span>
 
-<span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="nc">Component</span> <span class="p">{</span>
   <span class="p">...</span>
   <span class="c1">// Sets the state of App.js and is called from within the ReportForm</span>
   <span class="nx">setReportLocation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">location</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">setState</span><span class="p">({</span>
       <span class="na">cityLoc</span><span class="p">:</span> <span class="nx">location</span><span class="p">.</span><span class="nx">cityLoc</span><span class="p">,</span>
       <span class="na">stateLoc</span><span class="p">:</span> <span class="nx">location</span><span class="p">.</span><span class="nx">stateLoc</span>
     <span class="p">})</span>
     <span class="c1">// Call the function to get the Rails API Data,</span>
     <span class="c1">// passing it this location information</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">getReportData</span><span class="p">(</span><span class="nx">location</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">getReportData</span><span class="p">(</span><span class="nx">location</span><span class="p">)</span>
   <span class="p">}</span>
     <span class="p">...</span>
     <span class="c1">// Pass on the report data to the Report</span>

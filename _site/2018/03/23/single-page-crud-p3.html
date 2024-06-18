@@ -129,7 +129,7 @@
 
 <span class="c1">// Locate the record being edited by its id, then render</span>
 <span class="c1">// the `edit` partial as the sibling immediately after it</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">insertAdjacentHTML</span><span class="p">(</span><span class="dl">'</span><span class="s1">afterend</span><span class="dl">'</span><span class="p">,</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'edit') %&gt;</span><span class="dl">"</span><span class="p">)</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nf">insertAdjacentHTML</span><span class="p">(</span><span class="dl">'</span><span class="s1">afterend</span><span class="dl">'</span><span class="p">,</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'edit') %&gt;</span><span class="dl">"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>This javascript file is pointing to an “edit” partial that we haven’t made yet. So let’s make it. In Rails, when rendering a partial, we call it with <code class="language-plaintext highlighter-rouge">'edit'</code>, but Rails will be looking for a file named <code class="language-plaintext highlighter-rouge">_edit</code>. Create a file called (or rename your existing file to) <code class="language-plaintext highlighter-rouge">_edit.html.erb</code>, and give it this content:</p>
@@ -203,7 +203,7 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/views/critters/update.js.erb</span>
 
-<span class="nx">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Update.js.erb reporting for duty</span><span class="dl">"</span><span class="p">);</span>
+<span class="nf">alert</span><span class="p">(</span><span class="dl">"</span><span class="s2">Update.js.erb reporting for duty</span><span class="dl">"</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>Now when you refresh, click edit, then click update on the form, you should see that message pop up in your browser. If you dismiss the box and refresh the page, you’ll see that your record has been updated. YAY! Our data is flowing correctly. Now we need to make the index page reflect that change via AJAX.</p>
@@ -226,10 +226,10 @@
 
 <span class="c1">// Find the existing critter &lt;tr&gt; by id, then replace it</span>
 <span class="c1">// with the newly-populated partial (which is also a &lt;tr&gt;).</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;</span><span class="dl">"</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#critter_&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">outerHTML</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;%= escape_javascript(render partial: 'critter', locals: {critter: @critter} ) %&gt;</span><span class="dl">"</span>
 
 <span class="c1">// Remove the "edit" form from the table</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#edit-form-&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#edit-form-&lt;%= @critter.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nf">remove</span><span class="p">()</span>
 
 </code></pre></div></div>
 

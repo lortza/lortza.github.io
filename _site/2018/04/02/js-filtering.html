@@ -120,7 +120,7 @@
 
 <span class="c1">// Listen for the DOM to be loaded before running any of the</span>
 <span class="c1">// javascript inside this function</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
 
   <span class="c1">// CODE GOES HERE</span>
 
@@ -134,10 +134,10 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 
 <span class="c1">// Locate the filter input field in the HTML</span>
-<span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="c1">// Listen for each keystroke release happening in this field</span>
-<span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+<span class="nx">filter</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h2 id="write-the-filtering-function">Write the Filtering Function</h2>
@@ -146,15 +146,15 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 <span class="p">...</span>
-<span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+<span class="kd">function</span> <span class="nf">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
   <span class="c1">// Capture the text from the filter input field</span>
-  <span class="kd">const</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nf">toLowerCase</span><span class="p">()</span>
 
   <span class="c1">// Grab all `tr`s, then loop through them to get the critter name.</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
     <span class="c1">// Extract the critter name text out of the tr by finding it</span>
     <span class="c1">// inside the element with the `name` class</span>
-    <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nf">toLowerCase</span><span class="p">()</span>
     <span class="p">...</span>
   <span class="p">})</span>
 <span class="p">}</span>
@@ -172,12 +172,12 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 <span class="p">...</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
-  <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+  <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nf">toLowerCase</span><span class="p">()</span>
 
   <span class="c1">// If the input text appears anywhere in the critter's name, use default</span>
   <span class="c1">// display settings. Otherwise, hide the `&lt;tr&gt;`</span>
-  <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
     <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">''</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span>
@@ -211,27 +211,27 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 <span class="p">...</span>
 <span class="c1">// Locate the reset button via its id</span>
-<span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#reset-button</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#reset-button</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="c1">// Add an event listener to run a callback after a click</span>
-<span class="nx">reset</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
+<span class="nx">reset</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h2 id="write-the-resetresults-callback">Write the <code class="language-plaintext highlighter-rouge">resetResults</code> Callback</h2>
 
 <p>The callback function is ready to fire. To reset the table back to its original state, clear the input field and set <code class="language-plaintext highlighter-rouge">&lt;tr&gt;</code> display back to default.</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
   <span class="c1">// Clear the filter text out of the input field.</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
 
   <span class="c1">// Loop through all of the `tr`s and reset their display to the default.</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
     <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">''</span>
   <span class="p">})</span>
 
   <span class="c1">// Prevent the link from reloading the page</span>
-  <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+  <span class="nx">e</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -242,27 +242,27 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/assets/javascripts/critters.js</span>
 
 <span class="c1">// Listen for the DOM to finish loading</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">DOMContentLoaded</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
 
   <span class="c1">// Locate the filter field in the HTML</span>
-  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">);</span>
-  <span class="nx">filter</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">filter</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keyup</span><span class="dl">'</span><span class="p">,</span> <span class="nx">filterCritters</span><span class="p">)</span>
 
   <span class="c1">// Locate the reset button in the HTML</span>
-  <span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#reset-button</span><span class="dl">'</span><span class="p">);</span>
-  <span class="nx">reset</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="nx">reset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#reset-button</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">reset</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="nx">resetResults</span><span class="p">)</span>
 
-  <span class="kd">function</span> <span class="nx">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+  <span class="kd">function</span> <span class="nf">filterCritters</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
     <span class="c1">// Capture the text from the filter input field</span>
-    <span class="kd">let</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+    <span class="kd">let</span> <span class="nx">inputText</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nf">toLowerCase</span><span class="p">()</span>
 
     <span class="c1">// Grab all &lt;tr&gt;s that can be filtered and loop through them</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
 
       <span class="c1">// Extract the text out of the tr</span>
-      <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+      <span class="kd">const</span> <span class="nx">critterName</span> <span class="o">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.name</span><span class="dl">'</span><span class="p">).</span><span class="nx">textContent</span><span class="p">.</span><span class="nf">toLowerCase</span><span class="p">()</span>
 
-      <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">critterName</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="nx">inputText</span><span class="p">)){</span>
         <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">''</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span>
@@ -270,17 +270,17 @@
     <span class="p">})</span>
   <span class="p">}</span>
 
-  <span class="kd">function</span> <span class="nx">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+  <span class="kd">function</span> <span class="nf">resetResults</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
     <span class="c1">// Clear the filter text out of the input field.</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.filter &gt; input</span><span class="dl">'</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">''</span>
 
     <span class="c1">// Loop through all of the `tr`s and reset their display to the default.</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">tbody &gt; tr</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tr</span><span class="p">){</span>
       <span class="nx">tr</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="dl">''</span>
     <span class="p">})</span>
 
     <span class="c1">// Prevent the link from reloading the page.</span>
-    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+    <span class="nx">e</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>
   <span class="p">}</span>
 <span class="p">})</span>
 </code></pre></div></div>

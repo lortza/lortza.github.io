@@ -366,7 +366,7 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Use that handy `dom_id` from before to identify the correct</span>
 <span class="c1">// &lt;article&gt; on the index page and then grab its star &lt;i&gt;</span>
-<span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#task_&lt;%= @task.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.fa-star</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">starIcon</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">#task_&lt;%= @task.id %&gt;</span><span class="dl">"</span><span class="p">).</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">.fa-star</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="c1">// Reuse the logic from the `toggle_favorite` method to</span>
 <span class="c1">// update the star icon styles and the link destination</span>
