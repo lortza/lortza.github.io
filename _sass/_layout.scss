@@ -136,7 +136,7 @@
 
 /* Pagination   ************************************************/
  .pagination{
-  max-width: -webkit-calc(800px - (#{$horizontal-spacing-unit} * 2));
+  max-width: -webkit-calc(800px - #{$double-horizontal-spacing-unit});
   text-align: center;
   width: 100%;
   position: fixed;
@@ -146,6 +146,13 @@
   font-size: 50px;
   a {
     color: $theme-color;
+  }
+}
+
+.header-bar {
+  text-align: center;
+  img {
+    border-radius: 50%;
   }
 }
 /**
@@ -186,8 +193,8 @@
   }
 }
 
-img.about-pic {
-  margin-right: 1.25em;
+.about-content-text {
+ text-align: left;
 }
 
 .contact-icon {
@@ -242,13 +249,10 @@ img.about-pic {
       font-size: 18px;
     }
   }
-  img {
+  .post-image {
     width: 100%;
     min-width: 100px;
     max-width: 700px;
-  }
-  .post-image {
-    width: 700px;
   }
   .post-image-small {
     display: block;
