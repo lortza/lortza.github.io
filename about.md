@@ -4,15 +4,19 @@ title: about
 permalink: /about/
 ---
 
-<img class="col one left about-pic" src="{{site.header_image}}">
+<div class="header-bar">
+  <img src="{{ site.header_image }}">
+  <h1>Hi, I'm Anne.</h1>
+  <div class="about-content-text mb-4">
+    <br>
+    I've been building Rails apps since 2015. I revel in building tools or systems that make life easier, more efficient, or that display useful information in a compelling way.
 
-# Hi, I'm Anne.
-<br>
-I've been building Rails apps since 2015. I revel in building tools or systems that make life easier, more efficient, or that display useful information in a compelling way.
+    Software Engineer is not a title I've held for the majority of my professional career, though it is the mindset with which I've built a legacy of workplace tools and systems. Having changed into this career, I love my work. It's challenging and satisfying, and I get to spend time with talented and inspiring people.
 
-Software Engineer is not a title I've held for the majority of my professional career, though it is the mindset with which I've built a legacy of workplace tools and systems. Having changed into this career, I love my work. It's challenging and satisfying, and I get to spend time with talented and inspiring people.
+    Life is good when I'm making something and even better when I get to see people engage with that thing I made.
+  </div>
+</div>
 
-Life is good when I'm making something and even better when I get to see people engage with that thing I made.
 
 <hr/>
 <br/>
