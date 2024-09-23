@@ -86,7 +86,7 @@ a {
   color: #2698BA;
   text-decoration: none;
   /*
-  &:visited { color: darken($brand-color, 15%); }
+  &:visited { color: color.adjust($brand-color, $lightness: -15%); }
   */
 }
 a:hover {
@@ -131,7 +131,7 @@ pre > code {
 /* Wrapper */
 .wrapper {
   max-width: -webkit-calc(800px - (50px * 2));
-  max-width: calc(800px - (50px * 2));
+  max-width: calc(800px - 50px * 2);
   margin-right: auto;
   margin-left: auto;
   padding-right: 50px;
@@ -288,9 +288,9 @@ pre > code {
 /* Site footer  ******************************************/
 .site-footer {
   text-align: center;
-  border-top: 1px solid #424242;
+  border-top: 1px solid rgb(66.25, 66.25, 66.25);
   font-size: 10px;
-  background-color: #424242;
+  background-color: rgb(66.25, 66.25, 66.25);
   padding: 2px;
   color: #aaa;
   position: fixed;
