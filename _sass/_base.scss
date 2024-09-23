@@ -43,9 +43,9 @@ $lime_green: #B7D12A;
 $purple: #B509AC;
 
 $grey-color:#828282;
-$grey-color-light: color.adjust($grey-color, $lightness: 40%);
+$grey-color-light: #E8E8E8;
 $grey-color-medium: #AAA;
-$grey-color-dark: color.adjust($grey-color, $lightness: -25%);
+$grey-color-dark: #424242;
 
 $text-color: $grey-color;
 $background-color: #FFF;

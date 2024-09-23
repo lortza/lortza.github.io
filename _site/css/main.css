@@ -97,7 +97,7 @@ a:hover {
 /* Blockquotes */
 blockquote {
   color: #828282;
-  border-left: 10px solid #e8e8e8;
+  border-left: 10px solid #E8E8E8;
   padding-left: 25px;
   font-size: 18px;
   font-style: italic;
@@ -111,7 +111,7 @@ pre,
 code {
   font-size: 15px;
   border-radius: 3px;
-  background-color: #e8e8e8;
+  background-color: #E8E8E8;
 }
 
 code {
@@ -155,7 +155,7 @@ pre > code {
 
 /* Navbar  ******************************************/
 .site-header {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid #E8E8E8;
   background-color: #FFF;
   position: fixed;
   left: 0px;
@@ -251,12 +251,12 @@ pre > code {
     top: 100%;
     width: 100%;
     background-color: #FFF;
-    border-top: 1px solid #e8e8e8;
-    border-bottom: 1px solid #e8e8e8;
+    border-top: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
     opacity: 0;
     visibility: hidden;
     max-height: fit-content;
-    box-shadow: 0 1rem 0.75rem -0.75rem #e8e8e8;
+    box-shadow: 0 1rem 0.75rem -0.75rem #E8E8E8;
   }
   .site-header .nav-items ul {
     margin-left: 1rem;
@@ -271,7 +271,7 @@ pre > code {
     visibility: visible;
   }
   .site-header #nav-checkbox:focus ~ .nav-toggler {
-    box-shadow: 0 0 0.25rem #e8e8e8;
+    box-shadow: 0 0 0.25rem #E8E8E8;
   }
   .site-header #nav-checkbox:checked ~ .nav-toggler span {
     background-color: transparent;
@@ -288,9 +288,9 @@ pre > code {
 /* Site footer  ******************************************/
 .site-footer {
   text-align: center;
-  border-top: 1px solid rgb(66.25, 66.25, 66.25);
+  border-top: 1px solid #424242;
   font-size: 10px;
-  background-color: rgb(66.25, 66.25, 66.25);
+  background-color: #424242;
   padding: 2px;
   color: #aaa;
   position: fixed;
@@ -300,7 +300,7 @@ pre > code {
   width: 100%;
 }
 .site-footer a {
-  color: #e8e8e8;
+  color: #E8E8E8;
 }
 
 /* Pagination   ************************************************/
@@ -491,7 +491,7 @@ pre > code {
   min-width: 250px;
   margin: 0 auto;
   margin-top: 1.5em;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid #E8E8E8;
   padding: 1.25em 0em;
   text-transform: lowercase;
 }
@@ -659,7 +659,7 @@ pre > code {
   display: block;
   margin: 0 auto;
   width: 400px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #E8E8E8;
 }
 .portfolio-show .badge img {
   width: 144px;
