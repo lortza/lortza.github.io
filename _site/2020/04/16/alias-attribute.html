@@ -82,7 +82,7 @@
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># in your model file</span>
 
-<span class="n">alias_attribute</span> <span class="ss">:old_attribute_name</span><span class="p">,</span> <span class="ss">:new_aliased_name</span>
+<span class="n">alias_attribute</span> <span class="ss">:new_aliased_name</span><span class="p">,</span> <span class="ss">:old_attribute_name</span>
 </code></pre></div></div>
 
 <p>For example, let’s say we have a model called <code class="language-plaintext highlighter-rouge">Article</code> that has a <code class="language-plaintext highlighter-rouge">header</code> attribute and we’d like to change it to <code class="language-plaintext highlighter-rouge">title</code>. Using <code class="language-plaintext highlighter-rouge">alias_attribute</code> in the <code class="language-plaintext highlighter-rouge">app/models/article.rb</code> file will write the new getter and setter for us.</p>
@@ -90,7 +90,7 @@
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># renaming from `header` to `title`</span>
 
 <span class="c1"># this one-liner</span>
-<span class="n">alias_attribute</span> <span class="ss">:header</span><span class="p">,</span> <span class="ss">:title</span>
+<span class="n">alias_attribute</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:header</span>
 
 <span class="c1"># is the same as</span>
 <span class="k">def</span> <span class="nf">title</span>
