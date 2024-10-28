@@ -15,7 +15,7 @@
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
-
+    
 </head>
 
 
@@ -33,31 +33,31 @@
       </label>
       <nav class="nav-items">
         <ul>
-
-
+          
+            
               <li><a class="" href="/about/">about</a></li>
-
-
-
+            
+          
+            
               <li><a class="" href="/blog/">tech blog</a></li>
-
-
-
-
-
-
-
+            
+          
+            
+          
+            
+          
+            
               <li><a class="" href="/portfolio/">portfolio</a></li>
-
-
-
+            
+          
+            
               <li><a class="" href="/resources/">resources</a></li>
-
-
-
-
-
-
+            
+          
+            
+          
+            
+          
           <li><a class="" href="/resume/" target="_blank">resume</a></li>
         </ul>
       </nav>
@@ -103,11 +103,40 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
 </code></pre></div></div>
 
+<p>We’re also going to want <code class="language-plaintext highlighter-rouge">gem 'pry'</code> so we can easily look at our data and do debugging, so let’s get that in there. Our <code class="language-plaintext highlighter-rouge">Gemfile</code> now looks like:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
+
+<span class="n">ruby</span> <span class="s1">'3.2.2'</span>
+
+<span class="n">gem</span> <span class="s1">'sinatra'</span>
+<span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span>
+<span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span>
+<span class="n">gem</span> <span class="s1">'puma'</span>
+<span class="n">gem</span> <span class="s1">'rake'</span>
+<span class="n">gem</span> <span class="s1">'rackup'</span>
+<span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
+<span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
+
+<span class="n">group</span> <span class="ss">:development</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">'pry'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
 <p>Save and then <code class="language-plaintext highlighter-rouge">bundle</code>.</p>
 
-<p>And then require these gems in the app by adding this to the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
+<p>And then require these gems in the app by adding them to the <code class="language-plaintext highlighter-rouge">application.rb</code> file. Our file now looks like:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gems</span>
+<span class="nb">require</span> <span class="s1">'sinatra'</span>
+<span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
 <span class="nb">require</span> <span class="s1">'sinatra/url_for'</span>
+<span class="k">if</span> <span class="n">settings</span><span class="p">.</span><span class="nf">environment</span> <span class="o">==</span> <span class="ss">:development</span>
+  <span class="nb">require</span> <span class="s1">'pry'</span>
+<span class="k">end</span>
+
+<span class="c1"># Routes</span>
+<span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+  <span class="s2">"Hello World!"</span>
+<span class="k">end</span>
 </code></pre></div></div>
 
 <p>Okey doke, now let’s build out our models. Let’s pretend that there are 5 yoga poses, each named with a number. I’m planning to use real images and real yoga pose names in this project, but for the sake of this blog post, I’m just going to use these numbers and placeholder images. So in the <code class="language-plaintext highlighter-rouge">models/pose.rb</code> file, add:</p>
@@ -177,8 +206,27 @@ mkdir public &amp;&amp; touch public/application.css
 </code></pre></div></div>
 <p>…which looks eerily like what we’d do on a playlists <code class="language-plaintext highlighter-rouge">index</code> page, so let’s render this content on an index page!</p>
 
+<p>Now, if we want to have access to this model on our <code class="language-plaintext highlighter-rouge">index</code> page (and we do), we’re going to need to add the models to our <code class="language-plaintext highlighter-rouge">application.rb</code> file. I add them after the gems and before the routes:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gems</span>
+<span class="nb">require</span> <span class="s1">'sinatra'</span>
+<span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
+<span class="nb">require</span> <span class="s1">'sinatra/url_for'</span>
+<span class="k">if</span> <span class="n">settings</span><span class="p">.</span><span class="nf">environment</span> <span class="o">==</span> <span class="ss">:development</span>
+  <span class="nb">require</span> <span class="s1">'pry'</span>
+<span class="k">end</span>
+
+<span class="c1"># Models</span>
+<span class="nb">require_relative</span> <span class="s1">'models/pose'</span>
+<span class="nb">require_relative</span> <span class="s1">'models/playlist'</span>
+
+<span class="c1"># Routes</span>
+<span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+  <span class="s2">"Hello World!"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
 <h2 id="routes-that-render-a-view-file">Routes that render a view file</h2>
-<p>Back in the <code class="language-plaintext highlighter-rouge">application.rb</code>, we need a new route:</p>
+<p>In addition to adding the models, we’re going to need to add a new route to the <code class="language-plaintext highlighter-rouge">application.rb</code>:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get</span> <span class="s1">'/playlists'</span> <span class="k">do</span>
   <span class="vi">@playlists</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">all</span>
   <span class="c1"># yep, you need this weird symbolized string syntax:</span>
@@ -186,7 +234,30 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>We need a view file, so make an <code class="language-plaintext highlighter-rouge">index.erb</code> (not <code class="language-plaintext highlighter-rouge">index.html.erb</code>) for your playlists:</p>
+<p>Let’s take a look at that data before we render it in the view so we know what we have to work with. Put a <code class="language-plaintext highlighter-rouge">binding.pry</code> in there like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get</span> <span class="s1">'/playlists'</span> <span class="k">do</span>
+  <span class="vi">@playlists</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">all</span>
+  <span class="nb">binding</span><span class="p">.</span><span class="nf">pry</span>  <span class="c1"># &lt;-- stick it right here</span>
+  <span class="n">erb</span> <span class="ss">:'playlists/index'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Now save the file, start (or restart) your server, and go to <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>.</p>
+
+<p>In the server output, you can see the <code class="language-plaintext highlighter-rouge">binding.pry</code> breakpoint. Let’s play around with that <code class="language-plaintext highlighter-rouge">@playlists</code> object to see what <code class="language-plaintext highlighter-rouge">ActiveHash</code> is giving us:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="vi">@playlists</span><span class="p">.</span><span class="nf">all</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">id</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">display_name</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">poses</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">poses</span><span class="p">.</span><span class="nf">first</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">poses</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">id</span>
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">poses</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">display_name</span>
+</code></pre></div></div>
+<p>Our hashes are acting just like Ruby objects! Pretty neat.</p>
+
+<p>Okay, get out of <code class="language-plaintext highlighter-rouge">pry</code> with <code class="language-plaintext highlighter-rouge">exit</code>, then stop the server (<code class="language-plaintext highlighter-rouge">cmd</code> + <code class="language-plaintext highlighter-rouge">c</code>). Remove the <code class="language-plaintext highlighter-rouge">binding.pry</code> from your route. We won’t need this breakpoint anymore.</p>
+
+<p>We do need a view file though, so make an <code class="language-plaintext highlighter-rouge">index.erb</code> (not <code class="language-plaintext highlighter-rouge">index.html.erb</code>) for your playlists:</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/index.erb --&gt;</span>
 <span class="nt">&lt;h1&gt;</span>Playlists Index<span class="nt">&lt;/h1&gt;</span>
@@ -198,13 +269,13 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-<p>Restart your server and hit up <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>. You should see a bulleted list of playlists. Hooray! (Take note that <code class="language-plaintext highlighter-rouge">/playlists</code> is not the same as <code class="language-plaintext highlighter-rouge">/playlists/</code>. So if you’re having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out <a href="https://sinatrarb.com/intro.html">the Sinatra docs for routes</a>.)</p>
+<p>Restart your server and go back to <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>. You should see a bulleted list of playlists. Hooray! (Take note that <code class="language-plaintext highlighter-rouge">/playlists</code> is not the same as <code class="language-plaintext highlighter-rouge">/playlists/</code>. So if you’re having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out <a href="https://sinatrarb.com/intro.html">the Sinatra docs for routes</a> to see how to handle that.)</p>
 
 <p>Well it’s nice that we can see the list of playlists, but it’s kind of boring if we can’t click on each name. So how do we get to a show page for a playlist?</p>
 
 <h2 id="routing-to-a-show-page-with-an-id">Routing to a show page with an id</h2>
 <p>As you may guess, back in the <code class="language-plaintext highlighter-rouge">application.rb</code>, we need a new route:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># this route takes an :id param, like /playlists/1</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># this route takes an :id param, like /playlists/42</span>
 <span class="n">get</span> <span class="s1">'/playlists/:id'</span> <span class="k">do</span>
   <span class="c1"># and we use that param to find our specific playlist</span>
   <span class="vi">@playlist</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
@@ -212,7 +283,7 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>And a new view:</p>
+<p>And a new view for the <code class="language-plaintext highlighter-rouge">show</code> page:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/show.erb --&gt;</span>
 <span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/h1&gt;</span>
 
@@ -223,16 +294,16 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-<p>Restart your server and go to <a href="http://localhost:4567/playlists/2">http://localhost:4567/playlists/2</a> and you’ll see our glorious show page for playlist “One to Five”. And since none of us cares to memorize id numbers for random internet pages, next, we’ll link to this show page from the playlists index page.</p>
+<p>Restart your server and go to <a href="http://localhost:4567/playlists/2">http://localhost:4567/playlists/2</a> and you’ll see our glorious show page for playlist “One to Five”. And since none of us cares to memorize <code class="language-plaintext highlighter-rouge">id</code> numbers for random internet pages, next, we’ll link to this show page from the playlists index page.</p>
 
-<h2 id="links">Links</h2>
+<h2 id="linking-from-the-index-to-the-show-page">Linking from the index to the show page</h2>
 <p>In the <code class="language-plaintext highlighter-rouge">views/playlists/index.erb</code> file, replace this:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
 </code></pre></div></div>
 <p>with this:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">'&lt;%= url_for "/playlists/#{playlist.id}" %&gt;'</span><span class="nt">&gt;&lt;</span><span class="err">%=</span> <span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/a&gt;&lt;/li&gt;</span>
 </code></pre></div></div>
-<p>Is that link syntax heckin ugly? Ohhhhh yeah it is. I haven’t looked into how to make links much prettier in Sinatra, so for now, this gets the job done.</p>
+<p>Is that link syntax ugly? Ohhhhh yeah it is. I haven’t looked into how to make links much prettier in Sinatra, so for now, this gets the job done.</p>
 
 <h2 id="add-a-layout-for-consistent-page-design">Add a layout for consistent page design</h2>
 <p>And lastly, now that we have a few pages in our application, we’re probably going to want a nav bar and we’re probably going to want that on more than one page. We can accomplish this with an HTML layout.</p>
@@ -261,12 +332,13 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
+<p>When you refresh your page, you’ll see your new content.</p>
+
 <p>Now there is no styling on that nav bar. You have a file called <code class="language-plaintext highlighter-rouge">application.css</code> where you can put all of the styling you’d like. I’ll leave that up to you.</p>
 
 <p>But that’s it! You have all of the building blocks of basic app functionality. It’s been interesting for me to see how light and simple Sinatra feels compared to Rails – even though I miss having link helpers and am bothered by the clutter of the <code class="language-plaintext highlighter-rouge">application.rb</code> file. But these are preferences built from habit and habit is always worth challenging.</p>
 
 <p>I hope you’ve enjoyed this foray into Sinatra and that whatever project you’re working on that lead you here inspires and challenges you in all of the good ways!</p>
-
 
   </article>
 

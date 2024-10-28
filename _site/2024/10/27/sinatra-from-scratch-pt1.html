@@ -79,7 +79,7 @@
   <article class="post-content">
     <p>I’ve been a Rails developer for a while now so I recently built an app in Sinatra for fun. To help me with this project, I read <a href="https://sinatrarb.com/intro.html">the Sinatra docs</a> and a lot of blog posts, but nothing really outlined what a basic app needed for setup. Now I’m building my second Sinatra app and I decided to capture my steps so it is easier for you (and tbh, FutureMe) to get started with a basic Sinatra app.</p>
 
-<p>This post assumes a working knowledge of Ruby apps and some Rails background. Also this app does not include a database. The app I’m building is going to use Ruby hashes (all fancied up as <code class="language-plaintext highlighter-rouge">ActiveHash</code>) instead of database tables, so if you need a database in your Sinatra app, you’ll need to do some googling to wire up your db.</p>
+<p>This post assumes a working knowledge of Ruby apps and some Rails background. Also this app does not include a database. The app I’m building is going to use Ruby hashes (all fancied up as <a href="https://github.com/active-hash/active_hash">ActiveHash</a>) instead of database tables, so if you need a database in your Sinatra app, you’ll need to do some googling to wire up your db.</p>
 
 <p>I once had a full Rails app for yoga playlists. I learned a bunch of yoga a decade ago and naturally, I built an app for it.😂 ¯\<em>(ツ)</em>/¯ It was database-backed and had all of the bells and whistles. When Heroku discontinued its free tier, I chose to kill that app. Now, several years later, I am resurrecting it as a Sinatra app, foregoing a database because Heroku charges extra for databases.💸 Now you know the impetus. Let’s get started!</p>
 
@@ -88,7 +88,7 @@
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir yogaposeplaylist &amp;&amp; cd "$_"
 </code></pre></div></div>
 
-<p>Create these basic files that we’ll need for the app via the command line as well. We’ll fill the files’ contents in here shortly:</p>
+<p>We’ll need these files for basic app setup. Create them via the command line:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>touch application.rb
 touch config.ru
 touch Gemfile
@@ -101,25 +101,21 @@ touch README.md
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code .
 </code></pre></div></div>
 
-<p>But you can do whatever you want. Add the following code to each file. At the time of this post, I’m using Ruby 3.2.2, but you should use the latest version of any of Ruby and any of the gems I mention in this post:</p>
+<p>But you can do whatever you want.</p>
 
-<p>Put this code in the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+<p>Now let’s add some gems to the <code class="language-plaintext highlighter-rouge">Gemfile</code>. At the time of this post, I’m using Ruby 3.2.2, but you should use the latest version of any of Ruby and any of the gems I mention in this post:</p>
+
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
 
 <span class="n">ruby</span> <span class="s1">'3.2.2'</span>
 
+<span class="n">gem</span> <span class="s1">'sinatra'</span>
 <span class="n">gem</span> <span class="s1">'puma'</span>
 <span class="n">gem</span> <span class="s1">'rake'</span>
 <span class="n">gem</span> <span class="s1">'rackup'</span>
-<span class="n">gem</span> <span class="s1">'sinatra'</span>
-
-<span class="c1"># I also know I am going to need binding.pry</span>
-<span class="n">group</span> <span class="ss">:development</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">'pry'</span>
-<span class="k">end</span>
 </code></pre></div></div>
 
-<p>Put this code in the <code class="language-plaintext highlighter-rouge">.ruby_version</code> file:</p>
+<p>Put the Ruby version number in the <code class="language-plaintext highlighter-rouge">.ruby_version</code> file:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'3.2.2'
 </code></pre></div></div>
 
@@ -128,22 +124,19 @@ touch README.md
 </code></pre></div></div>
 <p>You should now see a <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> file in your project directory.</p>
 
-<p>Put this code in the <code class="language-plaintext highlighter-rouge">config.ru</code> file:</p>
+<p>We’ll need to tell the app how to run Sinatra here in the <code class="language-plaintext highlighter-rouge">config.ru</code> file:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'./application'</span> <span class="c1"># &lt;- this is pointing to our application.rb file</span>
 <span class="n">run</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Application</span>
 </code></pre></div></div>
 
-<p>Put this code in the <code class="language-plaintext highlighter-rouge">Procfile</code> – which I needed when I deployed to Heroku, so we’re just getting a head start here.</p>
+<p>In the <code class="language-plaintext highlighter-rouge">Procfile</code>, we’ll need to tell Heroku how we like to run our application. If you’re not planning to deploy your app, you can skip this step.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>web: bundle exec ruby application.rb -p $PORT
 </code></pre></div></div>
 
 <p>The next file is the <code class="language-plaintext highlighter-rouge">application.rb</code> file, which is the centerpiece of our app. This is where we load all of our necessary dependencies as well as declare our routes. Since I am personally used to the way Rails splits out config from routes and other concerns, so I find this file to be kind of messy. Alas, we’re here in Sinatra to see what it’s like outside of the magic kingdom 🪄 of Rails, right? 😂</p>
 
-<p>We’ll be requiring all of the basic gems we need for the app to run. Paste this code into the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
+<p>We’ll be requiring all of the basic gems we need for the app to run. At this point, we don’t have a lot to add. Paste this code into the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'sinatra'</span>
-<span class="k">if</span> <span class="n">settings</span><span class="p">.</span><span class="nf">environment</span> <span class="o">==</span> <span class="ss">:development</span>
-  <span class="nb">require</span> <span class="s1">'pry'</span>
-<span class="k">end</span>
 </code></pre></div></div>
 <p>Also keep in mind: <strong>Any time you make changes to your <code class="language-plaintext highlighter-rouge">application.rb</code> file, you need to restart the server</strong> – which I’ll tell you how to do in a bit.</p>
 
@@ -151,6 +144,15 @@ touch README.md
 <p>For now, let’s put a basic “hello world” message on the home page. To do so, add this route with content to the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+  <span class="s1">'Hello World!'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Our <code class="language-plaintext highlighter-rouge">application.rb</code> file now looks like this:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gems</span>
+<span class="nb">require</span> <span class="s1">'sinatra'</span>
+
+<span class="c1"># Routes</span>
+<span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
   <span class="s1">'Hello World!'</span>
 <span class="k">end</span>
 </code></pre></div></div>
@@ -175,7 +177,7 @@ http://localhost:4567<span class="sb">
 <p>And now it is time to run the app! Just like the README says, on the command line, run just like you would any Ruby file:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ruby application.rb
 
-<span class="c"># You can kill the server with `cmd c` when you care to.</span>
+<span class="c"># You can kill the server with `cmd c`.</span>
 </code></pre></div></div>
 
 <p>Then in the browser go to: <a href="http://localhost:4567/">http://localhost:4567/</a></p>
@@ -186,7 +188,7 @@ http://localhost:4567<span class="sb">
 
 <hr />
 
-<p>If you’d like to know more, in <a href="/2024/10/27/sinatra-from-scratch-pt2.html">this next post</a>, I’m going to render some <code class="language-plaintext highlighter-rouge">index</code> and <code class="language-plaintext highlighter-rouge">show</code> pages as well as use <code class="language-plaintext highlighter-rouge">ActiveHash</code> to organize data without a database.</p>
+<p>If you’d like to keep going, in <a href="/2024/10/27/sinatra-from-scratch-pt2.html">this next post</a>, I will be rendering some <code class="language-plaintext highlighter-rouge">index</code> and <code class="language-plaintext highlighter-rouge">show</code> pages as well as using <code class="language-plaintext highlighter-rouge">ActiveHash</code> to organize data without a database.</p>
 
   </article>
 

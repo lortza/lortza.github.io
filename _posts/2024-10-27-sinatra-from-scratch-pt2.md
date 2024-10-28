@@ -35,12 +35,42 @@ gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
 gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
 ```
 
+We're also going to want `gem 'pry'` so we can easily look at our data and do debugging, so let's get that in there. Our `Gemfile` now looks like:
+```ruby
+source 'https://rubygems.org'
+
+ruby '3.2.2'
+
+gem 'sinatra'
+gem 'active_hash', '~> 2.3.0'
+gem 'activesupport-inflector', '~> 0.1.0'
+gem 'puma'
+gem 'rake'
+gem 'rackup'
+gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
+gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
+
+group :development do
+  gem 'pry'
+end
+```
+
 Save and then `bundle`.
 
-And then require these gems in the app by adding this to the `application.rb` file:
+And then require these gems in the app by adding them to the `application.rb` file. Our file now looks like:
 ```ruby
+# Gems
+require 'sinatra'
 require 'sinatra/multi_route' # from sinatra-contrib gem
 require 'sinatra/url_for'
+if settings.environment == :development
+  require 'pry'
+end
+
+# Routes
+get '/' do
+  "Hello World!"
+end
 ```
 
 
@@ -115,9 +145,29 @@ end
 ```
 ...which looks eerily like what we'd do on a playlists `index` page, so let's render this content on an index page!
 
+Now, if we want to have access to this model on our `index` page (and we do), we're going to need to add the models to our `application.rb` file. I add them after the gems and before the routes:
+```ruby
+# Gems
+require 'sinatra'
+require 'sinatra/multi_route' # from sinatra-contrib gem
+require 'sinatra/url_for'
+if settings.environment == :development
+  require 'pry'
+end
+
+# Models
+require_relative 'models/pose'
+require_relative 'models/playlist'
+
+# Routes
+get '/' do
+  "Hello World!"
+end
+```
+
 
 ## Routes that render a view file
-Back in the `application.rb`, we need a new route:
+In addition to adding the models, we're going to need to add a new route to the `application.rb`:
 ```ruby
 get '/playlists' do
   @playlists = Playlist.all
@@ -126,7 +176,32 @@ get '/playlists' do
 end
 ```
 
-We need a view file, so make an `index.erb` (not `index.html.erb`) for your playlists:
+Let's take a look at that data before we render it in the view so we know what we have to work with. Put a `binding.pry` in there like this:
+```ruby
+get '/playlists' do
+  @playlists = Playlist.all
+  binding.pry  # <-- stick it right here
+  erb :'playlists/index'
+end
+```
+Now save the file, start (or restart) your server, and go to [http://localhost:4567/playlists](http://localhost:4567/playlists).
+
+In the server output, you can see the `binding.pry` breakpoint. Let's play around with that `@playlists` object to see what `ActiveHash` is giving us:
+```ruby
+@playlists.all
+@playlists.first
+@playlists.first.id
+@playlists.first.display_name
+@playlists.first.poses
+@playlists.first.poses.first
+@playlists.first.poses.first.id
+@playlists.first.poses.first.display_name
+```
+Our hashes are acting just like Ruby objects! Pretty neat.
+
+Okay, get out of `pry` with `exit`, then stop the server (`cmd` + `c`). Remove the `binding.pry` from your route. We won't need this breakpoint anymore.
+
+We do need a view file though, so make an `index.erb` (not `index.html.erb`) for your playlists:
 
 ```html
 <!-- views/playlists/index.erb -->
@@ -139,14 +214,14 @@ We need a view file, so make an `index.erb` (not `index.html.erb`) for your play
 </ul>
 ```
 
-Restart your server and hit up [http://localhost:4567/playlists](http://localhost:4567/playlists). You should see a bulleted list of playlists. Hooray! (Take note that `/playlists` is not the same as `/playlists/`. So if you're having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out [the Sinatra docs for routes](https://sinatrarb.com/intro.html).)
+Restart your server and go back to [http://localhost:4567/playlists](http://localhost:4567/playlists). You should see a bulleted list of playlists. Hooray! (Take note that `/playlists` is not the same as `/playlists/`. So if you're having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out [the Sinatra docs for routes](https://sinatrarb.com/intro.html) to see how to handle that.)
 
 Well it's nice that we can see the list of playlists, but it's kind of boring if we can't click on each name. So how do we get to a show page for a playlist?
 
 ## Routing to a show page with an id
 As you may guess, back in the `application.rb`, we need a new route:
 ```ruby
-# this route takes an :id param, like /playlists/1
+# this route takes an :id param, like /playlists/42
 get '/playlists/:id' do
   # and we use that param to find our specific playlist
   @playlist = Playlist.find(params[:id])
@@ -154,7 +229,7 @@ get '/playlists/:id' do
 end
 ```
 
-And a new view:
+And a new view for the `show` page:
 ```html
 <!-- views/playlists/show.erb -->
 <h1><%= @playlist.display_name %></h1>
@@ -166,9 +241,9 @@ And a new view:
 </ul>
 ```
 
-Restart your server and go to [http://localhost:4567/playlists/2](http://localhost:4567/playlists/2) and you'll see our glorious show page for playlist "One to Five". And since none of us cares to memorize id numbers for random internet pages, next, we'll link to this show page from the playlists index page.
+Restart your server and go to [http://localhost:4567/playlists/2](http://localhost:4567/playlists/2) and you'll see our glorious show page for playlist "One to Five". And since none of us cares to memorize `id` numbers for random internet pages, next, we'll link to this show page from the playlists index page.
 
-## Links
+## Linking from the index to the show page
 In the `views/playlists/index.erb` file, replace this:
 ```html
 <li><%= playlist.display_name %></li>
@@ -177,7 +252,7 @@ with this:
 ```html
 <li><a href='<%= url_for "/playlists/#{playlist.id}" %>'><%= playlist.display_name %></a></li>
 ```
-Is that link syntax heckin ugly? Ohhhhh yeah it is. I haven't looked into how to make links much prettier in Sinatra, so for now, this gets the job done.
+Is that link syntax ugly? Ohhhhh yeah it is. I haven't looked into how to make links much prettier in Sinatra, so for now, this gets the job done.
 
 
 ## Add a layout for consistent page design
@@ -208,10 +283,10 @@ Create a file called `layout.erb` and save it in your `views` folder. Fill it wi
 </html>
 ```
 
+When you refresh your page, you'll see your new content.
+
 Now there is no styling on that nav bar. You have a file called `application.css` where you can put all of the styling you'd like. I'll leave that up to you.
 
 But that's it! You have all of the building blocks of basic app functionality. It's been interesting for me to see how light and simple Sinatra feels compared to Rails -- even though I miss having link helpers and am bothered by the clutter of the `application.rb` file. But these are preferences built from habit and habit is always worth challenging.
 
 I hope you've enjoyed this foray into Sinatra and that whatever project you're working on that lead you here inspires and challenges you in all of the good ways!
-
-
