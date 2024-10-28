@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Build a Sinatra App - Part 2 Rendering Views</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2024/10/27/sinatra-from-scratch-pt2.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+
+
+              <li><a class="" href="/about/">about</a></li>
+
+
+
+              <li><a class="" href="/blog/">tech blog</a></li>
+
+
+
+
+
+
+
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+
+
+
+              <li><a class="" href="/resources/">resources</a></li>
+
+
+
+
+
+
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Build a Sinatra App - Part 2 Rendering Views</h1>
+    <p class="post-meta">October 27, 2024</p>
+  </header>
+
+  <article class="post-content">
+    <p>If you don’t have your basic Sinatra app set up yet, see <a href="/2024/10/27/sinatra-from-scratch-pt1.html">my previous post</a>. Otherwise, let’s get ready to dig in and build this app!</p>
+
+<p>Now let’s add some project folders and files to our app via the command line:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir models &amp;&amp; touch models/playlist.rb &amp;&amp; touch models/pose.rb
+mkdir views &amp;&amp; mkdir views/playlists &amp;&amp; mkdir views/poses
+mkdir public &amp;&amp; touch public/application.css
+</code></pre></div></div>
+
+<h2 id="getting-into-activehash">Getting into ActiveHash</h2>
+<p>The data I am using in this application is static, so I’m not going to use a database. Instead, I’m going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.</p>
+
+<p>In the Gemfile, add this gem (check <a href="https://github.com/active-hash/active_hash">the gem on github</a> for the laterst version):</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span>
+</code></pre></div></div>
+
+<p>Also (spoiler alert, I want to be able to use <code class="language-plaintext highlighter-rouge">titleize</code>, so I’m pulling in another Rails gem). Add this gem to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span>
+</code></pre></div></div>
+
+<p>If you’re feeling a little miffed that I’m pulling in select Rails gems, feel free to write your own functionality. Part of this Sinatra side-project journey for me is cherry picking the smallest slices of assistance vs rolling my own during small moments of free time. I’ve chosen gems in these last two cases, but do what makes you happy!</p>
+
+<p>Okay while we’re here in the <code class="language-plaintext highlighter-rouge">Gemfile</code>, we’re also going to need a couple of Sinatra gems to help with routes. Add these to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
+<span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
+</code></pre></div></div>
+
+<p>Save and then <code class="language-plaintext highlighter-rouge">bundle</code>.</p>
+
+<p>And then require these gems in the app by adding this to the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
+<span class="nb">require</span> <span class="s1">'sinatra/url_for'</span>
+</code></pre></div></div>
+
+<p>Okey doke, now let’s build out our models. Let’s pretend that there are 5 yoga poses, each named with a number. I’m planning to use real images and real yoga pose names in this project, but for the sake of this blog post, I’m just going to use these numbers and placeholder images. So in the <code class="language-plaintext highlighter-rouge">models/pose.rb</code> file, add:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># In Sinatra, we have to require any gem we're using in a file:</span>
+<span class="nb">require</span> <span class="s1">'active_hash'</span>
+<span class="nb">require</span> <span class="s1">'active_support/inflector'</span> <span class="c1"># for the 'titleize' behavior</span>
+
+<span class="k">class</span> <span class="nc">Pose</span> <span class="o">&lt;</span> <span class="no">ActiveHash</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">fields</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:image_file</span>
+
+  <span class="c1"># This method allows me to name a pose `:standing_forward_bend` for</span>
+  <span class="c1"># programming convenience while displaying it as "Standing Forward</span>
+  <span class="c1"># Bend" in the views:</span>
+  <span class="k">def</span> <span class="nf">display_name</span>
+    <span class="nb">name</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class="nf">titleize</span>
+  <span class="k">end</span>
+
+  <span class="nb">self</span><span class="p">.</span><span class="nf">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">1</span><span class="p">,</span> <span class="ss">name: :one</span><span class="p">,</span> <span class="ss">image_file: </span><span class="s1">'https://placehold.co/100?text=One'</span><span class="p">},</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">2</span><span class="p">,</span> <span class="ss">name: :two</span><span class="p">,</span> <span class="ss">image_file: </span><span class="s1">'https://placehold.co/100?text=Two'</span><span class="p">},</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">3</span><span class="p">,</span> <span class="ss">name: :three</span><span class="p">,</span> <span class="ss">image_file: </span><span class="s1">'https://placehold.co/100?text=Three'</span><span class="p">},</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">4</span><span class="p">,</span> <span class="ss">name: :four</span><span class="p">,</span> <span class="ss">image_file: </span><span class="s1">'https://placehold.co/100?text=Four'</span><span class="p">},</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">5</span><span class="p">,</span> <span class="ss">name: :five</span><span class="p">,</span> <span class="ss">image_file: </span><span class="s1">'https://placehold.co/100?text=Five'</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>What’s going on in that class up there? We now have pose data stored in a hash that we can access with that easy breezy dot notation just like we would a regular Ruby object. We can do:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Pose</span><span class="p">.</span><span class="nf">all</span> <span class="c1"># =&gt; array with all the hashes</span>
+<span class="no">Pose</span><span class="p">.</span><span class="nf">first</span><span class="p">.</span><span class="nf">name</span> <span class="c1"># =&gt; :one</span>
+<span class="no">Pose</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nf">display_name</span> <span class="c1"># =&gt; 'Four'</span>
+<span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :three</span><span class="p">)</span> <span class="c1"># =&gt; { id: 3, name: :three, image_file: 'https://placehold.co/100?text=Three'}</span>
+<span class="no">Pose</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">id: </span><span class="mi">3</span><span class="o">..</span><span class="p">)</span> <span class="c1"># =&gt; array with poses 3, 4, and 5</span>
+</code></pre></div></div>
+
+<p>I chose to symbolize these names because I am going to be building out data in my <code class="language-plaintext highlighter-rouge">Playlist</code> class that references instance of this <code class="language-plaintext highlighter-rouge">Pose</code> class by <code class="language-plaintext highlighter-rouge">name</code>. I could absolutely reference them by <code class="language-plaintext highlighter-rouge">id</code> like a database would, but as a human, I prefer the readablity of names. In reality, yoga pose names can be long – like “standing forward bend”, so using a symbol like <code class="language-plaintext highlighter-rouge">:standing_forward_bend</code> feels more concrete to me and less prone to error (like rogue caps or spaces if I were to <code class="language-plaintext highlighter-rouge">find_by(name: "standing forward bend")</code>).</p>
+
+<p>Now let’s get to that <code class="language-plaintext highlighter-rouge">Playlist</code> class in the <code class="language-plaintext highlighter-rouge">models/playlist.rb</code> file. Let’s pretend we have 2 playlists that we’ve built from those 5 poses we built above:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'active_hash'</span>
+
+<span class="k">class</span> <span class="nc">Playlist</span> <span class="o">&lt;</span> <span class="no">ActiveHash</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">fields</span> <span class="ss">:display_name</span><span class="p">,</span> <span class="ss">:poses</span>
+
+  <span class="nb">self</span><span class="p">.</span><span class="nf">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">1</span><span class="p">,</span> <span class="ss">display_name: </span><span class="s1">'One Two One'</span><span class="p">,</span> <span class="ss">poses: </span><span class="p">[</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :one</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :two</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :one</span><span class="p">)</span>
+    <span class="p">]},</span>
+    <span class="p">{</span> <span class="ss">id: </span><span class="mi">2</span><span class="p">,</span> <span class="ss">display_name: </span><span class="s1">'One to Five'</span><span class="p">,</span> <span class="ss">poses: </span><span class="p">[</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :one</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :two</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :three</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :four</span><span class="p">),</span>
+      <span class="no">Pose</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">name: :five</span><span class="p">)</span>
+    <span class="p">]},</span>
+  <span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>In that class, I’ve built 2 playlists that are consuming the <code class="language-plaintext highlighter-rouge">Pose</code> objects. As I said, I’m referencing them by symbolized <code class="language-plaintext highlighter-rouge">name</code>. Now in our app we can do things like…</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="vi">@playlists</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">all</span>
+
+<span class="vi">@playlists</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">playlist</span><span class="o">|</span>
+  <span class="n">playlist</span><span class="p">.</span><span class="nf">display_name</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>…which looks eerily like what we’d do on a playlists <code class="language-plaintext highlighter-rouge">index</code> page, so let’s render this content on an index page!</p>
+
+<h2 id="routes-that-render-a-view-file">Routes that render a view file</h2>
+<p>Back in the <code class="language-plaintext highlighter-rouge">application.rb</code>, we need a new route:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get</span> <span class="s1">'/playlists'</span> <span class="k">do</span>
+  <span class="vi">@playlists</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">all</span>
+  <span class="c1"># yep, you need this weird symbolized string syntax:</span>
+  <span class="n">erb</span> <span class="ss">:'playlists/index'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>We need a view file, so make an <code class="language-plaintext highlighter-rouge">index.erb</code> (not <code class="language-plaintext highlighter-rouge">index.html.erb</code>) for your playlists:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/index.erb --&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Playlists Index<span class="nt">&lt;/h1&gt;</span>
+
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">playlists.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">playlist</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre></div></div>
+
+<p>Restart your server and hit up <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>. You should see a bulleted list of playlists. Hooray! (Take note that <code class="language-plaintext highlighter-rouge">/playlists</code> is not the same as <code class="language-plaintext highlighter-rouge">/playlists/</code>. So if you’re having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out <a href="https://sinatrarb.com/intro.html">the Sinatra docs for routes</a>.)</p>
+
+<p>Well it’s nice that we can see the list of playlists, but it’s kind of boring if we can’t click on each name. So how do we get to a show page for a playlist?</p>
+
+<h2 id="routing-to-a-show-page-with-an-id">Routing to a show page with an id</h2>
+<p>As you may guess, back in the <code class="language-plaintext highlighter-rouge">application.rb</code>, we need a new route:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># this route takes an :id param, like /playlists/1</span>
+<span class="n">get</span> <span class="s1">'/playlists/:id'</span> <span class="k">do</span>
+  <span class="c1"># and we use that param to find our specific playlist</span>
+  <span class="vi">@playlist</span> <span class="o">=</span> <span class="no">Playlist</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="n">erb</span> <span class="ss">:'playlists/show'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And a new view:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/show.erb --&gt;</span>
+<span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/h1&gt;</span>
+
+<span class="nt">&lt;ul&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="err">@</span><span class="na">playlist.poses.each</span> <span class="na">do</span> <span class="err">|</span><span class="na">pose</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">pose.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre></div></div>
+
+<p>Restart your server and go to <a href="http://localhost:4567/playlists/2">http://localhost:4567/playlists/2</a> and you’ll see our glorious show page for playlist “One to Five”. And since none of us cares to memorize id numbers for random internet pages, next, we’ll link to this show page from the playlists index page.</p>
+
+<h2 id="links">Links</h2>
+<p>In the <code class="language-plaintext highlighter-rouge">views/playlists/index.erb</code> file, replace this:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;li&gt;&lt;</span><span class="err">%=</span> <span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/li&gt;</span>
+</code></pre></div></div>
+<p>with this:</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">'&lt;%= url_for "/playlists/#{playlist.id}" %&gt;'</span><span class="nt">&gt;&lt;</span><span class="err">%=</span> <span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/a&gt;&lt;/li&gt;</span>
+</code></pre></div></div>
+<p>Is that link syntax heckin ugly? Ohhhhh yeah it is. I haven’t looked into how to make links much prettier in Sinatra, so for now, this gets the job done.</p>
+
+<h2 id="add-a-layout-for-consistent-page-design">Add a layout for consistent page design</h2>
+<p>And lastly, now that we have a few pages in our application, we’re probably going to want a nav bar and we’re probably going to want that on more than one page. We can accomplish this with an HTML layout.</p>
+
+<p>Create a file called <code class="language-plaintext highlighter-rouge">layout.erb</code> and save it in your <code class="language-plaintext highlighter-rouge">views</code> folder. Fill it with basic HTML boilerplate and place a <code class="language-plaintext highlighter-rouge">&lt;%= yield %&gt;</code> where you want your page content to go.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"viewport"</span> <span class="na">content=</span><span class="s">"width=device-width, initial-scale=1.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"ie=edge"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"robots"</span> <span class="na">content=</span><span class="s">"noindex"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"&lt;%= url('/application.css') %&gt;"</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Yoga Pose Playlist<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;nav&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"&lt;%= url_for '/' %&gt;"</span><span class="nt">&gt;</span>Yoga Pose Playlist<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/nav&gt;</span>
+
+    <span class="c">&lt;!-- Your page content will render here: --&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">yield</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>Now there is no styling on that nav bar. You have a file called <code class="language-plaintext highlighter-rouge">application.css</code> where you can put all of the styling you’d like. I’ll leave that up to you.</p>
+
+<p>But that’s it! You have all of the building blocks of basic app functionality. It’s been interesting for me to see how light and simple Sinatra feels compared to Rails – even though I miss having link helpers and am bothered by the clutter of the <code class="language-plaintext highlighter-rouge">application.rb</code> file. But these are preferences built from habit and habit is always worth challenging.</p>
+
+<p>I hope you’ve enjoyed this foray into Sinatra and that whatever project you’re working on that lead you here inspires and challenges you in all of the good ways!</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2024</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

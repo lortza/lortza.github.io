@@ -1,0 +1,217 @@
+---
+layout: post
+title:  How to Build a Sinatra App - Part 2 Rendering Views
+date:   2024-10-27
+published: true
+---
+
+If you don't have your basic Sinatra app set up yet, see [my previous post]({% post_url 2024-10-27-sinatra-from-scratch-pt1 %}). Otherwise, let's get ready to dig in and build this app!
+
+Now let's add some project folders and files to our app via the command line:
+```
+mkdir models && touch models/playlist.rb && touch models/pose.rb
+mkdir views && mkdir views/playlists && mkdir views/poses
+mkdir public && touch public/application.css
+```
+
+## Getting into ActiveHash
+The data I am using in this application is static, so I'm not going to use a database. Instead, I'm going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.
+
+In the Gemfile, add this gem (check [the gem on github](https://github.com/active-hash/active_hash) for the laterst version):
+```ruby
+gem 'active_hash', '~> 2.3.0'
+```
+
+Also (spoiler alert, I want to be able to use `titleize`, so I'm pulling in another Rails gem). Add this gem to the `Gemfile`:
+```ruby
+gem 'activesupport-inflector', '~> 0.1.0'
+```
+
+If you're feeling a little miffed that I'm pulling in select Rails gems, feel free to write your own functionality. Part of this Sinatra side-project journey for me is cherry picking the smallest slices of assistance vs rolling my own during small moments of free time. I've chosen gems in these last two cases, but do what makes you happy!
+
+Okay while we're here in the `Gemfile`, we're also going to need a couple of Sinatra gems to help with routes. Add these to the `Gemfile`:
+```ruby
+gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
+gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
+```
+
+Save and then `bundle`.
+
+And then require these gems in the app by adding this to the `application.rb` file:
+```ruby
+require 'sinatra/multi_route' # from sinatra-contrib gem
+require 'sinatra/url_for'
+```
+
+
+Okey doke, now let's build out our models. Let's pretend that there are 5 yoga poses, each named with a number. I'm planning to use real images and real yoga pose names in this project, but for the sake of this blog post, I'm just going to use these numbers and placeholder images. So in the `models/pose.rb` file, add:
+```ruby
+# In Sinatra, we have to require any gem we're using in a file:
+require 'active_hash'
+require 'active_support/inflector' # for the 'titleize' behavior
+
+class Pose < ActiveHash::Base
+  fields :name, :image_file
+
+  # This method allows me to name a pose `:standing_forward_bend` for
+  # programming convenience while displaying it as "Standing Forward
+  # Bend" in the views:
+  def display_name
+    name.to_s.titleize
+  end
+
+  self.data = [
+    { id: 1, name: :one, image_file: 'https://placehold.co/100?text=One'},
+    { id: 2, name: :two, image_file: 'https://placehold.co/100?text=Two'},
+    { id: 3, name: :three, image_file: 'https://placehold.co/100?text=Three'},
+    { id: 4, name: :four, image_file: 'https://placehold.co/100?text=Four'},
+    { id: 5, name: :five, image_file: 'https://placehold.co/100?text=Five'}
+  ]
+end
+```
+What's going on in that class up there? We now have pose data stored in a hash that we can access with that easy breezy dot notation just like we would a regular Ruby object. We can do:
+```ruby
+Pose.all # => array with all the hashes
+Pose.first.name # => :one
+Pose.find(4).display_name # => 'Four'
+Pose.find_by(name: :three) # => { id: 3, name: :three, image_file: 'https://placehold.co/100?text=Three'}
+Pose.where(id: 3..) # => array with poses 3, 4, and 5
+```
+
+I chose to symbolize these names because I am going to be building out data in my `Playlist` class that references instance of this `Pose` class by `name`. I could absolutely reference them by `id` like a database would, but as a human, I prefer the readablity of names. In reality, yoga pose names can be long -- like "standing forward bend", so using a symbol like `:standing_forward_bend` feels more concrete to me and less prone to error (like rogue caps or spaces if I were to `find_by(name: "standing forward bend")`).
+
+Now let's get to that `Playlist` class in the `models/playlist.rb` file. Let's pretend we have 2 playlists that we've built from those 5 poses we built above:
+```ruby
+require 'active_hash'
+
+class Playlist < ActiveHash::Base
+  fields :display_name, :poses
+
+  self.data = [
+    { id: 1, display_name: 'One Two One', poses: [
+      Pose.find_by(name: :one),
+      Pose.find_by(name: :two),
+      Pose.find_by(name: :one)
+    ]},
+    { id: 2, display_name: 'One to Five', poses: [
+      Pose.find_by(name: :one),
+      Pose.find_by(name: :two),
+      Pose.find_by(name: :three),
+      Pose.find_by(name: :four),
+      Pose.find_by(name: :five)
+    ]},
+  ]
+end
+```
+
+In that class, I've built 2 playlists that are consuming the `Pose` objects. As I said, I'm referencing them by symbolized `name`. Now in our app we can do things like...
+
+```ruby
+@playlists = Playlist.all
+
+@playlists.each do |playlist|
+  playlist.display_name
+end
+```
+...which looks eerily like what we'd do on a playlists `index` page, so let's render this content on an index page!
+
+
+## Routes that render a view file
+Back in the `application.rb`, we need a new route:
+```ruby
+get '/playlists' do
+  @playlists = Playlist.all
+  # yep, you need this weird symbolized string syntax:
+  erb :'playlists/index'
+end
+```
+
+We need a view file, so make an `index.erb` (not `index.html.erb`) for your playlists:
+
+```html
+<!-- views/playlists/index.erb -->
+<h1>Playlists Index</h1>
+
+<ul>
+  <% @playlists.each do |playlist| %>
+    <li><%= playlist.display_name %></li>
+  <% end %>
+</ul>
+```
+
+Restart your server and hit up [http://localhost:4567/playlists](http://localhost:4567/playlists). You should see a bulleted list of playlists. Hooray! (Take note that `/playlists` is not the same as `/playlists/`. So if you're having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out [the Sinatra docs for routes](https://sinatrarb.com/intro.html).)
+
+Well it's nice that we can see the list of playlists, but it's kind of boring if we can't click on each name. So how do we get to a show page for a playlist?
+
+## Routing to a show page with an id
+As you may guess, back in the `application.rb`, we need a new route:
+```ruby
+# this route takes an :id param, like /playlists/1
+get '/playlists/:id' do
+  # and we use that param to find our specific playlist
+  @playlist = Playlist.find(params[:id])
+  erb :'playlists/show'
+end
+```
+
+And a new view:
+```html
+<!-- views/playlists/show.erb -->
+<h1><%= @playlist.display_name %></h1>
+
+<ul>
+  <% @playlist.poses.each do |pose| %>
+    <li><%= pose.display_name %></li>
+  <% end %>
+</ul>
+```
+
+Restart your server and go to [http://localhost:4567/playlists/2](http://localhost:4567/playlists/2) and you'll see our glorious show page for playlist "One to Five". And since none of us cares to memorize id numbers for random internet pages, next, we'll link to this show page from the playlists index page.
+
+## Links
+In the `views/playlists/index.erb` file, replace this:
+```html
+<li><%= playlist.display_name %></li>
+```
+with this:
+```html
+<li><a href='<%= url_for "/playlists/#{playlist.id}" %>'><%= playlist.display_name %></a></li>
+```
+Is that link syntax heckin ugly? Ohhhhh yeah it is. I haven't looked into how to make links much prettier in Sinatra, so for now, this gets the job done.
+
+
+## Add a layout for consistent page design
+And lastly, now that we have a few pages in our application, we're probably going to want a nav bar and we're probably going to want that on more than one page. We can accomplish this with an HTML layout.
+
+Create a file called `layout.erb` and save it in your `views` folder. Fill it with basic HTML boilerplate and place a `<%= yield %>` where you want your page content to go.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="robots" content="noindex">
+    <link href="<%= url('/application.css') %>" rel="stylesheet" type="text/css" />
+    <title>Yoga Pose Playlist</title>
+  </head>
+  <body>
+    <nav>
+      <a href="<%= url_for '/' %>">Yoga Pose Playlist</a>
+    </nav>
+
+    <!-- Your page content will render here: -->
+    <%= yield %>
+
+  </body>
+</html>
+```
+
+Now there is no styling on that nav bar. You have a file called `application.css` where you can put all of the styling you'd like. I'll leave that up to you.
+
+But that's it! You have all of the building blocks of basic app functionality. It's been interesting for me to see how light and simple Sinatra feels compared to Rails -- even though I miss having link helpers and am bothered by the clutter of the `application.rb` file. But these are preferences built from habit and habit is always worth challenging.
+
+I hope you've enjoyed this foray into Sinatra and that whatever project you're working on that lead you here inspires and challenges you in all of the good ways!
+
+
