@@ -37,6 +37,8 @@ But you can do whatever you want.
 Now let's add some gems to the `Gemfile`. At the time of this post, I'm using Ruby 3.2.2, but you should use the latest version of any of Ruby and any of the gems I mention in this post:
 
 ```ruby
+# Gemfile
+
 source 'https://rubygems.org'
 
 ruby '3.2.2'
@@ -59,14 +61,18 @@ bundle
 You should now see a `Gemfile.lock` file in your project directory.
 
 
-We'll need to tell the app how to run Sinatra here in the `config.ru` file:
+We'll set up our `rack` configuration here in the `config.ru` file:
 ```ruby
+# config.ru
+
 require './application' # <- this is pointing to our application.rb file
 run Sinatra::Application
 ```
 
 In the `Procfile`, we'll need to tell Heroku how we like to run our application. If you're not planning to deploy your app, you can skip this step.
-```
+```bash
+# Procfile
+
 web: bundle exec ruby application.rb -p $PORT
 ```
 
@@ -74,20 +80,24 @@ The next file is the `application.rb` file, which is the centerpiece of our app.
 
 We'll be requiring all of the basic gems we need for the app to run. At this point, we don't have a lot to add. Paste this code into the `application.rb` file:
 ```ruby
+# application.rb
+
 require 'sinatra'
 ```
 Also keep in mind: **Any time you make changes to your `application.rb` file, you need to restart the server** -- which I'll tell you how to do in a bit.
 
 ## Rendering Content
 For now, let's put a basic "hello world" message on the home page. To do so, add this route with content to the `application.rb` file:
-
 ```ruby
 get '/' do
   'Hello World!'
 end
 ```
+
 Our `application.rb` file now looks like this:
 ```ruby
+# application.rb
+
 # Gems
 require 'sinatra'
 
@@ -99,7 +109,7 @@ end
 
 
 In the `README.md` file, I like to put basic instructions that will help FutureMe remember how to do basic things:
-```markdown
+```
 # README
 This application uses Sinatra to render yoga poses in playlists.
 

@@ -10,24 +10,24 @@ If you don't have your basic Sinatra app set up yet, see [my previous post]({% p
 Now let's add some project folders and files to our app via the command line:
 ```
 mkdir models && touch models/playlist.rb && touch models/pose.rb
-mkdir views && mkdir views/playlists && mkdir views/poses
+mkdir views && mkdir views/playlists
 mkdir public && touch public/application.css
 ```
 
 ## Getting into ActiveHash
 The data I am using in this application is static, so I'm not going to use a database. Instead, I'm going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.
 
-In the Gemfile, add this gem (check [the gem on github](https://github.com/active-hash/active_hash) for the laterst version):
+In the Gemfile, add the `active_hash` gem (check [the gem on github](https://github.com/active-hash/active_hash) for the laterst version):
 ```ruby
 gem 'active_hash', '~> 2.3.0'
 ```
 
-Also (spoiler alert, I want to be able to use `titleize`, so I'm pulling in another Rails gem). Add this gem to the `Gemfile`:
+I want to be able to use the Rails `titleize` method, so I'm pulling in another Rails gem. Add `activesupport-inflector` to the `Gemfile`:
 ```ruby
 gem 'activesupport-inflector', '~> 0.1.0'
 ```
 
-If you're feeling a little miffed that I'm pulling in select Rails gems, feel free to write your own functionality. Part of this Sinatra side-project journey for me is cherry picking the smallest slices of assistance vs rolling my own during small moments of free time. I've chosen gems in these last two cases, but do what makes you happy!
+So why am I pulling select Rails gems into this Sinatra app? Part of this Sinatra side-project journey for me is also picking apart Rails and learning how to splice in small pieces of it. However, I do feel like pulling in `activesupport-inflector` is overkill for just `titleize`. Once I get testing set up in this app, I'll most likely write my own `titleize` method and pull the gem back out.
 
 Okay while we're here in the `Gemfile`, we're also going to need a couple of Sinatra gems to help with routes. Add these to the `Gemfile`:
 ```ruby
@@ -35,18 +35,20 @@ gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
 gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
 ```
 
-We're also going to want `gem 'pry'` so we can easily look at our data and do debugging, so let's get that in there. Our `Gemfile` now looks like:
+And we are going to want `gem 'pry'` so we can easily look at our data and do debugging, so let's get that in there. Our `Gemfile` now looks like:
 ```ruby
+# Gemfile
+
 source 'https://rubygems.org'
 
 ruby '3.2.2'
 
 gem 'sinatra'
-gem 'active_hash', '~> 2.3.0'
-gem 'activesupport-inflector', '~> 0.1.0'
 gem 'puma'
 gem 'rake'
 gem 'rackup'
+gem 'active_hash', '~> 2.3.0' # https://github.com/active-hash/active_hash
+gem 'activesupport-inflector', '~> 0.1.0' # for Rails `titleize`, etc
 gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
 gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
 
@@ -59,6 +61,8 @@ Save and then `bundle`.
 
 And then require these gems in the app by adding them to the `application.rb` file. Our file now looks like:
 ```ruby
+# application.rb
+
 # Gems
 require 'sinatra'
 require 'sinatra/multi_route' # from sinatra-contrib gem
@@ -73,9 +77,10 @@ get '/' do
 end
 ```
 
-
 Okey doke, now let's build out our models. Let's pretend that there are 5 yoga poses, each named with a number. I'm planning to use real images and real yoga pose names in this project, but for the sake of this blog post, I'm just going to use these numbers and placeholder images. So in the `models/pose.rb` file, add:
 ```ruby
+# models/pose.rb
+
 # In Sinatra, we have to require any gem we're using in a file:
 require 'active_hash'
 require 'active_support/inflector' # for the 'titleize' behavior
@@ -112,6 +117,8 @@ I chose to symbolize these names because I am going to be building out data in m
 
 Now let's get to that `Playlist` class in the `models/playlist.rb` file. Let's pretend we have 2 playlists that we've built from those 5 poses we built above:
 ```ruby
+# models/playlist.rb
+
 require 'active_hash'
 
 class Playlist < ActiveHash::Base
@@ -147,6 +154,8 @@ end
 
 Now, if we want to have access to this model on our `index` page (and we do), we're going to need to add the models to our `application.rb` file. I add them after the gems and before the routes:
 ```ruby
+# application.rb
+
 # Gems
 require 'sinatra'
 require 'sinatra/multi_route' # from sinatra-contrib gem
@@ -205,6 +214,7 @@ We do need a view file though, so make an `index.erb` (not `index.html.erb`) for
 
 ```html
 <!-- views/playlists/index.erb -->
+
 <h1>Playlists Index</h1>
 
 <ul>
@@ -232,6 +242,7 @@ end
 And a new view for the `show` page:
 ```html
 <!-- views/playlists/show.erb -->
+
 <h1><%= @playlist.display_name %></h1>
 
 <ul>
@@ -261,6 +272,8 @@ And lastly, now that we have a few pages in our application, we're probably goin
 Create a file called `layout.erb` and save it in your `views` folder. Fill it with basic HTML boilerplate and place a `<%= yield %>` where you want your page content to go.
 
 ```html
+<!-- views/layout.erb -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -286,6 +299,28 @@ Create a file called `layout.erb` and save it in your `views` folder. Fill it wi
 When you refresh your page, you'll see your new content.
 
 Now there is no styling on that nav bar. You have a file called `application.css` where you can put all of the styling you'd like. I'll leave that up to you.
+
+Our file tree looks like:
+```
+yogaposeplaylist/
+- models/
+  - playlist.rb
+  - pose.rb
+- public/
+  - application.css
+- views/
+  - playlists/
+    - index.erb
+    - show.erb
+  - layout.erb
+- .ruby_version
+- application.rb
+- config.ru
+- Gemfile
+- Gemfile.lock
+- Procfile
+- README.md
+```
 
 But that's it! You have all of the building blocks of basic app functionality. It's been interesting for me to see how light and simple Sinatra feels compared to Rails -- even though I miss having link helpers and am bothered by the clutter of the `application.rb` file. But these are preferences built from habit and habit is always worth challenging.
 

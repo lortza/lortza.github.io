@@ -81,39 +81,41 @@
 
 <p>Now let’s add some project folders and files to our app via the command line:</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir models &amp;&amp; touch models/playlist.rb &amp;&amp; touch models/pose.rb
-mkdir views &amp;&amp; mkdir views/playlists &amp;&amp; mkdir views/poses
+mkdir views &amp;&amp; mkdir views/playlists
 mkdir public &amp;&amp; touch public/application.css
 </code></pre></div></div>
 
 <h2 id="getting-into-activehash">Getting into ActiveHash</h2>
 <p>The data I am using in this application is static, so I’m not going to use a database. Instead, I’m going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.</p>
 
-<p>In the Gemfile, add this gem (check <a href="https://github.com/active-hash/active_hash">the gem on github</a> for the laterst version):</p>
+<p>In the Gemfile, add the <code class="language-plaintext highlighter-rouge">active_hash</code> gem (check <a href="https://github.com/active-hash/active_hash">the gem on github</a> for the laterst version):</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span>
 </code></pre></div></div>
 
-<p>Also (spoiler alert, I want to be able to use <code class="language-plaintext highlighter-rouge">titleize</code>, so I’m pulling in another Rails gem). Add this gem to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+<p>I want to be able to use the Rails <code class="language-plaintext highlighter-rouge">titleize</code> method, so I’m pulling in another Rails gem. Add <code class="language-plaintext highlighter-rouge">activesupport-inflector</code> to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span>
 </code></pre></div></div>
 
-<p>If you’re feeling a little miffed that I’m pulling in select Rails gems, feel free to write your own functionality. Part of this Sinatra side-project journey for me is cherry picking the smallest slices of assistance vs rolling my own during small moments of free time. I’ve chosen gems in these last two cases, but do what makes you happy!</p>
+<p>So why am I pulling select Rails gems into this Sinatra app? Part of this Sinatra side-project journey for me is also picking apart Rails and learning how to splice in small pieces of it. However, I do feel like pulling in <code class="language-plaintext highlighter-rouge">activesupport-inflector</code> is overkill for just <code class="language-plaintext highlighter-rouge">titleize</code>. Once I get testing set up in this app, I’ll most likely write my own <code class="language-plaintext highlighter-rouge">titleize</code> method and pull the gem back out.</p>
 
 <p>Okay while we’re here in the <code class="language-plaintext highlighter-rouge">Gemfile</code>, we’re also going to need a couple of Sinatra gems to help with routes. Add these to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
 <span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
 </code></pre></div></div>
 
-<p>We’re also going to want <code class="language-plaintext highlighter-rouge">gem 'pry'</code> so we can easily look at our data and do debugging, so let’s get that in there. Our <code class="language-plaintext highlighter-rouge">Gemfile</code> now looks like:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
+<p>And we are going to want <code class="language-plaintext highlighter-rouge">gem 'pry'</code> so we can easily look at our data and do debugging, so let’s get that in there. Our <code class="language-plaintext highlighter-rouge">Gemfile</code> now looks like:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gemfile</span>
+
+<span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
 
 <span class="n">ruby</span> <span class="s1">'3.2.2'</span>
 
 <span class="n">gem</span> <span class="s1">'sinatra'</span>
-<span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span>
-<span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span>
 <span class="n">gem</span> <span class="s1">'puma'</span>
 <span class="n">gem</span> <span class="s1">'rake'</span>
 <span class="n">gem</span> <span class="s1">'rackup'</span>
+<span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span> <span class="c1"># https://github.com/active-hash/active_hash</span>
+<span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span> <span class="c1"># for Rails `titleize`, etc</span>
 <span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
 <span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
 
@@ -125,7 +127,9 @@ mkdir public &amp;&amp; touch public/application.css
 <p>Save and then <code class="language-plaintext highlighter-rouge">bundle</code>.</p>
 
 <p>And then require these gems in the app by adding them to the <code class="language-plaintext highlighter-rouge">application.rb</code> file. Our file now looks like:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gems</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.rb</span>
+
+<span class="c1"># Gems</span>
 <span class="nb">require</span> <span class="s1">'sinatra'</span>
 <span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
 <span class="nb">require</span> <span class="s1">'sinatra/url_for'</span>
@@ -140,7 +144,9 @@ mkdir public &amp;&amp; touch public/application.css
 </code></pre></div></div>
 
 <p>Okey doke, now let’s build out our models. Let’s pretend that there are 5 yoga poses, each named with a number. I’m planning to use real images and real yoga pose names in this project, but for the sake of this blog post, I’m just going to use these numbers and placeholder images. So in the <code class="language-plaintext highlighter-rouge">models/pose.rb</code> file, add:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># In Sinatra, we have to require any gem we're using in a file:</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models/pose.rb</span>
+
+<span class="c1"># In Sinatra, we have to require any gem we're using in a file:</span>
 <span class="nb">require</span> <span class="s1">'active_hash'</span>
 <span class="nb">require</span> <span class="s1">'active_support/inflector'</span> <span class="c1"># for the 'titleize' behavior</span>
 
@@ -174,7 +180,9 @@ mkdir public &amp;&amp; touch public/application.css
 <p>I chose to symbolize these names because I am going to be building out data in my <code class="language-plaintext highlighter-rouge">Playlist</code> class that references instance of this <code class="language-plaintext highlighter-rouge">Pose</code> class by <code class="language-plaintext highlighter-rouge">name</code>. I could absolutely reference them by <code class="language-plaintext highlighter-rouge">id</code> like a database would, but as a human, I prefer the readablity of names. In reality, yoga pose names can be long – like “standing forward bend”, so using a symbol like <code class="language-plaintext highlighter-rouge">:standing_forward_bend</code> feels more concrete to me and less prone to error (like rogue caps or spaces if I were to <code class="language-plaintext highlighter-rouge">find_by(name: "standing forward bend")</code>).</p>
 
 <p>Now let’s get to that <code class="language-plaintext highlighter-rouge">Playlist</code> class in the <code class="language-plaintext highlighter-rouge">models/playlist.rb</code> file. Let’s pretend we have 2 playlists that we’ve built from those 5 poses we built above:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'active_hash'</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models/playlist.rb</span>
+
+<span class="nb">require</span> <span class="s1">'active_hash'</span>
 
 <span class="k">class</span> <span class="nc">Playlist</span> <span class="o">&lt;</span> <span class="no">ActiveHash</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">fields</span> <span class="ss">:display_name</span><span class="p">,</span> <span class="ss">:poses</span>
@@ -207,7 +215,9 @@ mkdir public &amp;&amp; touch public/application.css
 <p>…which looks eerily like what we’d do on a playlists <code class="language-plaintext highlighter-rouge">index</code> page, so let’s render this content on an index page!</p>
 
 <p>Now, if we want to have access to this model on our <code class="language-plaintext highlighter-rouge">index</code> page (and we do), we’re going to need to add the models to our <code class="language-plaintext highlighter-rouge">application.rb</code> file. I add them after the gems and before the routes:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Gems</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.rb</span>
+
+<span class="c1"># Gems</span>
 <span class="nb">require</span> <span class="s1">'sinatra'</span>
 <span class="nb">require</span> <span class="s1">'sinatra/multi_route'</span> <span class="c1"># from sinatra-contrib gem</span>
 <span class="nb">require</span> <span class="s1">'sinatra/url_for'</span>
@@ -260,6 +270,7 @@ mkdir public &amp;&amp; touch public/application.css
 <p>We do need a view file though, so make an <code class="language-plaintext highlighter-rouge">index.erb</code> (not <code class="language-plaintext highlighter-rouge">index.html.erb</code>) for your playlists:</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/index.erb --&gt;</span>
+
 <span class="nt">&lt;h1&gt;</span>Playlists Index<span class="nt">&lt;/h1&gt;</span>
 
 <span class="nt">&lt;ul&gt;</span>
@@ -285,6 +296,7 @@ mkdir public &amp;&amp; touch public/application.css
 
 <p>And a new view for the <code class="language-plaintext highlighter-rouge">show</code> page:</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/playlists/show.erb --&gt;</span>
+
 <span class="nt">&lt;h1&gt;&lt;</span><span class="err">%=</span> <span class="err">@</span><span class="na">playlist.display_name</span> <span class="err">%</span><span class="nt">&gt;&lt;/h1&gt;</span>
 
 <span class="nt">&lt;ul&gt;</span>
@@ -310,7 +322,9 @@ mkdir public &amp;&amp; touch public/application.css
 
 <p>Create a file called <code class="language-plaintext highlighter-rouge">layout.erb</code> and save it in your <code class="language-plaintext highlighter-rouge">views</code> folder. Fill it with basic HTML boilerplate and place a <code class="language-plaintext highlighter-rouge">&lt;%= yield %&gt;</code> where you want your page content to go.</p>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- views/layout.erb --&gt;</span>
+
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;head&gt;</span>
     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
@@ -335,6 +349,27 @@ mkdir public &amp;&amp; touch public/application.css
 <p>When you refresh your page, you’ll see your new content.</p>
 
 <p>Now there is no styling on that nav bar. You have a file called <code class="language-plaintext highlighter-rouge">application.css</code> where you can put all of the styling you’d like. I’ll leave that up to you.</p>
+
+<p>Our file tree looks like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yogaposeplaylist/
+- models/
+  - playlist.rb
+  - pose.rb
+- public/
+  - application.css
+- views/
+  - playlists/
+    - index.erb
+    - show.erb
+  - layout.erb
+- .ruby_version
+- application.rb
+- config.ru
+- Gemfile
+- Gemfile.lock
+- Procfile
+- README.md
+</code></pre></div></div>
 
 <p>But that’s it! You have all of the building blocks of basic app functionality. It’s been interesting for me to see how light and simple Sinatra feels compared to Rails – even though I miss having link helpers and am bothered by the clutter of the <code class="language-plaintext highlighter-rouge">application.rb</code> file. But these are preferences built from habit and habit is always worth challenging.</p>
 
