@@ -3,3 +3,6 @@
 .sass-cache/*
 styles/.sass-cache
 styles/.sass-cache/*
+
+# local files
+.vscode
