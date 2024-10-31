@@ -33,7 +33,8 @@ body {
  * Set `margin-bottom` to maintain vertical rhythm
  */
 p, blockquote, pre,
-ul, ol, dl, figure {
+ul, ol, dl, figure,
+.highlight {
   margin-bottom: 40px;
 }
 

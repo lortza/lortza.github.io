@@ -18,7 +18,7 @@ code, pre {
 .highlight {
   background: $code_background;
   border-radius: 3px;
-  @extend %vertical-rhythm !optional;
+  @extend %vertical-rhythm;
 
     .c     { color: $comment_color; font-style: italic } // Comment
     // .err   { color: #a61717; background-color: #e3d2d2 } // Error

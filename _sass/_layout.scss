@@ -1,14 +1,12 @@
-@use "base";
-
 /* Navbar  ******************************************/
 .site-header {
-  a { color: base.$text-color; }
-  border-bottom: 1px solid base.$grey-color-light;
-  background-color: base.$background-color;
+  a { color: $text-color; }
+  border-bottom: 1px solid $grey-color-light;
+  background-color: $background-color;
   position: fixed;
   left: 0px;
   top: 0px;
-  height: base.$nav-height;
+  height: $nav-height;
   width: 100%;
   z-index: 50;
 }
@@ -17,7 +15,7 @@
 	display: flex;
 	flex-wrap: wrap;
   align-items: center;
-  height: base.$nav-height;
+  height: $nav-height;
 }
 
 .site-header .site-title,
@@ -36,7 +34,7 @@
 }
 .site-header .nav-items ul li a:hover,
 .site-header .nav-items ul li a.active {
-	color: base.$theme-color;
+	color: $theme-color;
 }
 
 .site-header #nav-checkbox {
@@ -48,7 +46,7 @@
 .nav-toggler {
 	height: 34px;
 	width: 44px;
-	background-color: base.$background-color;
+	background-color: $background-color;
 	border-radius: 4px;
 	cursor: pointer;
 	display: none;
@@ -60,7 +58,7 @@
 	display: block;
 	height: 2px;
 	width: 20px;
-	background-color: base.$text-color;
+	background-color: $text-color;
 	position: relative;
 }
 .nav-toggler span::before,
@@ -69,26 +67,26 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: base.$text-color;
+  background-color: $text-color;
   left: 0;
 }
 .nav-toggler span::before { top: -6px; }
 .nav-toggler span::after { top: 6px; }
 
-@media(max-width: base.$on-laptop){
+@media(max-width: $on-laptop){
   .nav-toggler { display: flex; }
   .site-header .nav-items {
     position: absolute;
     left: 0;
     top: 100%;
     width: 100%;
-    background-color: base.$background-color;
-    border-top: 1px solid base.$grey-color-light;
-    border-bottom: 1px solid base.$grey-color-light;
+    background-color: $background-color;
+    border-top: 1px solid $grey-color-light;
+    border-bottom: 1px solid $grey-color-light;
     opacity: 0;
     visibility: hidden;
     max-height: fit-content;
-    box-shadow: 0 1rem .75rem -.75rem base.$grey-color-light;
+    box-shadow: 0 1rem .75rem -.75rem $grey-color-light;
   }
 
   .site-header .nav-items ul {
@@ -104,7 +102,7 @@
     visibility: visible;
   }
   .site-header #nav-checkbox:focus ~ .nav-toggler {
-    box-shadow: 0 0 .25rem base.$grey-color-light;
+    box-shadow: 0 0 .25rem $grey-color-light;
   }
   .site-header #nav-checkbox:checked ~ .nav-toggler span {
     background-color: transparent;
@@ -123,9 +121,9 @@
 /* Site footer  ******************************************/
  .site-footer {
   text-align: center;
-  border-top: 1px solid base.$grey-color-dark;
+  border-top: 1px solid $grey-color-dark;
   font-size: 10px;
-  background-color: base.$grey-color-dark;
+  background-color: $grey-color-dark;
   padding: 2px;
   color: #aaa;
   position:fixed;
@@ -133,12 +131,12 @@
   bottom:0px;
   height:25px;
   width:100%;
-  a { color: base.$grey-color-light; }
+  a { color: $grey-color-light; }
 }
 
 /* Pagination   ************************************************/
  .pagination{
-  max-width: -webkit-calc(800px - #{base.$double-horizontal-spacing-unit});
+  max-width: -webkit-calc(800px - #{$double-horizontal-spacing-unit});
   text-align: center;
   width: 100%;
   position: fixed;
@@ -147,7 +145,7 @@
 .paginationicon {
   font-size: 50px;
   a {
-    color: base.$theme-color;
+    color: $theme-color;
   }
 }
 
@@ -172,7 +170,7 @@
     letter-spacing: -1px;
     line-height: 1;
     margin-bottom: 1.25em;
-    @include base.media-query(base.$on-laptop) {
+    @include media-query($on-laptop) {
       font-size: 36px;
     }
   }
@@ -186,10 +184,10 @@
   margin: 0px 0;
   list-style: none;
   > li {
-    margin-bottom: base.$vertical-spacing-unit;
+    margin-bottom: $vertical-spacing-unit;
   }
 }
-@include base.media-query(base.$on-laptop) {
+@include media-query($on-laptop) {
   .post-list {
       > li { margin-bottom: 0; }
   }
@@ -204,7 +202,7 @@
   display:block;
   margin: 10px;
   a {
-    color: base.$theme-color-2;
+    color: $theme-color-2;
     margin: 0px 5px;
   } /* a */
 }/* contact-icon */
@@ -216,12 +214,12 @@
  * Posts  **********************************************************
  */
  .post-header {
-  margin-bottom: base.$vertical-spacing-unit;
+  margin-bottom: $vertical-spacing-unit;
 }
 .post-title {
   font-size: 1.75rem;
   letter-spacing: -1px;
-  @include base.media-query(base.$on-laptop) {
+  @include media-query($on-laptop) {
     font-size: 1.25rem;
   }
 }
@@ -231,7 +229,7 @@
   h2 {
     font-size: 30px !important;
     margin-top: 2em;
-    @include base.media-query(base.$on-laptop) {
+    @include media-query($on-laptop) {
       font-size: 28px;
       margin-top: .5em;
     }
@@ -240,14 +238,14 @@
     font-size: 20px !important;
     margin-top: 1.5em;
     margin-bottom: 0.25em;
-    @include base.media-query(base.$on-laptop) {
+    @include media-query($on-laptop) {
       font-size: 22px;
     }
   }
   h4 {
     font-size: 15px !important;
     font-weight: bold;
-    @include base.media-query(base.$on-laptop) {
+    @include media-query($on-laptop) {
       font-size: 18px;
     }
   }
@@ -260,14 +258,14 @@
     display: block;
     margin: 0 auto;
     height: auto;
-    width: base.$tile-size;
+    width: $tile-size;
   }
 }
 
 
 .post-meta {
-  font-size: base.$small-font-size;
-  color: base.$grey-color;
+  font-size: $small-font-size;
+  color: $grey-color;
   margin-bottom: 0px;
 }
 .post-link {
@@ -282,8 +280,8 @@
   text-transform: lowercase;
   a {
     margin: 0px 10px;
-    color: base.$theme-color-2;
-    &:hover { color: base.$theme-color; }
+    color: $theme-color-2;
+    &:hover { color: $theme-color; }
   } /* a */
 } /* .home-links */
 
@@ -293,7 +291,7 @@
   font-size: 24px;
   letter-spacing: -1px;
   line-height: 1;
-  @include base.media-query(base.$on-laptop) {
+  @include media-query($on-laptop) {
     font-size: 16px;
   }
 }
@@ -306,7 +304,7 @@
     min-width: 250px;
     margin: 0 auto;
     margin-top: 1.5em;
-    border-top: 1px solid base.$grey-color-light;
+    border-top: 1px solid $grey-color-light;
     padding: 1.25em 0em;
     text-transform: lowercase;
   }
@@ -405,8 +403,8 @@
 }
 .thumbnail{
   text-align: center;
-  width: base.$tile-size;
-  height: base.$tile-size;
+  width: $tile-size;
+  height: $tile-size;
   -webkit-box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
   -moz-box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
   box-shadow: 10px 10px 20px 0px rgba(229,228,222,1);
@@ -417,7 +415,7 @@
 .thumbnail a{
   float: left;
   position: relative;
-  height: base.$tile-size;
+  height: $tile-size;
   overflow: hidden;
 }
 .thumbnail a span {
@@ -428,7 +426,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: base.$theme-color;
+  background: $theme-color;
   opacity: 0.9;
   filter: alpha(opacity=90);
   color: white;
@@ -453,7 +451,7 @@
     display: block;
     margin: 0 auto;
     width: 400px;
-    border: 1px solid base.$grey-color-light;
+    border: 1px solid $grey-color-light;
   }
   .badge img {
     width: 144px;
@@ -464,13 +462,13 @@
     // text-align: center;
     // margin: 1em 0 2em 0;
     a {
-      color: base.$theme-color;
-      border: 1px solid base.$theme-color;
+      color: $theme-color;
+      border: 1px solid $theme-color;
       padding: 2px 10px;
       border-radius: 5px;
       margin: 0 5px;
       &:hover {
-        background-color: base.$theme-color;
+        background-color: $theme-color;
         color: white;
       } /* &:hover */
     } /* a */
@@ -484,14 +482,14 @@
  * Portfolio pages **********************************************************
  */
  .blankbox{
-  background: base.$theme-color;
+  background: $theme-color;
 }
 .img_nav-{
-  height: base.$img_height;
+  height: $img_height;
   width: 100%;
   overflow: hidden;
   box-sizing:border-box;
-  padding: base.$img_spacing;
+  padding: $img_spacing;
 }
 .col{
   width: 100%;
@@ -499,7 +497,7 @@
   float: left;
   object-fit: cover;
   box-sizing:border-box;
-  padding: base.$img_spacing;
+  padding: $img_spacing;
 }
 .right{
   float: right;
@@ -515,10 +513,10 @@
 }
 .caption{
   height: 100%;
-  color: base.$caption_color;
+  color: $caption_color;
   text-align: center;
   vertical-align: middle;
-  font-size: base.$caption_font_size;
+  font-size: $caption_font_size;
 }
 
 /**
