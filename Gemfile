@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.2'
+ruby File.read(".ruby-version").strip
+
 gem 'jekyll'
 
 # Permits redirecting from my resume page to a google drive doc
