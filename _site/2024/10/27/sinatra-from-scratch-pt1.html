@@ -84,20 +84,24 @@
 <p>I once had a full Rails app for yoga playlists. I learned a bunch of yoga a decade ago and naturally, I built an app for it.😂 ¯\<em>(ツ)</em>/¯ It was database-backed and had all of the bells and whistles. When Heroku discontinued its free tier, I chose to kill that app. Now, several years later, I am resurrecting it as a Sinatra app, foregoing a database because Heroku charges extra for databases.💸 Now you know the impetus. Let’s get started!</p>
 
 <h2 id="getting-started">Getting Started</h2>
+
 <p>Let’s get started by creating the main folder for the application via the command line and <code class="language-plaintext highlighter-rouge">cd</code>ing into it:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir yogaposeplaylist &amp;&amp; cd "$_"
 </code></pre></div></div>
 
 <p>We’ll need these files for basic app setup. Create them via the command line:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>touch application.rb
 touch config.ru
 touch Gemfile
 touch Procfile
-touch .ruby_version
+touch .ruby-version
 touch README.md
 </code></pre></div></div>
 
 <p>Then I like to open the whole project folder in VS Code with:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code .
 </code></pre></div></div>
 
@@ -109,7 +113,7 @@ touch README.md
 
 <span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
 
-<span class="n">ruby</span> <span class="s1">'3.2.2'</span>
+<span class="n">ruby</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">".ruby-version"</span><span class="p">).</span><span class="nf">strip</span>
 
 <span class="n">gem</span> <span class="s1">'sinatra'</span>
 <span class="n">gem</span> <span class="s1">'puma'</span>
@@ -117,16 +121,20 @@ touch README.md
 <span class="n">gem</span> <span class="s1">'rackup'</span>
 </code></pre></div></div>
 
-<p>Put the Ruby version number in the <code class="language-plaintext highlighter-rouge">.ruby_version</code> file:</p>
+<p>Put the Ruby version number in the <code class="language-plaintext highlighter-rouge">.ruby-version</code> file:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'3.2.2'
 </code></pre></div></div>
 
 <p>Then bundle the gems by running <code class="language-plaintext highlighter-rouge">bundle</code> on the command line:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle
 </code></pre></div></div>
+
 <p>You should now see a <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> file in your project directory.</p>
 
 <p>We’ll set up our <code class="language-plaintext highlighter-rouge">rack</code> configuration here in the <code class="language-plaintext highlighter-rouge">config.ru</code> file:</p>
+
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config.ru</span>
 
 <span class="nb">require</span> <span class="s1">'./application'</span> <span class="c1"># &lt;- this is pointing to our application.rb file</span>
@@ -134,6 +142,7 @@ touch README.md
 </code></pre></div></div>
 
 <p>In the <code class="language-plaintext highlighter-rouge">Procfile</code>, we’ll need to tell Heroku how we like to run our application. If you’re not planning to deploy your app, you can skip this step.</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Procfile</span>
 
 web: bundle <span class="nb">exec </span>ruby application.rb <span class="nt">-p</span> <span class="nv">$PORT</span>
@@ -142,20 +151,25 @@ web: bundle <span class="nb">exec </span>ruby application.rb <span class="nt">-p
 <p>The next file is the <code class="language-plaintext highlighter-rouge">application.rb</code> file, which is the centerpiece of our app. This is where we load all of our necessary dependencies as well as declare our routes. Since I am personally used to the way Rails splits out config from routes and other concerns, so I find this file to be kind of messy. Alas, we’re here in Sinatra to see what it’s like outside of the magic kingdom 🪄 of Rails, right? 😂</p>
 
 <p>We’ll be requiring all of the basic gems we need for the app to run. At this point, we don’t have a lot to add. Paste this code into the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
+
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.rb</span>
 
 <span class="nb">require</span> <span class="s1">'sinatra'</span>
 </code></pre></div></div>
+
 <p>Also keep in mind: <strong>Any time you make changes to your <code class="language-plaintext highlighter-rouge">application.rb</code> file, you need to restart the server</strong> – which I’ll tell you how to do in a bit.</p>
 
 <h2 id="rendering-content">Rendering Content</h2>
+
 <p>For now, let’s put a basic “hello world” message on the home page. To do so, add this route with content to the <code class="language-plaintext highlighter-rouge">application.rb</code> file:</p>
+
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
   <span class="s1">'Hello World!'</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
 <p>Our <code class="language-plaintext highlighter-rouge">application.rb</code> file now looks like this:</p>
+
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.rb</span>
 
 <span class="c1"># Gems</span>
@@ -168,6 +182,7 @@ web: bundle <span class="nb">exec </span>ruby application.rb <span class="nt">-p
 </code></pre></div></div>
 
 <p>In the <code class="language-plaintext highlighter-rouge">README.md</code> file, I like to put basic instructions that will help FutureMe remember how to do basic things:</p>
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># README
 This application uses Sinatra to render yoga poses in playlists.
 
@@ -185,6 +200,7 @@ http://localhost:4567
 </code></pre></div></div>
 
 <p>And now it is time to run the app! Just like the README says, on the command line, run just like you would any Ruby file:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ruby application.rb
 
 <span class="c"># You can kill the server with `cmd c`.</span>

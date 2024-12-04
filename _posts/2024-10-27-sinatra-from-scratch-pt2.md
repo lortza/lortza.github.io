@@ -313,7 +313,7 @@ yogaposeplaylist/
     - index.erb
     - show.erb
   - layout.erb
-- .ruby_version
+- .ruby-version
 - application.rb
 - config.ru
 - Gemfile
