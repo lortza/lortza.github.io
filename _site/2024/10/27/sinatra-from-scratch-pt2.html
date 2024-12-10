@@ -88,15 +88,9 @@ mkdir public &amp;&amp; touch public/application.css
 <h2 id="getting-into-activehash">Getting into ActiveHash</h2>
 <p>The data I am using in this application is static, so I’m not going to use a database. Instead, I’m going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.</p>
 
-<p>In the Gemfile, add the <code class="language-plaintext highlighter-rouge">active_hash</code> gem (check <a href="https://github.com/active-hash/active_hash">the gem on github</a> for the laterst version):</p>
+<p>In the Gemfile, add the <code class="language-plaintext highlighter-rouge">active_hash</code> gem (check <a href="https://github.com/active-hash/active_hash">the gem on github</a> for the latest version):</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span>
 </code></pre></div></div>
-
-<p>I want to be able to use the Rails <code class="language-plaintext highlighter-rouge">titleize</code> method, so I’m pulling in another Rails gem. Add <code class="language-plaintext highlighter-rouge">activesupport-inflector</code> to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span>
-</code></pre></div></div>
-
-<p>So why am I pulling select Rails gems into this Sinatra app? Part of this Sinatra side-project journey for me is also picking apart Rails and learning how to splice in small pieces of it. However, I do feel like pulling in <code class="language-plaintext highlighter-rouge">activesupport-inflector</code> is overkill for just <code class="language-plaintext highlighter-rouge">titleize</code>. Once I get testing set up in this app, I’ll most likely write my own <code class="language-plaintext highlighter-rouge">titleize</code> method and pull the gem back out.</p>
 
 <p>Okay while we’re here in the <code class="language-plaintext highlighter-rouge">Gemfile</code>, we’re also going to need a couple of Sinatra gems to help with routes. Add these to the <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
@@ -108,14 +102,13 @@ mkdir public &amp;&amp; touch public/application.css
 
 <span class="n">source</span> <span class="s1">'https://rubygems.org'</span>
 
-<span class="n">ruby</span> <span class="s1">'3.2.2'</span>
+<span class="n">ruby</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s1">'.ruby-version'</span><span class="p">).</span><span class="nf">strip</span>
 
 <span class="n">gem</span> <span class="s1">'sinatra'</span>
 <span class="n">gem</span> <span class="s1">'puma'</span>
 <span class="n">gem</span> <span class="s1">'rake'</span>
 <span class="n">gem</span> <span class="s1">'rackup'</span>
 <span class="n">gem</span> <span class="s1">'active_hash'</span><span class="p">,</span> <span class="s1">'~&gt; 2.3.0'</span> <span class="c1"># https://github.com/active-hash/active_hash</span>
-<span class="n">gem</span> <span class="s1">'activesupport-inflector'</span><span class="p">,</span> <span class="s1">'~&gt; 0.1.0'</span> <span class="c1"># for Rails `titleize`, etc</span>
 <span class="n">gem</span> <span class="s1">'sinatra-contrib'</span> <span class="c1"># https://sinatrarb.com/contrib/multi_route.html</span>
 <span class="n">gem</span> <span class="s1">'emk-sinatra-url-for'</span> <span class="c1"># path helpers https://github.com/emk/sinatra-url-for/</span>
 
@@ -148,7 +141,6 @@ mkdir public &amp;&amp; touch public/application.css
 
 <span class="c1"># In Sinatra, we have to require any gem we're using in a file:</span>
 <span class="nb">require</span> <span class="s1">'active_hash'</span>
-<span class="nb">require</span> <span class="s1">'active_support/inflector'</span> <span class="c1"># for the 'titleize' behavior</span>
 
 <span class="k">class</span> <span class="nc">Pose</span> <span class="o">&lt;</span> <span class="no">ActiveHash</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">fields</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:image_file</span>
@@ -157,7 +149,7 @@ mkdir public &amp;&amp; touch public/application.css
   <span class="c1"># programming convenience while displaying it as "Standing Forward</span>
   <span class="c1"># Bend" in the views:</span>
   <span class="k">def</span> <span class="nf">display_name</span>
-    <span class="nb">name</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class="nf">titleize</span>
+    <span class="nb">name</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:capitalize</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="nb">self</span><span class="p">.</span><span class="nf">data</span> <span class="o">=</span> <span class="p">[</span>
@@ -280,9 +272,17 @@ mkdir public &amp;&amp; touch public/application.css
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-<p>Restart your server and go back to <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>. You should see a bulleted list of playlists. Hooray! (Take note that <code class="language-plaintext highlighter-rouge">/playlists</code> is not the same as <code class="language-plaintext highlighter-rouge">/playlists/</code>. So if you’re having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out <a href="https://sinatrarb.com/intro.html">the Sinatra docs for routes</a> to see how to handle that.)</p>
+<p>Restart your server and go back to <a href="http://localhost:4567/playlists">http://localhost:4567/playlists</a>. You should see a bulleted list of playlists. Hooray!</p>
 
-<p>Well it’s nice that we can see the list of playlists, but it’s kind of boring if we can’t click on each name. So how do we get to a show page for a playlist?</p>
+<p>Side note here: Notice <code class="language-plaintext highlighter-rouge">/playlists</code> is not the same as <code class="language-plaintext highlighter-rouge">/playlists/</code>. So if you’re having trouble rendering this in the browser, this maybe why. 🤦‍♀️ <a href="https://sinatrarb.com/intro.html">The Sinatra docs for routes</a> has more information, but I’m going to handle it in one easy step by adding this line to the <code class="language-plaintext highlighter-rouge">application.rb</code> file just above my first route declaration.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># application.rb</span>
+
+<span class="n">set</span> <span class="ss">:strict_paths</span><span class="p">,</span> <span class="kp">false</span> <span class="c1"># Normalize trailing slashes automatically</span>
+</code></pre></div></div>
+<p>Restart the server and now you’ll see that both <code class="language-plaintext highlighter-rouge">/playlists</code> and <code class="language-plaintext highlighter-rouge">/playlists/</code> take you to that index page.</p>
+
+<p>Well it’s nice that we can see the list of playlists, but it’s kind of boring if we can’t click on each playlist name to see more. So how do we get to a show page for a playlist?</p>
 
 <h2 id="routing-to-a-show-page-with-an-id">Routing to a show page with an id</h2>
 <p>As you may guess, back in the <code class="language-plaintext highlighter-rouge">application.rb</code>, we need a new route:</p>
@@ -374,6 +374,8 @@ mkdir public &amp;&amp; touch public/application.css
 <p>But that’s it! You have all of the building blocks of basic app functionality. It’s been interesting for me to see how light and simple Sinatra feels compared to Rails – even though I miss having link helpers and am bothered by the clutter of the <code class="language-plaintext highlighter-rouge">application.rb</code> file. But these are preferences built from habit and habit is always worth challenging.</p>
 
 <p>I hope you’ve enjoyed this foray into Sinatra and that whatever project you’re working on that lead you here inspires and challenges you in all of the good ways!</p>
+
+<p>If you’d like to keep going, in <a href="/2024/12/10/sinatra-from-scratch-pt3.html">this next post</a>, I will be deploying a Sinatra app to my dyno pool in Heroku.</p>
 
   </article>
 

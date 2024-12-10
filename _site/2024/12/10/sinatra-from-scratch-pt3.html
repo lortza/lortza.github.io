@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | How to Build a Sinatra App - Part 3 Deploying to Heroku</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2024/12/10/sinatra-from-scratch-pt3.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+    
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          
+            
+              <li><a class="" href="/about/">about</a></li>
+            
+          
+            
+              <li><a class="" href="/blog/">tech blog</a></li>
+            
+          
+            
+          
+            
+          
+            
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+            
+          
+            
+              <li><a class="" href="/resources/">resources</a></li>
+            
+          
+            
+          
+            
+          
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">How to Build a Sinatra App - Part 3 Deploying to Heroku</h1>
+    <p class="post-meta">December 10, 2024</p>
+  </header>
+
+  <article class="post-content">
+    <p>See How to Build a Sinatra App <a href="/2024/10/27/sinatra-from-scratch-pt1.html">Part 1</a> and <a href="/2024/10/27/sinatra-from-scratch-pt2.html">Part 2</a> if you need help building a Sinatra App from scratch.</p>
+
+<p>I already have an account at <a href="https://www.heroku.com/ruby">Heroku</a> where I pay for the <a href="https://www.heroku.com/pricing">shared Eco dyno pool</a>. This means I can quickly and easily spin up any app on Heroku and it is included in my $5/mo fee. You’ll need to be willing to pay some amount in order to deploy to Heroku. If you’re not, look into <a href="https://fly.io/">Fly.io</a>. They have some free options.</p>
+
+<h2 id="preparing-our-app-for-heroku">Preparing Our App for Heroku</h2>
+<p>Now that our app is working locally, we’d like to deploy it to the interwebs to we can use it. First, ensure you have a <code class="language-plaintext highlighter-rouge">Procfile</code> and <code class="language-plaintext highlighter-rouge">config.ru</code> and file:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Procfile</span>
+
+web: bundle <span class="nb">exec </span>ruby application.rb <span class="nt">-p</span> <span class="nv">$PORT</span>
+</code></pre></div></div>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config.ru</span>
+
+<span class="nb">require</span> <span class="s1">'./application'</span>
+<span class="n">run</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Application</span>
+</code></pre></div></div>
+
+<p>If you don’t already have them, add them and commit them with git.</p>
+
+<h2 id="creating-our-app-on-heroku-via-the-heroku-cli">Creating Our App on Heroku via the Heroku CLI</h2>
+<p><a href="https://blog.heroku.com/32_deploy_merb_sinatra_or_any_rack_app_to_heroku">This handy post by Heroku</a> outlines most of the steps on the Heroku side for you. First, install the <a href="https://devcenter.heroku.com/articles/heroku-cli">Heroku CLI</a> with Homebrew if you don’t already have it:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew tap heroku/brew &amp;&amp; brew install heroku
+</code></pre></div></div>
+
+<p>The Heroku CLI commands start with <code class="language-plaintext highlighter-rouge">heroku</code>, so we’ll log in with:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heroku login
+</code></pre></div></div>
+
+<p>From inside our project root directory, we’ll need to create an app on Heroku. You can pass it a custom name, but it will have to be unique.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heroku create your_app_name
+
+<span class="c"># If you want Heroku to generate a random name for you:</span>
+heroku create
+
+<span class="c"># For my project I'll run:</span>
+heroku create yogaposeplaylist
+</code></pre></div></div>
+<p>This will create the application for you on Heroku and output the url and the remote address, like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://yogaposeplaylist-12345.herokuapp.com/ | https://git.heroku.com/yogaposeplaylist.git
+</code></pre></div></div>
+
+<p>In a  browser, go to your application url (our example is https://yogaposeplaylist-12345.herokuapp.com/) and you’ll see placeholder content from Heroku.</p>
+
+<p>To ensure your git remotes are in place, type <code class="language-plaintext highlighter-rouge">git remote -v</code>. You’ll see output like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heroku	https://git.heroku.com/yogaposeplaylist.git (fetch)
+heroku	https://git.heroku.com/yogaposeplaylist.git (push)
+origin	git@github.com:user-name/yogaposeplaylist.git (fetch)
+origin	git@github.com:user-name/yogaposeplaylist.git (push)
+</code></pre></div></div>
+
+<p>We’ll want to ensure our app will know it is in the production environment when it is on Heroku, so we’ll set the environment variable in Heroku:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heroku config:set <span class="nv">RACK_ENV</span><span class="o">=</span>production
+</code></pre></div></div>
+
+<h2 id="deploying">Deploying</h2>
+<p>Now all you have to do to deploy is push it to the Heroku remote with:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push heroku main
+</code></pre></div></div>
+<p>You’ll see a bunch of output in your console and when it is done, go back to that url in the browser and you’ll see your app.</p>
+
+<p>If anything goes wrong, sign in to <a href="https://dashboard.heroku.com/apps">https://dashboard.heroku.com/apps</a> and click on your app name. You’ll see an option to look at logs. Use those to pinpoint what may have gone wrong.</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2024</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -17,17 +17,10 @@ mkdir public && touch public/application.css
 ## Getting into ActiveHash
 The data I am using in this application is static, so I'm not going to use a database. Instead, I'm going to store my data in hashes. I could use plain old regular hashes, but I am going to pull in a gem that is also available to Rails. I am doing this so I can get dot notation on my data-storing classes along with some other bells and whistles.
 
-In the Gemfile, add the `active_hash` gem (check [the gem on github](https://github.com/active-hash/active_hash) for the laterst version):
+In the Gemfile, add the `active_hash` gem (check [the gem on github](https://github.com/active-hash/active_hash) for the latest version):
 ```ruby
 gem 'active_hash', '~> 2.3.0'
 ```
-
-I want to be able to use the Rails `titleize` method, so I'm pulling in another Rails gem. Add `activesupport-inflector` to the `Gemfile`:
-```ruby
-gem 'activesupport-inflector', '~> 0.1.0'
-```
-
-So why am I pulling select Rails gems into this Sinatra app? Part of this Sinatra side-project journey for me is also picking apart Rails and learning how to splice in small pieces of it. However, I do feel like pulling in `activesupport-inflector` is overkill for just `titleize`. Once I get testing set up in this app, I'll most likely write my own `titleize` method and pull the gem back out.
 
 Okay while we're here in the `Gemfile`, we're also going to need a couple of Sinatra gems to help with routes. Add these to the `Gemfile`:
 ```ruby
@@ -41,14 +34,13 @@ And we are going to want `gem 'pry'` so we can easily look at our data and do de
 
 source 'https://rubygems.org'
 
-ruby '3.2.2'
+ruby File.read('.ruby-version').strip
 
 gem 'sinatra'
 gem 'puma'
 gem 'rake'
 gem 'rackup'
 gem 'active_hash', '~> 2.3.0' # https://github.com/active-hash/active_hash
-gem 'activesupport-inflector', '~> 0.1.0' # for Rails `titleize`, etc
 gem 'sinatra-contrib' # https://sinatrarb.com/contrib/multi_route.html
 gem 'emk-sinatra-url-for' # path helpers https://github.com/emk/sinatra-url-for/
 
@@ -83,7 +75,6 @@ Okey doke, now let's build out our models. Let's pretend that there are 5 yoga p
 
 # In Sinatra, we have to require any gem we're using in a file:
 require 'active_hash'
-require 'active_support/inflector' # for the 'titleize' behavior
 
 class Pose < ActiveHash::Base
   fields :name, :image_file
@@ -92,7 +83,7 @@ class Pose < ActiveHash::Base
   # programming convenience while displaying it as "Standing Forward
   # Bend" in the views:
   def display_name
-    name.to_s.titleize
+    name.to_s.split("_").map(&:capitalize).join(" ")
   end
 
   self.data = [
@@ -224,9 +215,18 @@ We do need a view file though, so make an `index.erb` (not `index.html.erb`) for
 </ul>
 ```
 
-Restart your server and go back to [http://localhost:4567/playlists](http://localhost:4567/playlists). You should see a bulleted list of playlists. Hooray! (Take note that `/playlists` is not the same as `/playlists/`. So if you're having troble rendering this in the browser, this maybe why. 🤦‍♀️ Check out [the Sinatra docs for routes](https://sinatrarb.com/intro.html) to see how to handle that.)
+Restart your server and go back to [http://localhost:4567/playlists](http://localhost:4567/playlists). You should see a bulleted list of playlists. Hooray! 
 
-Well it's nice that we can see the list of playlists, but it's kind of boring if we can't click on each name. So how do we get to a show page for a playlist?
+Side note here: Notice `/playlists` is not the same as `/playlists/`. So if you're having trouble rendering this in the browser, this maybe why. 🤦‍♀️ [The Sinatra docs for routes](https://sinatrarb.com/intro.html) has more information, but I'm going to handle it in one easy step by adding this line to the `application.rb` file just above my first route declaration. 
+
+```ruby
+# application.rb
+
+set :strict_paths, false # Normalize trailing slashes automatically
+```
+Restart the server and now you'll see that both `/playlists` and `/playlists/` take you to that index page. 
+
+Well it's nice that we can see the list of playlists, but it's kind of boring if we can't click on each playlist name to see more. So how do we get to a show page for a playlist?
 
 ## Routing to a show page with an id
 As you may guess, back in the `application.rb`, we need a new route:
@@ -325,3 +325,5 @@ yogaposeplaylist/
 But that's it! You have all of the building blocks of basic app functionality. It's been interesting for me to see how light and simple Sinatra feels compared to Rails -- even though I miss having link helpers and am bothered by the clutter of the `application.rb` file. But these are preferences built from habit and habit is always worth challenging.
 
 I hope you've enjoyed this foray into Sinatra and that whatever project you're working on that lead you here inspires and challenges you in all of the good ways!
+
+If you'd like to keep going, in [this next post]({% post_url 2024-12-10-sinatra-from-scratch-pt3 %}), I will be deploying a Sinatra app to my dyno pool in Heroku.
