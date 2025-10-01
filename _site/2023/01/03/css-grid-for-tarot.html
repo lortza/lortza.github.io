@@ -124,18 +124,18 @@ I was fine with that sacrifice at the time, but as time passed and folks familia
 <p>Before I get fancy, I like to hard-code whatever I’m doing to make sure it works, so that’s the approach I’ll take here. First we need a grid. This tarot spread has 3 columns and 3 rows, so we need a grid with 3 columns and 3 rows.</p>
 
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
-  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
-  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
-  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">grid</span><span class="p">;</span>
+  <span class="nl">grid-template-columns</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
+  <span class="nl">grid-template-rows</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>Then we need to position card #1 in row 1, column 2:</p>
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.card-1</span> <span class="p">{</span>
-  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
-  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
-  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
-  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+  <span class="nl">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="nl">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -182,24 +182,24 @@ grid_rows: 3
 <p>Currently our grid class is completely committed to being a 3x3 grid, always.</p>
 
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
-  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
-  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
-  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">grid</span><span class="p">;</span>
+  <span class="nl">grid-template-columns</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
+  <span class="nl">grid-template-rows</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>How did I shove a dynamic value into this class so it can be whatever size I want? Well, I didn’t. After reviewing the shapes of all of my reading spreads, I built a library of utility classes for grids of sizes up to the largest grid I needed. Now I can swap out classes on the fly by breaking the original <code class="language-plaintext highlighter-rouge">grid-container</code>’s properties into different classes. Here is a sample of some of the classes I wrote – these are the classes that are relevant to our example grid:</p>
 
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.grid-container</span> <span class="p">{</span>
-  <span class="nl">display</span><span class="p">:</span> <span class="n">grid</span><span class="p">;</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">grid</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nc">.grid-container-3-col</span> <span class="p">{</span>
-  <span class="py">grid-template-columns</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="nl">grid-template-columns</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="nc">.grid-container-3-row</span> <span class="p">{</span>
-  <span class="py">grid-template-rows</span><span class="p">:</span> <span class="nb">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1</span><span class="n">fr</span><span class="p">);</span>
+  <span class="nl">grid-template-rows</span><span class="p">:</span> <span class="nf">repeat</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">1fr</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -221,21 +221,21 @@ grid_rows: 3
 
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">/* Instead of a single class for each possible position on the grid... */</span>
 <span class="nc">.card-1</span> <span class="p">{</span>
-  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
-  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
-  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
-  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+  <span class="nl">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="nl">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="c">/* I made classes for each column and row address on the grid */</span>
 <span class="nc">.grid-col-2</span> <span class="p">{</span>
-  <span class="py">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
-  <span class="py">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
+  <span class="nl">grid-column-start</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-column-end</span><span class="p">:</span> <span class="m">3</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nc">.grid-row-1</span> <span class="p">{</span>
-  <span class="py">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
-  <span class="py">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+  <span class="nl">grid-row-start</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+  <span class="nl">grid-row-end</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -326,9 +326,9 @@ Card 2:
 <p>Voila. But then I needed to add another column to my <code class="language-plaintext highlighter-rouge">reading_positions</code> table to indicate if a card in this position should be crossed. I tossed a boolean called <code class="language-plaintext highlighter-rouge">crossed</code> in there and was good to go. As for the styling, I wrote a class that rotated the card and rendered that class in the HTML if the <code class="language-plaintext highlighter-rouge">reading_position.crossed?</code> was true.</p>
 
 <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.crossed</span> <span class="p">{</span>
-  <span class="nl">-ms-transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">IE</span> <span class="err">9</span>
-  <span class="nl">-webkit-transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">Safari</span> <span class="err">3-8</span>
-  <span class="nl">transform</span><span class="p">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span>
+  <span class="nl">-ms-transform</span><span class="p">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">IE</span> <span class="err">9</span>
+  <span class="nl">-webkit-transform</span><span class="p">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span> <span class="err">//</span> <span class="err">Safari</span> <span class="err">3-8</span>
+  <span class="nl">transform</span><span class="p">:</span> <span class="nf">rotate</span><span class="p">(</span><span class="m">90deg</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 

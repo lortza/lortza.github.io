@@ -154,6 +154,9 @@ pre > code {
 }
 
 /* Navbar  ******************************************/
+.site-header a {
+  color: #828282;
+}
 .site-header {
   border-bottom: 1px solid #E8E8E8;
   background-color: #FFF;
@@ -163,9 +166,6 @@ pre > code {
   height: 56px;
   width: 100%;
   z-index: 50;
-}
-.site-header a {
-  color: #828282;
 }
 
 .nav-row {
@@ -336,7 +336,6 @@ pre > code {
 .page-header {
   text-align: center;
   margin-bottom: 1.25em;
-  /* h5 */
 }
 .page-header h1 {
   font-size: 60px;
@@ -353,8 +352,9 @@ pre > code {
   font-size: 12px;
   margin-bottom: 4em;
 }
-
-/* .page-header */
+.page-header {
+  /* h5 */
+} /* .page-header */
 .post-list {
   margin: 0px 0;
   list-style: none;
@@ -376,14 +376,14 @@ pre > code {
   font-size: 50px;
   display: block;
   margin: 10px;
-  /* a */
 }
 .contact-icon a {
   color: #B509AC;
   margin: 0px 5px;
 }
-
-/* contact-icon */
+.contact-icon {
+  /* a */
+} /* contact-icon */
 .center {
   text-align: center;
 }
@@ -461,7 +461,6 @@ pre > code {
 .home-links {
   text-align: center;
   text-transform: lowercase;
-  /* a */
 }
 .home-links a {
   margin: 0px 10px;
@@ -470,8 +469,9 @@ pre > code {
 .home-links a:hover {
   color: #2698BA;
 }
-
-/* .home-links */
+.home-links {
+  /* a */
+} /* .home-links */
 /** Poem formatting ********************************************/
 .poem-title {
   font-size: 24px;
@@ -555,26 +555,28 @@ pre > code {
 }
 
 /* .products */
-.writing, .open-source {
-  /* article */
-}
 .writing article, .open-source article {
   margin-bottom: 2em;
-  /* h4 */
-  /* p */
 }
 .writing article h4, .open-source article h4 {
   font-weight: bold;
   font-size: 1.25em;
   margin-bottom: 0px;
 }
+.writing article, .open-source article {
+  /* h4 */
+}
 .writing article p, .open-source article p {
   margin: 0;
   font-size: 0.85em;
   line-height: 1.25em;
 }
-
-/* .writing */
+.writing article, .open-source article {
+  /* p */
+}
+.writing, .open-source {
+  /* article */
+} /* .writing */
 /**
  * Portfolio grid **********************************************************
  */
@@ -643,7 +645,6 @@ pre > code {
 /******** Projects ********/
 .portfolio-show {
   text-align: left;
-  /* links */
 }
 .portfolio-show header {
   text-align: center;
@@ -666,20 +667,25 @@ pre > code {
   border: transparent;
   margin-bottom: 10px;
 }
-.portfolio-show .link-buttons {
-  /* a */
-}
 .portfolio-show .link-buttons a {
   color: #2698BA;
   border: 1px solid #2698BA;
   padding: 2px 10px;
   border-radius: 5px;
   margin: 0 5px;
-  /* &:hover */
 }
 .portfolio-show .link-buttons a:hover {
   background-color: #2698BA;
   color: white;
+}
+.portfolio-show .link-buttons a {
+  /* &:hover */
+}
+.portfolio-show .link-buttons {
+  /* a */
+}
+.portfolio-show {
+  /* links */
 }
 .portfolio-show li {
   text-align: left;
