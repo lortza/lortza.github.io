@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Search and Select Item for a Shopping List using Turbo</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2026/03/30/search-and-select-with-turbo.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+    
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          
+            
+              <li><a class="" href="/about/">about</a></li>
+            
+          
+            
+              <li><a class="" href="/blog/">tech blog</a></li>
+            
+          
+            
+          
+            
+          
+            
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+            
+          
+            
+              <li><a class="" href="/resources/">resources</a></li>
+            
+          
+            
+          
+            
+          
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Search and Select Item for a Shopping List using Turbo</h1>
+    <p class="post-meta">March 30, 2026</p>
+  </header>
+
+  <article class="post-content">
+    <p>I have a recipe app with a grocery shopping list where I can add items to it in bulk from a recipe and remove items individually as I shop for them at the store. My approach in building this app has been to keep everything as simple as possible and then add in complexity over time. I find this approach works well because then I’m not building out complex features that I don’t end up using. That said, this list feature has been technically <em>quite simple</em> but from a user experience <em>not nearly simple enough</em> and for <em>way too long</em>. So I shined it up with Turbo and Stimulus and released the whole feature with <a href="https://github.com/lortza/food_planner/pull/1257">this PR</a>.</p>
+
+<p>Here is the behavior before:
+<img class="col three" src="/img/posts/2026-03-30_before.gif" alt="screencap of clicking on an option and going to a results page before returning to the list page" title="before behavior screencap" /></p>
+
+<p>Here is the Turboified behavior after:
+<img class="col three" src="/img/posts/2026-03-30_after.gif" alt="screencap of selecting and activating an item with one click on the list" title="after behavior screencap" /></p>
+
+<h2 id="architecture-context">Architecture Context</h2>
+<p>The application was born in Rails 5, had several upgrades over the years, but only recently was updated to the latest Rails version of 8.1.2 at the time of this work.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">shopping_list_item</code> belongs to a <code class="language-plaintext highlighter-rouge">shopping_list</code> and an <code class="language-plaintext highlighter-rouge">aisle</code>. An item appears under its aisle on the list.</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ShoppingListItem</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="no">STATUSES</span> <span class="o">=</span> <span class="sx">%w[active inactive in_cart]</span><span class="p">.</span><span class="nf">freeze</span>
+
+  <span class="n">belongs_to</span> <span class="ss">:aisle</span>
+  <span class="n">belongs_to</span> <span class="ss">:shopping_list</span>
+  <span class="n">belongs_to</span> <span class="ss">:list</span><span class="p">,</span> <span class="ss">foreign_key: :shopping_list_id</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"ShoppingList"</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When an item is active, it appears in the top section of the list. Clicking on it deactivates it and moves it to the inactive section of the list where it is grey and crossed off. Clicking on a deactivated item, toggles it back to active, removing it from the inactive section and putting it in the active section.</p>
+
+<h2 id="the-original-implementation">The Original Implementation</h2>
+<p>The original implementation was straight Rails CRUD (with a smidge of javascript). I was using an HTML <code class="language-plaintext highlighter-rouge">&lt;datalist&gt;</code> with all of the list’s items prepopulated. This allowed for simple filtering as the user typed because that functionality is baked-in to the HTML <code class="language-plaintext highlighter-rouge">&lt;datalist&gt;</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;datalist id="name"&gt;
+  &lt;option value="  "&gt;&lt;/option&gt;
+  &lt;% @shopping_list.items.each do |item| %&gt;
+    &lt;option id="&lt;%= item.id %&gt;" value="&lt;%= item.name %&gt;"&gt;&lt;/option&gt;
+  &lt;% end %&gt;
+&lt;/datalist&gt;
+</code></pre></div></div>
+<p>Once the item was selected, the user then had to manually submit the form by hitting enter. This initiated a <code class="language-plaintext highlighter-rouge">GET</code> request to the <code class="language-plaintext highlighter-rouge">ShopplingListsController#search</code> action which rendered the <code class="language-plaintext highlighter-rouge">search.html.erb</code> page. The user then selected one of the search results which was a <code class="language-plaintext highlighter-rouge">POST</code> to <code class="language-plaintext highlighter-rouge">ShoppingListItemStatusesController#activate_from_search</code>, updating the item’s status to <code class="language-plaintext highlighter-rouge">active</code>. The controller action then implicitly rendered the <code class="language-plaintext highlighter-rouge">shopping_list_item_statuses/activate_from_search.html.js</code> which used javascript to render a “item added” badge next to the item on the page. The user then clicked a link to <code class="language-plaintext highlighter-rouge">GET</code> back to the list’s <code class="language-plaintext highlighter-rouge">show.html.erb</code> page. While the <code class="language-plaintext highlighter-rouge">activate_from_search.html.js</code> was converted to a <code class="language-plaintext highlighter-rouge">activate_from_search.turbo_stream.erb</code> in the Rails 8 upgrade, it was still the same workflow and user experience.</p>
+
+<p>It was clunky. It was annoying. It was time to upgrade.</p>
+
+<h2 id="building-the-turbo-implementation">Building the Turbo Implementation</h2>
+<p>The new user workflow needed to be simpler. I wanted to see the search results on the list page and to be able to add items from those results without ever leaving the list show page. I also wanted to keep workflow for creating a new item on its own page. Now with access to some sweet Turbo tools like frames, streams, and Stimulus, I could get this behavior going pretty easily.</p>
+
+<h3 id="step-1-show-search-results-on-the-show-page">Step 1: Show search results on the show page</h3>
+<p>In order to have search results appear instantly while a user’s keystrokes filtered down the options, I reached for a Turbo frame and a Stimulus controller. The new technical flow is:</p>
+<ol>
+  <li>User types in the search box</li>
+  <li>Every keystroke triggers the Stimulus <code class="language-plaintext highlighter-rouge">search#submit</code>, which debounces 300ms then submits the form</li>
+  <li>The form url submits a <code class="language-plaintext highlighter-rouge">GET</code> request to <code class="language-plaintext highlighter-rouge">search_shopping_list_path</code></li>
+  <li>The controller action responds with a Turbo frame matching the Turbo frame placeholder on the show page</li>
+  <li>Only that frame’s content is swapped in — showing matching items below the search box without a full page reload</li>
+</ol>
+
+<p>This little chunk of view code pulls all of the technologies together. Let me break it down for you.</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/shopping_lists/show.html.erb --&gt;</span>
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">tag.article</span><span class="err">(</span><span class="na">id:</span> <span class="na">dom_id</span><span class="err">(@</span><span class="na">shopping_list</span><span class="err">,</span> <span class="na">:item_search_form</span><span class="err">))</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form_with</span><span class="err">(</span><span class="na">url:</span> <span class="na">search_shopping_list_path</span><span class="err">(@</span><span class="na">shopping_list</span><span class="err">),</span> <span class="na">method:</span> <span class="na">:get</span><span class="err">,</span> <span class="na">id:</span> <span class="err">'</span><span class="na">search-form</span><span class="err">',</span>
+                <span class="na">data:</span> <span class="err">{</span> <span class="na">controller:</span> <span class="err">"</span><span class="na">search</span><span class="err">",</span> <span class="na">turbo_frame:</span> <span class="na">dom_id</span><span class="err">(@</span><span class="na">shopping_list</span><span class="err">,</span> <span class="na">:search_results</span><span class="err">)</span> <span class="err">})</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-xs-12"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">text_field_tag</span> <span class="na">:search</span><span class="err">,</span> <span class="na">nil</span><span class="err">,</span>
+          <span class="na">placeholder:</span> <span class="err">'</span><span class="na">Find</span> <span class="na">or</span> <span class="na">Add</span> <span class="na">an</span> <span class="na">item...</span><span class="err">',</span>
+          <span class="na">class:</span> <span class="err">'</span><span class="na">form-control</span> <span class="na">form-control-sm</span><span class="err">',</span>
+          <span class="na">autocomplete:</span> <span class="err">'</span><span class="na">off</span><span class="err">',</span>
+          <span class="na">data:</span> <span class="err">{</span> <span class="na">search_target:</span> <span class="err">"</span><span class="na">input</span><span class="err">",</span> <span class="na">action:</span> <span class="err">"</span><span class="na">input-</span><span class="nt">&gt;</span>search#submit" } %&gt;
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">turbo_frame_tag</span> <span class="na">dom_id</span><span class="err">(@</span><span class="na">shopping_list</span><span class="err">,</span> <span class="na">:search_results</span><span class="err">),</span> <span class="na">target:</span> <span class="err">"</span><span class="na">_top</span><span class="err">"</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<h4 id="the-stimulus-piece-works-like-this">The Stimulus piece works like this:</h4>
+<ul>
+  <li>The form’s <code class="language-plaintext highlighter-rouge">data-controller="search"</code>: mounts an instance of the Stimulus <code class="language-plaintext highlighter-rouge">search_controller.js</code> on this <code class="language-plaintext highlighter-rouge">&lt;form&gt;</code> element, giving the form and its child elements access to this controller’s actions.</li>
+  <li>The text input’s <code class="language-plaintext highlighter-rouge">data-search-target="input"</code>: registers it as the <code class="language-plaintext highlighter-rouge">inputTarget</code> in the Stimulus controller. If you’re not familiar with Stimulus targets, this is just a fancy way of passing arguments into a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)</li>
+  <li>The text input’s <code class="language-plaintext highlighter-rouge">data-action="input-&gt;search#submit"</code>: calls the Stimulus function <code class="language-plaintext highlighter-rouge">search#submit</code> on every keystroke</li>
+  <li>The <code class="language-plaintext highlighter-rouge">search#submit</code> function debounces the call by 300ms, then calls <code class="language-plaintext highlighter-rouge">this.element.requestSubmit()</code> — where <code class="language-plaintext highlighter-rouge">this.element</code> is the <code class="language-plaintext highlighter-rouge">&lt;form&gt;</code> itself. This submits the form without a page reload.</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/javascript/controllers/search_controller.js</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Controller</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@hotwired/stimulus</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nc">extends</span> <span class="nx">Controller</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="nx">targets</span> <span class="o">=</span> <span class="p">[</span><span class="dl">"</span><span class="s2">input</span><span class="dl">"</span><span class="p">]</span>
+
+  <span class="nf">connect</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="kc">null</span>
+  <span class="p">}</span>
+
+  <span class="nf">submit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nf">requestSubmit</span><span class="p">()</span>
+    <span class="p">},</span> <span class="mi">300</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nf">clear</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasInputTarget</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">inputTarget</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">""</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nf">requestSubmit</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="the-turbo-frame-piece-works-like-this">The Turbo frame piece works like this:</h4>
+<ul>
+  <li>The form’s submit url is <code class="language-plaintext highlighter-rouge">search_shopping_list_path(@shopping_list)</code>.</li>
+  <li>The form’s <code class="language-plaintext highlighter-rouge">data: { turbo_frame: dom_id(@shopping_list, :search_results) }</code> tells Turbo that when this form submits, the response should be scoped to only the Turbo frame with that ID and not the the whole page.</li>
+  <li>When the form hits the <code class="language-plaintext highlighter-rouge">ShoppingListsController#search</code> action, it gets the search results data and then responds via Turbo frame by rendering the inner contents of the “response” turbo frame with the matching dom id in the <code class="language-plaintext highlighter-rouge">app/views/shopping_lists/search.html.erb</code> view.</li>
+  <li>The list show page’s empty <code class="language-plaintext highlighter-rouge">&lt;%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %&gt;</code> just below the form is the partner “navigation” Turbo frame where the results will be populated.</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/shopping_list_item_statuses_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">ShoppingListsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">before_action</span> <span class="ss">:set_shopping_list</span><span class="p">,</span> <span class="ss">only: </span><span class="sx">%i[search edit update destroy]</span>
+
+  <span class="k">def</span> <span class="nf">search</span>
+    <span class="n">search_term</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:search</span><span class="p">]</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">strip</span><span class="o">&amp;</span><span class="p">.</span><span class="nf">squish</span>
+    <span class="vi">@shopping_list_items</span> <span class="o">=</span> <span class="vi">@shopping_list</span><span class="p">.</span><span class="nf">search_results</span><span class="p">(</span><span class="n">search_term</span><span class="p">)</span>
+    <span class="c1"># responds to Turbo frame with search results partial, which will display results in the search area of the shopping list show page</span>
+  <span class="k">end</span>
+  <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And the related Turbo frame with the search content:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;!-- app/views/shopping_lists/search.html.erb --&gt;
+&lt;%= turbo_frame_tag dom_id(@shopping_list, :search_results) do %&gt;
+  &lt;div class="search-results"&gt;
+    &lt;% if @shopping_list_items.present? %&gt;
+      &lt;section id='searched-items'&gt;
+        &lt;% @shopping_list_items.by_recently_edited.each do |item| %&gt;
+          &lt;%= render partial: '/shopping_list_items/item', locals: { item: item, destination_path: activate_from_search_shopping_list_item_path(item) } %&gt;
+        &lt;% end %&gt;
+      &lt;/section&gt;
+    &lt;% elsif params[:search].present? %&gt;
+      &lt;p&gt;Sorry, there are no results matching &lt;strong&gt;"&lt;%= params[:search] %&gt;"&lt;/strong&gt;&lt;/p&gt;
+      &lt;%= link_to 'Create New Item', new_shopping_list_shopping_list_item_path(@shopping_list, search_term: params[:search]), class: button_classes('primary btn-block mt-3') %&gt;
+    &lt;% end %&gt;
+  &lt;/div&gt;
+&lt;% end %&gt;
+</code></pre></div></div>
+
+<p>Why did I use a Turbo Frame instead of a Turbo Stream?</p>
+<ol>
+  <li>The form is making a <code class="language-plaintext highlighter-rouge">GET</code> request and Turbo Streams conventionally pair with POST/PATCH/DELETE (form submissions with side effects). You can force streams over GET, but it’s awkward.</li>
+  <li>Rendering search results is only updating one thing on the page. Streams can do that too. But we tend to use them when we need to update multiple things.</li>
+</ol>
+
+<h3 id="step-2-click-search-result-item-to-activate-on-list">Step 2: Click search result item to activate on list</h3>
+<p>It seems like an item is just activated on the list, but several changes need to happen to the UX:</p>
+<ul>
+  <li>Clear the search value from the input field</li>
+  <li>Clear the search results from the top of the page</li>
+  <li>Remove the item from the inactive section of the list</li>
+  <li>Add the item to the proper aisle in the active section</li>
+  <li>Update the item count in the nav bar list item</li>
+</ul>
+
+<p>The original (legacy) implementation was using a basic <code class="language-plaintext highlighter-rouge">respond_to :js</code>, so my first approach was just converting that same workflow into a Turbo stream. This meant manually updating <em>all of those items</em> via <code class="language-plaintext highlighter-rouge">dom_id</code>s. But that felt so silly! Essentially, I was touching <em>every part of the page,</em> so it made more sense to let Turbo do its regular page load behavior of swapping out the body with the new content. So the <code class="language-plaintext highlighter-rouge">ShoppingListItemStatusesController#activate_from_search</code> changed to a regular <code class="language-plaintext highlighter-rouge">redirect_to</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># app/controllers/shopping_list_item_statuses_controller.rb
+
+class ShoppingListItemStatusesController &lt; ApplicationController
+  def activate_from_search
+    @shopping_list_item.activate! unless @shopping_list_item.in_cart?
+    redirect_to shopping_list_url(@shopping_list_item.list)
+  end
+end
+</code></pre></div></div>
+
+<p>This is why the <code class="language-plaintext highlighter-rouge">target: "_top"</code> is so important in the show page’s empty Turbo frame <code class="language-plaintext highlighter-rouge">&lt;%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %&gt;</code>. By default, any links initiated from within this frame (i.e. the “activate” links for each item and the “create a new item” link) are scoped to the frame. If you want to actually load a new page, you have to break out of the Turbo frame with a <code class="language-plaintext highlighter-rouge">target: "_top"</code>. You don’t have to do it this way. Instead, you could set a <code class="language-plaintext highlighter-rouge">target: "_top"</code> on any appropriate link inside the frame if you choose. I chose to do it this way. Either way, the <code class="language-plaintext highlighter-rouge">redirect_to</code> will not work correctly without the <code class="language-plaintext highlighter-rouge">target: "_top"</code> on the link if it is inside of a Turbo frame.</p>
+
+<p>Oddly enough, the turbo frame in the <code class="language-plaintext highlighter-rouge">search.html.erb</code> file does not need <code class="language-plaintext highlighter-rouge">target: "_top"</code> because it is the <em>response</em> frame. The target attribute only matters on the frame that actually lives in the browser. The response frame is just a wrapper Turbo uses to locate the right content to transplant.</p>
+
+<p>A little more explanation on the purposes of the two frames:</p>
+<ul>
+  <li>the <code class="language-plaintext highlighter-rouge">show.html.erb</code> navigation frame: the empty placeholder frame that lives on the page. It’s the persistent container. Setting <code class="language-plaintext highlighter-rouge">target: "_top"</code> here will have make any link rendered inside it (search results, “Create New Item”, etc.) break out to the top page.</li>
+  <li>the <code class="language-plaintext highlighter-rouge">search.html.erb</code> response frame: in the server response HTML, it exists purely as a matching source HTML for Turbo to extract content from. Turbo finds it by ID, pulls out its inner HTML, and uses it to fill the placeholder frame in the navigation from on <code class="language-plaintext highlighter-rouge">show.html.erb</code>. Once that swap happens, the response frame itself is discarded — it never persists in the DOM, so any target attribute on it would be irrelevant.</li>
+</ul>
+
+<h2 id="in-summary">In Summary</h2>
+<p>I now have a feature that works so much more smoothly as a user experience. Hooray! I was able to replace a simpler CRUD + legacy javascript workflow with shiny new Stimulus and Turbo solutions. And they work like this:</p>
+<ul>
+  <li>The search form uses Stimulus to autosubmit when a user enters keystrokes</li>
+  <li>The search results are rendered in the content of a Turbo frame</li>
+  <li>The links inside the results Turbo frame are allowed to break out of the frame to load a whole page body</li>
+  <li>All content on the screen is updated after the server-side updates are made</li>
+</ul>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2026</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
