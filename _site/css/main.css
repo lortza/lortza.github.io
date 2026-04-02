@@ -33,8 +33,7 @@ body {
  * Set `margin-bottom` to maintain vertical rhythm
  */
 p, blockquote, pre,
-ul, ol, dl, figure,
-.highlight {
+ul, ol, dl, figure {
   margin-bottom: 40px;
 }
 
@@ -758,6 +757,7 @@ code, pre {
 .highlight {
   background: #EEEEFF;
   border-radius: 3px;
+  margin-bottom: 40px;
 }
 .highlight .c {
   color: #B7B9D1;

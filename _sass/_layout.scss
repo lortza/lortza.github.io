@@ -1,3 +1,5 @@
+@use "base" as *;
+
 /* Navbar  ******************************************/
 .site-header {
   a { color: $text-color; }
