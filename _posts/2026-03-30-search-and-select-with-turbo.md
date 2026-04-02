@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Search and Select Item for a Shopping List using Turbo
+title:  Search and Select an Item in a Shopping List using Turbo and Stimulus
 date:   2026-03-30
 published: true
 ---
@@ -15,21 +15,10 @@ Here is the Turboified behavior after:
 
 
 
-
 ## Architecture Context
 The application was born in Rails 5, had several upgrades over the years, but only recently was updated to the latest Rails version of 8.1.2 at the time of this work.
 
 A `shopping_list_item` belongs to a `shopping_list` and an `aisle`. An item appears under its aisle on the list.
-```ruby
-class ShoppingListItem < ApplicationRecord
-  STATUSES = %w[active inactive in_cart].freeze
-
-  belongs_to :aisle
-  belongs_to :shopping_list
-  belongs_to :list, foreign_key: :shopping_list_id, class_name: "ShoppingList"
-  ...
-end
-```
 
 When an item is active, it appears in the top section of the list. Clicking on it deactivates it and moves it to the inactive section of the list where it is grey and crossed off. Clicking on a deactivated item, toggles it back to active, removing it from the inactive section and putting it in the active section.
 
@@ -37,7 +26,9 @@ When an item is active, it appears in the top section of the list. Clicking on i
 ## The Original Implementation
 The original implementation was straight Rails CRUD (with a smidge of javascript). I was using an HTML `<datalist>` with all of the list's items prepopulated. This allowed for simple filtering as the user typed because that functionality is baked-in to the HTML `<datalist>`.
 
-```
+```html
+<!-- app/views/shopping_lists/show.html.erb -->
+ 
 <datalist id="name">
   <option value="  "></option>
   <% @shopping_list.items.each do |item| %>
@@ -65,26 +56,30 @@ In order to have search results appear instantly while a user's keystrokes filte
 This little chunk of view code pulls all of the technologies together. Let me break it down for you.
 ```html
 <!-- app/views/shopping_lists/show.html.erb -->
-<%= tag.article(id: dom_id(@shopping_list, :item_search_form)) do %>
-  <%= form_with(url: search_shopping_list_path(@shopping_list), method: :get, id: 'search-form',
-                data: { controller: "search", turbo_frame: dom_id(@shopping_list, :search_results) }) do %>
-    <div class="col-xs-12">
-      <%= text_field_tag :search, nil,
-          placeholder: 'Find or Add an item...',
-          class: 'form-control form-control-sm',
-          autocomplete: 'off',
-          data: { search_target: "input", action: "input->search#submit" } %>
-    </div>
-  <% end %>
-  <%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %>
-<% end %>
+
+01 <%= tag.article(id: dom_id(@shopping_list, :item_search_form)) do %>
+02   <%= form_with(url: search_shopping_list_path(@shopping_list), 
+03                 method: :get, 
+04                 id: 'search-form',
+05                 data: { controller: "search", turbo_frame: dom_id(@shopping_list, :search_results) }) do %>
+06     <div class="col-xs-12">
+07       <%= text_field_tag :search, nil,
+08           placeholder: 'Find or Add an item...',
+09           class: 'form-control form-control-sm',
+10           autocomplete: 'off',
+11           data: { search_target: "input", action: "input->search#submit" } %>
+12     </div>
+13   <% end %>
+14   <%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %>
+15 <% end %>
 ```
 
 #### The Stimulus piece works like this:
-- The form's `data-controller="search"`: mounts an instance of the Stimulus `search_controller.js` on this `<form>` element, giving the form and its child elements access to this controller's actions.
-- The text input's `data-search-target="input"`: registers it as the `inputTarget` in the Stimulus controller. If you're not familiar with Stimulus targets, this is just a fancy way of passing arguments into a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)
-- The text input's `data-action="input->search#submit"`: calls the Stimulus function `search#submit` on every keystroke
-- The `search#submit` function debounces the call by 300ms, then calls `this.element.requestSubmit()` — where `this.element` is the `<form>` itself. This submits the form without a page reload.
+- Line 5: The form's `data: { controller: "search" }`: mounts an instance of the Stimulus `search_controller.js` on this `<form>` element, giving the form and its child elements access to this controller's actions.
+- Line 5: The text input's `data: { search_target: "input" }`: registers this HTML element as the `inputTarget` in the Stimulus controller. If you're not familiar with Stimulus targets, this is just a fancy way of passing arguments into a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)
+- Line 11: The text input's `data: { action: "input->search#submit" }`: calls the Stimulus function `search#submit` on every keystroke. It's reminiscent of the vanilla JS `addEventListener("input", search())` approach.
+- Line 11: The `search#submit` portion calls the `submit` function that's defined in the `search` Stimulus controller. This function debounces (pauses) the call by 300ms, then calls `this.element.requestSubmit()` — where `this.element` is the `<form>` itself. 
+- The end result is the form is submitted without a page reload.
 
 ```javascript
 // app/javascript/controllers/search_controller.js
@@ -114,30 +109,32 @@ export default class extends Controller {
 ```
   
 #### The Turbo frame piece works like this:
-- The form's submit url is `search_shopping_list_path(@shopping_list)`.
-- The form's `data: { turbo_frame: dom_id(@shopping_list, :search_results) }` tells Turbo that when this form submits, the response should be scoped to only the Turbo frame with that ID and not the the whole page.
-- When the form hits the `ShoppingListsController#search` action, it gets the search results data and then responds via Turbo frame by rendering the inner contents of the "response" turbo frame with the matching dom id in the `app/views/shopping_lists/search.html.erb` view. 
-- The list show page's empty `<%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %>` just below the form is the partner "navigation" Turbo frame where the results will be populated.
+- Line 2: When the form is submitted, it hits the `search_shopping_list_path(@shopping_list)` path.
+- Line 5: The form's `data: { turbo_frame: dom_id(@shopping_list, :search_results) }` tells Turbo that when this form submits, the response should be scoped to only the Turbo frame with that ID and not the the whole page.
+- When the form hits the `ShoppingListsController#search` action, it gets the search results data and then responds via Turbo frame by rendering the inner contents of the partner "response" Turbo frame with the matching dom id in the `app/views/shopping_lists/search.html.erb` view. 
+- Line 14: The list show page's empty `<%= turbo_frame_tag dom_id(@shopping_list, :search_results), target: "_top" %>` just below the form is the partner "navigation" Turbo frame where the results will be populated.
  
 ```ruby
 # app/controllers/shopping_list_item_statuses_controller.rb
 
 class ShoppingListsController < ApplicationController
-  before_action :set_shopping_list, only: %i[search edit update destroy]
+  before_action :set_shopping_list, only: %i[search]
 
   def search
     search_term = params[:search]&.strip&.squish
+    # Responds implicitly with HTML that contains a Turbo frame with the matching dom_id
     @shopping_list_items = @shopping_list.search_results(search_term)
-    # responds to Turbo frame with search results partial, which will display results in the search area of the shopping list show page
   end
   ...
 end
 ```
 
 And the related Turbo frame with the search content:
-```
+```erb
 <!-- app/views/shopping_lists/search.html.erb -->
-<%= turbo_frame_tag dom_id(@shopping_list, :search_results) do %>
+
+<!-- See the matching dom_id here? -->
+<%= turbo_frame_tag dom_id(@shopping_list, :search_results) do %> 
   <div class="search-results">
     <% if @shopping_list_items.present? %>
       <section id='searched-items'>
@@ -167,7 +164,7 @@ It seems like an item is just activated on the list, but several changes need to
 
 The original (legacy) implementation was using a basic `respond_to :js`, so my first approach was just converting that same workflow into a Turbo stream. This meant manually updating _all of those items_ via `dom_id`s. But that felt so silly! Essentially, I was touching _every part of the page,_ so it made more sense to let Turbo do its regular page load behavior of swapping out the body with the new content. So the `ShoppingListItemStatusesController#activate_from_search` changed to a regular `redirect_to`. 
 
-```
+```ruby
 # app/controllers/shopping_list_item_statuses_controller.rb
 
 class ShoppingListItemStatusesController < ApplicationController
