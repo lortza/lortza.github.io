@@ -11,5 +11,5 @@ description: In March 2020 when COVID-19 forced us all into quarantine, I wanted
 role: solo project, full stack
 tech_used: Rails & ActionCable, RSpec, Heroku, Devise, Bulma CSS, GitHub CI
 published: true
-featured: true
+featured: false
 ---

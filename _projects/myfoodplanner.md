@@ -11,5 +11,5 @@ description: The purpose of this tool is threefold <ol><li>enable smart nutritio
 role: solo project, full stack
 tech_used: Rails, PostgreSQL, Vanilla Javascript, Bootstrap CSS, RSpec, Heroku Scheduler, Devise, GitHub CI
 published: true
-featured: false
+featured: true
 ---
