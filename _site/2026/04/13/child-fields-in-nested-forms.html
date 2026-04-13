@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Anne Richardson | Refactoring adding child fields to a nested form from Turbo Streams to Stimulus</title>
+    <meta name="description" content="Anne Richardson Rails Developer
+ blog and portfolio">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="canonical" href="http://localhost:4000/2026/04/13/child-fields-in-nested-forms.html">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- Helpful post with inspectlet instructions: https://michaelsoolee.com/google-analytics-jekyll/ -->
+    
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+  <div class="wrapper">
+    <div class="nav-row align-items-center justify-content-between">
+      <div class="site-title">
+        <a class="" href="/">Anne Richardson</a>
+      </div>
+      <input type="checkbox" id="nav-checkbox">
+      <label for="nav-checkbox" class="nav-toggler">
+        <span></span>
+      </label>
+      <nav class="nav-items">
+        <ul>
+          
+            
+              <li><a class="" href="/about/">about</a></li>
+            
+          
+            
+              <li><a class="" href="/blog/">tech blog</a></li>
+            
+          
+            
+          
+            
+          
+            
+              <li><a class="" href="/portfolio/">portfolio</a></li>
+            
+          
+            
+              <li><a class="" href="/resources/">resources</a></li>
+            
+          
+            
+          
+            
+          
+          <li><a class="" href="/resume/" target="_blank">resume</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Refactoring adding child fields to a nested form from Turbo Streams to Stimulus</h1>
+    <p class="post-meta">April 13, 2026</p>
+  </header>
+
+  <article class="post-content">
+    <p>I recently implemented a feature to add child fields (ingredients) to a nested form (for a recipe) in Rails 8 using Turbo Streams (in <a href="https://github.com/lortza/food_planner/pull/1267">this PR</a>).</p>
+
+<p><img class="col three" src="/img/posts/2026-04-13_new_ingredient.gif" alt="screencap of adding new ingredient form fields to the recipe form" title="adding new ingredient form fields to the recipe form" /></p>
+
+<p>The implementation was pretty nifty, using just Turbo to insert the fields – which makes my little Railsy heart happy because I don’t love messing around with javascript. I did end up using a small Stimulus controller to handle removing the fields – because I couldn’t justify another round trip to the server just to remove fields. But I didn’t love this implementation because it <em>was making a whole round trip to the server</em> without needing to hit the database, just to add empty fields to a form. Had the form needed the <code class="language-plaintext highlighter-rouge">recipe</code> or <code class="language-plaintext highlighter-rouge">ingredient</code> object, that would have been different, but it didn’t, so this Turbo Stream implementation seemed like overkill to me and I wanted to do something more light-weight. I’ll outline the steps of this Turbo Stream implementation for you below because it sets the stage for the refactor.</p>
+
+<h2 id="an-overview-of-the-turbo-stream-implementation">An overview of the Turbo Stream Implementation</h2>
+
+<p>Add a route for a new ingredient</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/routes.rb</span>
+
+<span class="n">resources</span> <span class="ss">:ingredients</span><span class="p">,</span> <span class="ss">only: </span><span class="p">[</span><span class="ss">:new</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>A whole new controller for that new route</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/ingredients_controller.rb</span>
+
+<span class="k">class</span> <span class="nc">IngredientsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The turbo stream view that handles the appending of the existing <code class="language-plaintext highlighter-rouge">/ingredients/_form_fields</code> partial.</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/ingredients/new.turbo_stream.erb --&gt;</span>
+
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">turbo_stream.append</span> <span class="err">'</span><span class="na">js_ingredients_table</span><span class="err">'</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">fields_for</span> <span class="err">'</span><span class="na">recipe</span><span class="err">[</span><span class="na">ingredients_attributes</span><span class="err">][]',</span> <span class="na">Ingredient.new</span><span class="err">(</span><span class="na">quantity:</span> <span class="na">nil</span><span class="err">),</span> <span class="na">index:</span> <span class="na">Time.current.to_i</span> <span class="na">do</span> <span class="err">|</span><span class="na">f_ingredient</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="na">partial:</span> <span class="err">'/</span><span class="na">ingredients</span><span class="err">/</span><span class="na">form_fields</span><span class="err">',</span> <span class="na">locals:</span> <span class="err">{</span> <span class="na">f_ingredient:</span> <span class="na">f_ingredient</span> <span class="err">}</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>And now just a link on the existing recipe form using our new route to the <code class="language-plaintext highlighter-rouge">IngredientsController#new</code> to insert the new ingredient row via Turbo Stream.</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/recipes/_form.html.erb --&gt;</span>
+...
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span> <span class="na">new_ingredient_path</span><span class="err">,</span> <span class="na">data:</span> <span class="err">{</span> <span class="na">turbo_stream:</span> <span class="na">true</span> <span class="err">}</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+  + Add Ingredient
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+...
+</code></pre></div></div>
+
+<p>Pretty simple so far! But then I wanted to add a button to remove the row if I changed my mind. Uh oh. Do I make another trip to the server? Nah. That seems excessive. So I set up the recipe form to use Stimulus by adding the a Stimulus controller called <code class="language-plaintext highlighter-rouge">remove_form_field_controller</code> to the nested child (ingredients) section of the form.</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/recipes/_form.html.erb --&gt;</span>
+...
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.label</span> <span class="err">'</span><span class="na">Ingredients</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">data-controller=</span><span class="s">"remove-form-field"</span><span class="nt">&gt;</span>
+  ...
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span> <span class="na">new_ingredient_path</span><span class="err">,</span> <span class="na">data:</span> <span class="err">{</span> <span class="na">turbo_stream:</span> <span class="na">true</span> <span class="err">}</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+    + Add Ingredient
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+...
+</code></pre></div></div>
+
+<p>Then the form fields partial got a couple of new pieces of logic. First, I’ve assigned a Stimulus target to the parent div for the fields. This way, Stimulus will know exactly what to target when removing unwanted fields. Then I added the link to hit the stimulus controller’s <code class="language-plaintext highlighter-rouge">remove</code> function.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/ingredients/_form_fields.html.erb --&gt;</span>
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">tag.div</span><span class="err">(</span><span class="na">data:</span> <span class="err">{</span> <span class="na">remove_form_field_target:</span> <span class="err">"</span><span class="na">ingredientFieldsRow</span><span class="err">"</span> <span class="err">})</span> <span class="na">do</span> <span class="err">%</span><span class="nt">&gt;</span>
+  ...
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="na">f_ingredient.object.persisted</span><span class="err">?</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">f_ingredient.check_box</span> <span class="na">:_destroy</span> <span class="err">%</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">else</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;a</span> <span class="na">data-controller=</span><span class="s">"remove-form-field"</span> <span class="na">data-action=</span><span class="s">"click-&gt;remove-form-field#remove"</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>x<span class="nt">&lt;/a&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>This is the Stimulus controller that removes the fields:</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/javascript/controllers/remove_form_field_controller.js</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Controller</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@hotwired/stimulus</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nc">extends</span> <span class="nx">Controller</span> <span class="p">{</span>
+  <span class="nf">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>                                                                                                                                                     
+    <span class="nx">event</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>                                                                                                                                            
+    <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nf">closest</span><span class="p">(</span><span class="dl">'</span><span class="s1">[data-remove-form-field-target="ingredientFieldsRow"]</span><span class="dl">'</span><span class="p">).</span><span class="nf">remove</span><span class="p">()</span>                                                                                   
+  <span class="p">}</span>                                                                                                                                                                 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Okay, so now that I’m using Stimulus now <em>anyway</em>. I should probably address that nagging feeling about this Turbo Stream trip to the server being a bit excessive.</p>
+
+<h2 id="the-refactor-from-turbo-streams-to-stimulus">The refactor from Turbo Streams to Stimulus</h2>
+<p>You can see the full diff in the <a href="https://github.com/lortza/food_planner/pull/1273">PR for this refactor</a>.</p>
+
+<p>Now I get to remove lots of things!</p>
+<ol>
+  <li>The <code class="language-plaintext highlighter-rouge">:ingredients, only: [:new]</code> route</li>
+  <li>The <code class="language-plaintext highlighter-rouge">IngredientsController</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">app/views/ingredients/new.turbo_stream.erb</code> view</li>
+</ol>
+
+<p>I expanded the Stimulus <code class="language-plaintext highlighter-rouge">remove_form_field_controller</code>’s functionality and renamed it to <code class="language-plaintext highlighter-rouge">add_ingredient_fields_controller</code> so it can handle both the appending and the removing behaviors. Then, anywhere the old controller was called, I renamed it to the new controller. You’ll see some iterating over instances of <code class="language-plaintext highlighter-rouge">NEW_RECORD</code> in the logic below. I’ll get to that in a bit. You’ll also see some <code class="language-plaintext highlighter-rouge">target</code>s in there which will be used to identify DOM elements on the recipe form.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app/javascript/controllers/add_ingredient_fields_controller.js</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Controller</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@hotwired/stimulus</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nc">extends</span> <span class="nx">Controller</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="nx">targets</span> <span class="o">=</span> <span class="p">[</span><span class="dl">"</span><span class="s2">template</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">container</span><span class="dl">"</span><span class="p">]</span>
+  
+  <span class="c1">// The new append function</span>
+  <span class="nf">append</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">templateTarget</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nf">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>                                                                                                       
+    <span class="kd">const</span> <span class="nx">index</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span>
+
+    <span class="nx">content</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">[name*="NEW_RECORD"], [id*="NEW_RECORD"]</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">el</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">if </span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">NEW_RECORD</span><span class="dl">'</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+      <span class="k">if </span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">NEW_RECORD</span><span class="dl">'</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">containerTarget</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span>
+  <span class="p">}</span> 
+  
+  <span class="c1">// Same functionality from the old controller</span>
+  <span class="nf">remove</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>                                                                                                                                                     
+    <span class="nx">event</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">()</span>                                                                                                                                            
+    <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nf">closest</span><span class="p">(</span><span class="dl">'</span><span class="s1">[data-add-ingredient-fields-target="ingredientFieldsRow"]</span><span class="dl">'</span><span class="p">).</span><span class="nf">remove</span><span class="p">()</span>                                                                                   
+  <span class="p">}</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The recipe form gets 3 significant changes to switch over to Stimulus:</p>
+<ol>
+  <li>Instead of the <code class="language-plaintext highlighter-rouge">app/views/ingredients/new.turbo_stream.erb</code> holding the HTML we need for the ingredient form fields, I inserted a <code class="language-plaintext highlighter-rouge">&lt;template&gt;</code> in the ingredients section of the recipe form and added a Stimulus target called <code class="language-plaintext highlighter-rouge">"template"</code> so Stimulus knows where to find the source HTML.</li>
+  <li>The destination container for the inserted form fields got a Stimulus target called <code class="language-plaintext highlighter-rouge">"container"</code>, so Stimulus knows where to put that template HTML.</li>
+  <li>The “Add Ingredient” button changes from a turbo stream linking to the <code class="language-plaintext highlighter-rouge">IngredientsController#new</code> action to an empty link that is used to trigger the new Stimulus controller’s <code class="language-plaintext highlighter-rouge">append</code> function.</li>
+</ol>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/recipes/_form.html.erb --&gt;</span>
+...
+<span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.label</span> <span class="err">'</span><span class="na">Ingredients</span><span class="err">'</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+<span class="c">&lt;!-- instantiating the add_ingredients_fields controller --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">data-controller=</span><span class="s">"add-ingredient-fields"</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- assigning a target to the destination container HTML --&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-add-ingredient-fields-target=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.fields_for</span> <span class="na">:ingredients</span> <span class="na">do</span> <span class="err">|</span><span class="na">f_ingredient</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="na">partial:</span> <span class="err">'/</span><span class="na">ingredients</span><span class="err">/</span><span class="na">form_fields</span><span class="err">',</span> <span class="na">locals:</span> <span class="err">{</span> <span class="na">f_ingredient:</span> <span class="na">f_ingredient</span> <span class="err">}</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+
+    <span class="c">&lt;!-- assigning a target to the source HTML for the form fields --&gt;</span>
+    <span class="nt">&lt;template</span> <span class="na">data-add-ingredient-fields-target=</span><span class="s">"template"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">form.fields_for</span> <span class="na">:ingredients</span><span class="err">,</span> <span class="na">Ingredient.new</span><span class="err">(</span><span class="na">quantity:</span> <span class="na">nil</span><span class="err">),</span> <span class="na">child_index:</span> <span class="err">'</span><span class="na">NEW_RECORD</span><span class="err">'</span> <span class="na">do</span> <span class="err">|</span><span class="na">f_ingredient</span><span class="err">|</span> <span class="err">%</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">render</span> <span class="na">partial:</span> <span class="err">'/</span><span class="na">ingredients</span><span class="err">/</span><span class="na">form_fields</span><span class="err">',</span> <span class="na">locals:</span> <span class="err">{</span> <span class="na">f_ingredient:</span> <span class="na">f_ingredient</span> <span class="err">}</span> <span class="err">%</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/template&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+  <span class="c">&lt;!-- triggering the Stimulus "append" on click --&gt;</span>
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span> <span class="err">'</span><span class="na">#</span><span class="err">',</span> <span class="err">'+</span> <span class="na">Add</span> <span class="na">Ingredient</span><span class="err">',</span> <span class="na">data:</span> <span class="err">{</span> <span class="na">action:</span> <span class="err">"</span><span class="na">click-</span><span class="nt">&gt;</span>add-ingredient-fields#append" } %&gt;
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<p>Now about that <code class="language-plaintext highlighter-rouge">NEW_RECORD</code> javascript logic… Each row of ingredient form fields needs its own unique index. The turbo stream view was handling that with a <code class="language-plaintext highlighter-rouge">Time.current.to_i</code> upon insertion. Since we were making a trip to the server, it did give us that benefit. Now without that, simply inserting the <code class="language-plaintext highlighter-rouge">&lt;template&gt;</code> content will make an identical index even if we used a <code class="language-plaintext highlighter-rouge">Time.current.to_i</code>.  Bummer. So this little piece of javascript grabs all of those identical strings called <code class="language-plaintext highlighter-rouge">"NEW_RECORD"</code> inside that template and replaces them with a timestamp upon insertion.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">content</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">'</span><span class="s1">[name*="NEW_RECORD"], [id*="NEW_RECORD"]</span><span class="dl">'</span><span class="p">).</span><span class="nf">forEach</span><span class="p">(</span><span class="nx">el</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if </span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">NEW_RECORD</span><span class="dl">'</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+  <span class="k">if </span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">NEW_RECORD</span><span class="dl">'</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>Now we get those unique indexes that the form needs.</p>
+
+<h2 id="improvements-from-refactor">Improvements from Refactor</h2>
+<p>So overall, the improvements made in this refactor are:</p>
+<ul>
+  <li>No round trip to the server just to insert empty fields!</li>
+  <li>No new <code class="language-plaintext highlighter-rouge">ingredients#new</code> route to protect and maintain</li>
+  <li>No new <code class="language-plaintext highlighter-rouge">IngredientsController</code> plus request specs for this controller</li>
+  <li>No separate turbo stream view to insert the partial</li>
+  <li>Use a single Stimulus controller for both <code class="language-plaintext highlighter-rouge">append</code> and <code class="language-plaintext highlighter-rouge">remove</code> behaviors</li>
+  <li>Use Stimulus targets for accurately identifying source and destination HTML without relying on HTML <code class="language-plaintext highlighter-rouge">id</code>s.</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;template&gt;</code> source HTML is right on the page where it will be inserted – making it easy to understand</li>
+</ul>
+
+<p>Cons: well, you do have to use Stimulus and if you prefer the simplicity of the Turbo Stream workflow, you’re probably feeling like a sad panda right now. Welcome to the <strike>dark</strike> javascript side of Rails work.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+  	<p>This site was built using <a href="http://jekyllrb.com" target="_blank">Jekyll</a> based on the <a href="https://github.com/bogoli/-folio" target="_blank" alt="folio" title="folio">*folio</a> theme and is hosted on <a href="https://github.com" target="_blank">Github</a> &#169;2026</p>
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
