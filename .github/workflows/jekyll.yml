@@ -28,13 +28,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
       - name: Install dependencies
-        run: bundle install --retry 3
+        run: |
+          ruby --version
+          bundle --version
+          bundle install --retry 3
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
