@@ -144,7 +144,7 @@
 <h4 id="the-stimulus-piece-works-like-this">The Stimulus piece works like this:</h4>
 <ul>
   <li>Line 5: The form’s <code class="language-plaintext highlighter-rouge">data: { controller: "search" }</code>: mounts an instance of the Stimulus <code class="language-plaintext highlighter-rouge">search_controller.js</code> on this <code class="language-plaintext highlighter-rouge">&lt;form&gt;</code> element, giving the form and its child elements access to this controller’s actions.</li>
-  <li>Line 5: The text input’s <code class="language-plaintext highlighter-rouge">data: { search_target: "input" }</code>: registers this HTML element as the <code class="language-plaintext highlighter-rouge">inputTarget</code> in the Stimulus controller. If you’re not familiar with Stimulus targets, this is just a fancy way of passing arguments into a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)</li>
+  <li>Line 11: The text input’s <code class="language-plaintext highlighter-rouge">data: { search_target: "input" }</code>: registers this HTML element as the <code class="language-plaintext highlighter-rouge">inputTarget</code> in the Stimulus controller. If you’re not familiar with Stimulus targets, this is just a fancy way of identifying DOM elements in a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)</li>
   <li>Line 11: The text input’s <code class="language-plaintext highlighter-rouge">data: { action: "input-&gt;search#submit" }</code>: calls the Stimulus function <code class="language-plaintext highlighter-rouge">search#submit</code> on every keystroke. It’s reminiscent of the vanilla JS <code class="language-plaintext highlighter-rouge">addEventListener("input", search())</code> approach.</li>
   <li>Line 11: The <code class="language-plaintext highlighter-rouge">search#submit</code> portion calls the <code class="language-plaintext highlighter-rouge">submit</code> function that’s defined in the <code class="language-plaintext highlighter-rouge">search</code> Stimulus controller. This function debounces (pauses) the call by 300ms, then calls <code class="language-plaintext highlighter-rouge">this.element.requestSubmit()</code> — where <code class="language-plaintext highlighter-rouge">this.element</code> is the <code class="language-plaintext highlighter-rouge">&lt;form&gt;</code> itself.</li>
   <li>The end result is the form is submitted without a page reload.</li>
@@ -165,13 +165,6 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nf">requestSubmit</span><span class="p">()</span>
     <span class="p">},</span> <span class="mi">300</span><span class="p">)</span>
-  <span class="p">}</span>
-
-  <span class="nf">clear</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">if </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasInputTarget</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">inputTarget</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">""</span>
-    <span class="p">}</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">.</span><span class="nf">requestSubmit</span><span class="p">()</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>

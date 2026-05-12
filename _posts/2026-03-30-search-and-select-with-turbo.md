@@ -76,7 +76,7 @@ This little chunk of view code pulls all of the technologies together. Let me br
 
 #### The Stimulus piece works like this:
 - Line 5: The form's `data: { controller: "search" }`: mounts an instance of the Stimulus `search_controller.js` on this `<form>` element, giving the form and its child elements access to this controller's actions.
-- Line 5: The text input's `data: { search_target: "input" }`: registers this HTML element as the `inputTarget` in the Stimulus controller. If you're not familiar with Stimulus targets, this is just a fancy way of passing arguments into a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)
+- Line 11: The text input's `data: { search_target: "input" }`: registers this HTML element as the `inputTarget` in the Stimulus controller. If you're not familiar with Stimulus targets, this is just a fancy way of identifying DOM elements in a javascript function. (See the <a href="https://stimulus.hotwired.dev/reference/targets" target="_blank">Stimulus docs about targets</a>.)
 - Line 11: The text input's `data: { action: "input->search#submit" }`: calls the Stimulus function `search#submit` on every keystroke. It's reminiscent of the vanilla JS `addEventListener("input", search())` approach.
 - Line 11: The `search#submit` portion calls the `submit` function that's defined in the `search` Stimulus controller. This function debounces (pauses) the call by 300ms, then calls `this.element.requestSubmit()` — where `this.element` is the `<form>` itself. 
 - The end result is the form is submitted without a page reload.
@@ -97,13 +97,6 @@ export default class extends Controller {
     this.timeout = setTimeout(() => {
       this.element.requestSubmit()
     }, 300)
-  }
-
-  clear() {
-    if (this.hasInputTarget) {
-      this.inputTarget.value = ""
-    }
-    this.element.requestSubmit()
   }
 }
 ```
