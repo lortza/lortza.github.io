@@ -139,7 +139,7 @@ export default class extends Controller {
 The recipe form gets 3 significant changes to switch over to Stimulus: 
 1. Instead of the `app/views/ingredients/new.turbo_stream.erb` holding the HTML we need for the ingredient form fields, I inserted a `<template>` in the ingredients section of the recipe form and added a Stimulus target called `"template"` so Stimulus knows where to find the source HTML. 
 2. The destination container for the inserted form fields got a Stimulus target called `"container"`, so Stimulus knows where to put that template HTML.
-3. The "Add Ingredient" button changes from a turbo stream linking to the `IngredientsController#new` action to an empty link that is used to trigger the new Stimulus controller's `append` function.
+3. The "Add Ingredient" button changes from a turbo stream linking to the `IngredientsController#new` action to a simple `<div>` as a DOM element that is used to trigger the new Stimulus controller's `append` function.
 
 ```html
 <!-- app/views/recipes/_form.html.erb -->
@@ -162,7 +162,9 @@ The recipe form gets 3 significant changes to switch over to Stimulus:
     </template>
   </div>
   <!-- triggering the Stimulus "append" on click -->
-  <%= link_to '#', '+ Add Ingredient', data: { action: "click->add-ingredient-fields#append" } %>
+  <%= tag.div(data: { action: "click->add-ingredient-fields#append" }, class: button_classes) do %>
+    + Add ingredient
+  <% end %>
 </div>
 ```
 

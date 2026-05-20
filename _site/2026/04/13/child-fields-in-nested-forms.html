@@ -205,7 +205,7 @@
 <ol>
   <li>Instead of the <code class="language-plaintext highlighter-rouge">app/views/ingredients/new.turbo_stream.erb</code> holding the HTML we need for the ingredient form fields, I inserted a <code class="language-plaintext highlighter-rouge">&lt;template&gt;</code> in the ingredients section of the recipe form and added a Stimulus target called <code class="language-plaintext highlighter-rouge">"template"</code> so Stimulus knows where to find the source HTML.</li>
   <li>The destination container for the inserted form fields got a Stimulus target called <code class="language-plaintext highlighter-rouge">"container"</code>, so Stimulus knows where to put that template HTML.</li>
-  <li>The “Add Ingredient” button changes from a turbo stream linking to the <code class="language-plaintext highlighter-rouge">IngredientsController#new</code> action to an empty link that is used to trigger the new Stimulus controller’s <code class="language-plaintext highlighter-rouge">append</code> function.</li>
+  <li>The “Add Ingredient” button changes from a turbo stream linking to the <code class="language-plaintext highlighter-rouge">IngredientsController#new</code> action to a simple <code class="language-plaintext highlighter-rouge">&lt;div&gt;</code> as a DOM element that is used to trigger the new Stimulus controller’s <code class="language-plaintext highlighter-rouge">append</code> function.</li>
 </ol>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- app/views/recipes/_form.html.erb --&gt;</span>
@@ -228,7 +228,9 @@
     <span class="nt">&lt;/template&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
   <span class="c">&lt;!-- triggering the Stimulus "append" on click --&gt;</span>
-  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">link_to</span> <span class="err">'</span><span class="na">#</span><span class="err">',</span> <span class="err">'+</span> <span class="na">Add</span> <span class="na">Ingredient</span><span class="err">',</span> <span class="na">data:</span> <span class="err">{</span> <span class="na">action:</span> <span class="err">"</span><span class="na">click-</span><span class="nt">&gt;</span>add-ingredient-fields#append" } %&gt;
+  <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">tag.div</span><span class="err">(</span><span class="na">data:</span> <span class="err">{</span> <span class="na">action:</span> <span class="err">"</span><span class="na">click-</span><span class="nt">&gt;</span>add-ingredient-fields#append" }, class: button_classes) do %&gt;
+    + Add ingredient
+  <span class="nt">&lt;</span><span class="err">%</span> <span class="na">end</span> <span class="err">%</span><span class="nt">&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </code></pre></div></div>
 
