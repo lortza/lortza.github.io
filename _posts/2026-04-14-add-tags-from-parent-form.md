@@ -9,7 +9,7 @@ published: true
 I have a recipe app where a recipe can have many tags. Adding a tag to a recipe is done via the recipe's edit page. If the user needs to add a new tag, they have to leave the recipe form, create a tag in a separate CRUD workflow, then come back to the recipe form to add it. This is not an ideal workflow. 
 
 ## The Solution
-Add the new tag option to the recipe form dynamically via a turbo stream. I did the work for this feature in [this PR](https://github.com/lortza/food_planner/pull/1275). This is what the implementation it looks like:
+The solution I chose is to add the new tag option to the recipe form dynamically via a turbo stream. I did the work for this feature in [this PR](https://github.com/lortza/food_planner/pull/1275). This is what the implementation it looks like:
 
 <img class="col three" src="{{ site.baseurl }}/img/posts/2026-04-14_new_tags.gif" alt="screencap of adding a new tag option without leaving the recipe form" title="adding a new tag option without leaving the recipe form"/>
 <p>&nbsp;</p>
@@ -22,7 +22,26 @@ Add the new tag option to the recipe form dynamically via a turbo stream. I did 
 5. Lastly, the `create.turbo_stream.erb` is rendered which appends the new checkbox for the new tag to the DOM.
 
 ## The Details
-First of all, it is invalid HTML to have a `<form>` tag within a `<form>` tag. In addition, this would cause conflicts with submitting the parent `recipe` form. So having a simple form that submits to a Turbo Stream is off the table for this scenario. In a case like this, using Stimulus to respond to user-initiated DOM actions cuts through the noise. The tricky part is converting that DOM click to a Turbo Stream in the Stimulus controller. 
+First of all, it is invalid HTML to have a `<form>` tag within a `<form>` tag. In addition, this would cause conflicts with submitting the parent `recipe` form. This is an example of an invalid HTML form:
+```html
+<!-- This does not work -->
+<form action="/recipes" method="post">
+  <form action="/tags" id="tag-creation" method="post">
+    <input type="text" name="tag[name]" form="tag-creation">
+    <button form="tag-creation">Add tag</button>
+  </form>
+  <button>Save Recipe</button>
+</form>
+```
+
+So having a tags `<form>` inside the recipe `<form>` that submits to a Turbo Stream is off the table for this scenario. There are a couple of solutions that I have seen implemented most recently:
+1. use Stimulus to trigger the action (what this post explains)
+2. build a tags form _outside_ of the recipes form and trigger the tags form submit from within the recipes form (what this [refactor post]({% post_url 2026-05-21-refactor-form-inside-form %}) explains)
+
+I chose to implement option #1 because I wanted practice (and an example to reference in my codebase) using the `requestjs-rails` gem. And, to be honest, I forgot about option #2 until a friend reminded me after I had already implemented #1. 😂 C'est la vie! 
+
+### So on to option #1! 
+The tricky part about this from-inside-a-form problem is converting that DOM click to a Turbo Stream in the Stimulus controller. 
 
 Fortunately, this scenario is pretty common in Rails development, so there are gems to help us out. I chose to use the `requestjs-rails` gem because it's heavily used and has good support. Please see the [gem docs](https://github.com/rails/requestjs-rails) for installation instructions. 
 
@@ -183,3 +202,7 @@ end
 ```
 
 And that's it. This solution gets to flex a lot of native Rails behavior with just a tiny gem wedged in there for the Stimulus-to-Turbo-Stream workflow. So we're able to pull off something that is annoyingly tricky with a relatively simple solution.
+
+The End...
+
+Well, actually, it's not. 😂 After writing this post and then messing around with option #2 (build a tags form outside of the recipes form and trigger the tags form submit from within the recipes form), I decided to refactor. You can read about it [in this follow-up refactor post]({% post_url 2026-05-21-refactor-form-inside-form %}).
